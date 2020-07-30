@@ -57,5 +57,6 @@ func routes(_ app: Application) throws {
     try app.register(collection: TodoController())
 
     let apiRoutes = app.grouped("api", "v1")
+    try apiRoutes.grouped("register").register(collection: RegistrationContoller())
     try apiRoutes.grouped("organizations").register(collection: OrganizationAPIController())
 }

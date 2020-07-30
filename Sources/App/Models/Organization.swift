@@ -10,4 +10,11 @@ final class Organization: Model, Content {
 
     @Field(key: "name")
     var name: String
+    
+    init() {}
+    
+    init(id: UUID? = nil, name: String) {
+        self.id = id
+        self.name = name
+    }
 }

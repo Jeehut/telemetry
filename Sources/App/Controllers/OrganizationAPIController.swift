@@ -8,22 +8,22 @@
 import Vapor
 
 class OrganizationAPIController {
-    struct Organization: Content {
+    struct OrgOrg: Content {
         let id: Int
         let title: String
     }
 
     static let organizations = [
-        Organization(id: 1, title: "breakthesystem"),
-        Organization(id: 2, title: "Weyland Yutani"),
-        Organization(id: 3, title: "Microsoft"),
+        OrgOrg(id: 1, title: "breakthesystem"),
+        OrgOrg(id: 2, title: "Weyland Yutani"),
+        OrgOrg(id: 3, title: "Microsoft"),
     ]
 
-    func getOrganizations(req: Request) -> [Organization] {
+    func getOrganizations(req: Request) -> [OrgOrg] {
         return Self.organizations
     }
 
-    func getOrganization(req: Request) throws -> Organization {
+    func getOrganization(req: Request) throws -> OrgOrg {
         guard
             let organizationIDString = req.parameters.get("organizationID"),
             let organizationID = Int(organizationIDString),
