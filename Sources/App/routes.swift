@@ -42,7 +42,15 @@ func routes(_ app: Application) throws {
 
     // TODO: Put this in a versioned api
     let passwordProtected = app.grouped(User.authenticator())
-    passwordProtected.post("login") { req -> User in
+    passwordProtected.post("login") { req -> EventLoopFuture<UserToken> in
+        let user = try req.auth.require(User.self)
+        let token = try user.generateToken()
+        return token.save(on: req.db)
+            .map { token }
+    }
+
+    let tokenProtected = app.grouped(UserToken.authenticator())
+    tokenProtected.get("me") { req -> User in
         try req.auth.require(User.self)
     }
 

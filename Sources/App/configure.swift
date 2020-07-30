@@ -15,6 +15,8 @@ public func configure(_ app: Application) throws {
 
     app.migrations.add(CreateTodo())
     app.migrations.add(User.Migration())
+    app.migrations.add(UserToken.Migration())
+
     try app.autoMigrate().wait()
 
     // register routes
