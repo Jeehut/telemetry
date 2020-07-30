@@ -2,7 +2,7 @@
     #export("body"):
         <div class="jumbotron">
             <h1 class="display-4">#(index.title)</h1>
-            <p class="lead">Welcome to Telemetry, your black box for App Telemetry</p>
+            <p class="lead">Welcome to Telemetry, your black box for App Telemetry. No privacy problems, no dependencies, no third party SDKs</p>
             <hr class="my-4">
             <p>#(page.content)</p>
             <p class="lead">
