@@ -1,12 +1,4 @@
-//
-//  File.swift
-//  
-//
-//  Created by Daniel Jilg on 30.07.20.
-//
-
 import Fluent
-import Vapor
 
 extension User {
     struct Migration: Fluent.Migration {
