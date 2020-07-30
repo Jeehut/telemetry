@@ -6,7 +6,7 @@ struct RegistrationContoller: RouteCollection {
         routes.post(use: create)
     }
     
-    struct RegistrationRequestBody: Content {
+    struct RegistrationRequestBody: Content, Validatable {
         let organisationName: String
         let userFirstName: String
         let userLastName: String
@@ -18,18 +18,40 @@ struct RegistrationContoller: RouteCollection {
             return Organization(name: organisationName)
         }
         
-        func makeUser() -> User {
-            // TODO: This is bonkers and wrong
-            return User(name: userFirstName, email: userEmail, passwordHash: userPassword)
+        func makeUser(organizationID: UUID) -> User {
+            // TODO: Salt that hash, mofo!
+            let hashedPassword = try! Bcrypt.hash(self.userPassword)
+            
+            return User(
+                firstName: userFirstName,
+                lastName: userLastName,
+                email: userEmail,
+                passwordHash: hashedPassword,
+                organizationID: organizationID
+            )
+        }
+        
+        static func validations(_ validations: inout Validations) {
+            validations.add("userFirstName", as: String.self, is: !.empty)
+            validations.add("userLastName", as: String.self, is: !.empty)
+            validations.add("userEmail", as: String.self, is: .email)
+            validations.add("userPassword", as: String.self, is: .count(8...))
         }
     }
     
-    func create(req: Request) throws -> EventLoopFuture<Organization> {
+    func create(req: Request) throws -> EventLoopFuture<User> {
+        try RegistrationRequestBody.validate(req)
         let registrationRequestBody = try req.content.decode(RegistrationRequestBody.self)
+        
+        guard registrationRequestBody.userPassword == registrationRequestBody.userPasswordConfirm else {
+            throw Abort(.badRequest, reason: "Passwords did not match")
+        }
+        
         let org = registrationRequestBody.makeOrganisation()
-        let user = registrationRequestBody.makeUser()
         
-        return org.save(on: req.db).map { org }
-        
+        return org.create(on: req.db).flatMap {
+            let user = registrationRequestBody.makeUser(organizationID: org.id!)
+            return user.create(on: req.db).map { user }
+        }
     }
 }

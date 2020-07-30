@@ -4,14 +4,16 @@ extension User {
     struct Migration: Fluent.Migration {
         var name: String { "CreateUser" }
 
-        // TODO: name should be unique
-        // TODO: First name, last Name
         func prepare(on database: Database) -> EventLoopFuture<Void> {
             database.schema("users")
                 .id()
-                .field("name", .string, .required)
+                .field("first_name", .string, .required)
+                .field("last_name", .string, .required)
                 .field("email", .string, .required)
                 .field("password_hash", .string, .required)
+                .field("organization_id", .uuid, .required, .references("organizations", "id"))
+                .foreignKey("organization_id", references: Organization.schema, "id", onDelete: .cascade, onUpdate: .noAction)
+                .unique(on: "email")
                 .create()
         }
 

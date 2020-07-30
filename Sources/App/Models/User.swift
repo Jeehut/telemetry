@@ -7,43 +7,35 @@ final class User: Model, Content {
     @ID(key: .id)
     var id: UUID?
 
-    @Field(key: "name")
-    var name: String
+    @Field(key: "first_name")
+    var firstName: String
+
+    @Field(key: "last_name")
+    var lastName: String
 
     @Field(key: "email")
     var email: String
 
     @Field(key: "password_hash")
     var passwordHash: String
+    
+    @Parent(key: "organization_id")
+    var organization: Organization
 
     init() { }
 
-    init(id: UUID? = nil, name: String, email: String, passwordHash: String) {
+    init(id: UUID? = nil, firstName: String, lastName: String, email: String, passwordHash: String, organizationID: UUID) {
         self.id = id
-        self.name = name
+        self.firstName = firstName
+        self.lastName = lastName
         self.email = email
         self.passwordHash = passwordHash
-    }
-}
-
-
-// TODO: Put this into its own file somewhere?
-extension User {
-    struct Create: Content, Validatable {
-        var name: String
-        var email: String
-        var password: String
-        var confirmPassword: String
-
-        static func validations(_ validations: inout Validations) {
-            validations.add("name", as: String.self, is: !.empty)
-            validations.add("email", as: String.self, is: .email)
-            validations.add("password", as: String.self, is: .count(8...))
-        }
+        self.$organization.id = organizationID
     }
 }
 
 extension User: ModelAuthenticatable {
+    // TODO: Is this correct and needed???
     static let usernameKey = \User.$email
     static let passwordHashKey = \User.$passwordHash
 
@@ -53,6 +45,7 @@ extension User: ModelAuthenticatable {
 }
 
 extension User {
+    // TODO: Is this correct and needed???
     func generateToken() throws -> UserToken {
         try .init(
             value: [UInt8].random(count: 16).base64,
