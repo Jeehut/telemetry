@@ -3,6 +3,8 @@ import Vapor
 
 final class UserToken: Model, Content {
     static let schema = "user_tokens"
+    
+    // TOOD: Add expiration date
 
     @ID(key: .id)
     var id: UUID?

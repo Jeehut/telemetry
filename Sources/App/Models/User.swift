@@ -35,17 +35,15 @@ final class User: Model, Content {
 }
 
 extension User: ModelAuthenticatable {
-    // TODO: Is this correct and needed???
     static let usernameKey = \User.$email
     static let passwordHashKey = \User.$passwordHash
 
+    /// Used for email/password login in order to generate Tokens
     func verify(password: String) throws -> Bool {
         try Bcrypt.verify(password, created: self.passwordHash)
     }
-}
 
-extension User {
-    // TODO: Is this correct and needed???
+    /// Used to generate login tokens for use in the rest of the API
     func generateToken() throws -> UserToken {
         try .init(
             value: [UInt8].random(count: 16).base64,

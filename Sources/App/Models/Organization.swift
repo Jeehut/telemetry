@@ -11,6 +11,9 @@ final class Organization: Model, Content {
     @Field(key: "name")
     var name: String
     
+    @Children(for: \.$organization)
+    var users: [User]
+    
     init() {}
     
     init(id: UUID? = nil, name: String) {

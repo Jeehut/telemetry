@@ -3,7 +3,15 @@ import Vapor
 
 struct RegistrationContoller: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
-        routes.post(use: create)
+        
+        routes.post("register", use: create)
+        
+        let passwordProtected = routes.grouped(User.authenticator())
+        passwordProtected.post("login", use: getBearerTokenForUser)
+        
+        
+        let tokenProtected = routes.grouped(UserToken.authenticator())
+        tokenProtected.get("me", use: getUserInformation)
     }
     
     struct RegistrationRequestBody: Content, Validatable {
@@ -39,6 +47,8 @@ struct RegistrationContoller: RouteCollection {
         }
     }
     
+    
+    /// Register and Create a new Organization
     func create(req: Request) throws -> EventLoopFuture<User> {
         try RegistrationRequestBody.validate(req)
         let registrationRequestBody = try req.content.decode(RegistrationRequestBody.self)
@@ -53,5 +63,17 @@ struct RegistrationContoller: RouteCollection {
             let user = registrationRequestBody.makeUser(organizationID: org.id!)
             return user.create(on: req.db).map { user }
         }
+    }
+    
+    func getBearerTokenForUser(req: Request) throws -> EventLoopFuture<UserToken> {
+            let user = try req.auth.require(User.self)
+            let token = try user.generateToken()
+            return token.save(on: req.db)
+                .map { token }
+    }
+    
+    func getUserInformation(req: Request) throws -> User {
+        // TODO: Also return the organization
+        try req.auth.require(User.self)
     }
 }
