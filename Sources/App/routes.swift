@@ -29,4 +29,5 @@ func routes(_ app: Application) throws {
     let apiRoutes = app.grouped("api", "v1")
     try apiRoutes.grouped("users").register(collection: RegistrationContoller())
     try apiRoutes.grouped("organizations").register(collection: OrganizationAPIController())
+    try apiRoutes.grouped("apps").register(collection: AppController())
 }
