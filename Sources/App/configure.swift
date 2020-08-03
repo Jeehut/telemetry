@@ -17,8 +17,6 @@ public func configure(_ app: Application) throws {
 
     app.migrations.add(Organization.Migration())
     app.migrations.add(App.Migration())
-    app.migrations.add(ClientUser.Migration())
-    app.migrations.add(SignalType.Migration())
     app.migrations.add(Signal.Migration())
 
     app.migrations.add(User.Migration())

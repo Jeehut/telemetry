@@ -8,9 +8,12 @@ extension Signal  {
         func prepare(on database: Database) -> EventLoopFuture<Void> {
             database.schema(schema)
                 .id()
+                .field("app_id", .uuid, .required, .references(App.schema, "id"))
+                .foreignKey("app_id", references: App.schema, "id", onDelete: .cascade, onUpdate: .noAction)
                 .field("received_at", .date, .required)
-                .field("client_user_id", .uuid, .required, .references("client_users", "id"))
-                .field("signal_type_id", .uuid, .required, .references("signal_types", "id"))
+                .field("client_user", .string, .required)
+                .field("signal_type", .string, .required)
+                .field("payload", .dictionary(of: .string))
                 .create()
         }
 

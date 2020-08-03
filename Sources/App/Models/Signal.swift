@@ -1,18 +1,24 @@
 import Fluent
 import Vapor
 
-final class Signal: Model, Codable {
+final class Signal: Model, Content {
     static let schema = "signals"
 
     @ID(key: .id)
     var id: UUID?
+    
+    @Parent(key: "app_id")
+    var app: App
+    
+    @Timestamp(key: "received_at", on: .create)
+    var receivedAt: Date?
 
-    @Field(key: "received_at")
-    var receivedAt: Date
+    @Field(key: "client_user")
+    var clientUser: String
 
-    @Parent(key: "client_user_id")
-    var clientUser: ClientUser
-
-    @Parent(key: "signal_type_id")
-    var type: SignalType
+    @Field(key: "signal_type")
+    var type: String
+    
+    @Field(key: "payload")
+    var payload: Dictionary<String, String>?
 }
