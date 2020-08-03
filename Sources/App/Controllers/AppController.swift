@@ -13,8 +13,10 @@ struct AppController: RouteCollection {
     func index(req: Request) throws -> EventLoopFuture<[App]> {
         let user = try req.auth.require(User.self)
         
-        // TODO: Only show user's orgs' apps
-        return App.query(on: req.db).all()
+        // Only show user's orgs' apps, thanks to @jhoughjr
+        return App.query(on: req.db)
+            .filter(\.$organization.$id == user.$organization.id)
+            .all()
     }
     
     struct AppRequestBody: Content, Validatable {
