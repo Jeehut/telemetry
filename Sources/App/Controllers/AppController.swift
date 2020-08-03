@@ -14,7 +14,10 @@ struct AppController: RouteCollection {
         let user = try req.auth.require(User.self)
         
         // TODO: Only show user's orgs' apps
-        return App.query(on: req.db).all()
+        return App.query(on: req.db).with(\.$organization)
+            .filter(\.$organization.$id, .equal, user.$organization.id)
+                         .all()
+
     }
     
     struct AppRequestBody: Content, Validatable {
