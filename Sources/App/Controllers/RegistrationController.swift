@@ -72,8 +72,8 @@ struct RegistrationContoller: RouteCollection {
                 .map { token }
     }
     
-    func getUserInformation(req: Request) throws -> User {
-        // TODO: Also return the organization
-        try req.auth.require(User.self)
+    func getUserInformation(req: Request) throws -> EventLoopFuture<User> {
+        let user = try req.auth.require(User.self)
+        return user.$organization.load(on: req.db).map { user }
     }
 }
