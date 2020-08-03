@@ -15,7 +15,7 @@ struct AppController: RouteCollection {
     
     func index(req: Request) throws -> EventLoopFuture<[App]> {
         let user = try req.auth.require(User.self)
-        
+
         // Only show user's orgs' apps, thanks to @jhoughjr
         return App.query(on: req.db)
             .filter(\.$organization.$id == user.$organization.id)
