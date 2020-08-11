@@ -9,9 +9,17 @@ import SwiftUI
 
 @main
 struct Telemetry_ViewerApp: App {
+    @StateObject var store = SignalStore()
+    @State private var selectedApp: TelemetryApp?
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            
+            NavigationView {
+                SidebarView(store: store, selectedApp: $selectedApp)
+                Text("Please Select an App")
+                Text("Hello world").font(.largeTitle)
+            }.navigationViewStyle(DoubleColumnNavigationViewStyle())
         }
     }
 }
