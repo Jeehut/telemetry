@@ -19,9 +19,6 @@ struct SignalView: View {
     var body: some View {
         Label {
             HStack(alignment: .top) {
-                
-                
-                
                 VStack(alignment: .leading) {
                     HStack {
                         Text(signal.type).bold()

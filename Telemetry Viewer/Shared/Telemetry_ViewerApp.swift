@@ -9,7 +9,7 @@ import SwiftUI
 
 @main
 struct Telemetry_ViewerApp: App {
-    @StateObject var store = SignalStore()
+    @StateObject var store = APIRepresentative()
     @State private var selectedApp: TelemetryApp?
     
     var body: some Scene {

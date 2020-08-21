@@ -27,13 +27,14 @@ struct Signal: Codable, Hashable {
     var payload: Dictionary<String, String>?
 }
 
-var organization: Organization = .init(name: "breakthesystem")
-var app1: TelemetryApp = .init(name: "Test App", organization: organization)
-var app2: TelemetryApp = .init(name: "Other Test App", organization: organization)
+var exampleOrganization: Organization = .init(name: "breakthesystem")
+var app1: TelemetryApp = .init(name: "Test App", organization: exampleOrganization)
+var app2: TelemetryApp = .init(name: "Other Test App", organization: exampleOrganization)
 
 
-final class SignalStore: ObservableObject {
-    @Published var organzation: Organization = organization
+
+final class APIRepresentative: ObservableObject {
+    @Published var organzation: Organization = exampleOrganization
     
     @Published var allApps: [TelemetryApp] = [app1, app2]
     

@@ -15,13 +15,14 @@ struct SignalList: View {
             ForEach(signals, id: \.self) { signal in
                     SignalView(signal: signal)
             }
-        }.navigationBarTitle(Text("Raw Signals"))
+        }
+        
     }
 }
 
 struct SignalList_Previews: PreviewProvider {
     static var previews: some View {
-        let signals = SignalStore().allSignals[app1]!
+        let signals = APIRepresentative().allSignals[app1]!
         
         SignalList(signals: signals)
     }

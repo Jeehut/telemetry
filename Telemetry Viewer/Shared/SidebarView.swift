@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SidebarView: View {
-    @ObservedObject var store: SignalStore
+    @ObservedObject var store: APIRepresentative
     @Binding var selectedApp: TelemetryApp?
     
     var body: some View {
@@ -28,7 +28,7 @@ struct SidebarView: View {
             }
             
             Section(header: Text("Settings")) {
-                
+                Text("Settings go here")
             }
         }.listStyle(SidebarListStyle())
     }

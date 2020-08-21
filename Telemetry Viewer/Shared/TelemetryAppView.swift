@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TelemetryAppView: View {
-    @ObservedObject var store: SignalStore
+    @ObservedObject var store: APIRepresentative
     var app: TelemetryApp
     
     var body: some View {
@@ -20,6 +20,7 @@ struct TelemetryAppView: View {
                     Label("Raw Signals", systemImage: "waveform.path.ecg.rectangle")
                 }
             )
-        }.navigationBarTitle(Text(app.name))
+        }
+        
     }
 }
