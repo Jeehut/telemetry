@@ -31,17 +31,17 @@ struct TelemetryAppView: View {
         TabView(selection: $selectedView) {
             UserCountList(userCounts: api.userCounts[app]!)
                 .tabItem {
-                    Image(systemName: "1.circle")
+                    Image(systemName: "person.2.square.stack")
                     Text("Users")
                 }.tag(0)
             Text("Insights")
                 .tabItem {
-                    Image(systemName: "3.circle")
+                    Image(systemName: "eyes")
                     Text("Insights")
                 }.tag(1)
             SignalList(signals: api.allSignals[app]!)
                 .tabItem {
-                    Image(systemName: "3.circle")
+                    Image(systemName: "list.bullet.rectangle")
                     Text("Signals")
                 }.tag(2)
                 

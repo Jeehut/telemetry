@@ -11,27 +11,25 @@ struct SignalView: View {
     var signal: Signal
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateStyle = .medium
+        formatter.dateStyle = .short
         formatter.timeStyle = .short
         return formatter
     }()
     
     var body: some View {
         Label {
-            HStack(alignment: .top) {
-                VStack(alignment: .leading) {
-                    HStack {
-                        Text(signal.type).bold()
-                        Text("received at")
-                        Text(dateFormatter.string(from: signal.receivedAt))
-                    }
-                    
-                    HStack {
-                        Text("From")
-                        Text(signal.app.name)
-                        Text("user")
-                        Text(signal.clientUser).bold()
-                    }
+            VStack(alignment: .leading) {
+                HStack(spacing: 3) {
+                    Text(signal.type).bold()
+                    Text("received at")
+                    Text(dateFormatter.string(from: signal.receivedAt))
+                }
+                
+                HStack(spacing: 2) {
+                    Text("From")
+                    Text(signal.app.name)
+                    Text("user")
+                    Text(signal.clientUser).bold()
                 }
                 
                 Text(signal.payload?.debugDescription ?? "No Payload").foregroundColor(.gray)
@@ -46,7 +44,7 @@ struct SignalView: View {
 
 struct SignalView_Previews: PreviewProvider {
     static var previews: some View {
-        let signal: Signal = .init(id: UUID(), app: app1, receivedAt: Date(), clientUser: "randomClientUser", type: "ExampleSignal", payload: ["systemVersion": "14.0", "isSimulator": "false"])
+        let signal: Signal = .init(id: UUID(), app: app1, receivedAt: Date(), clientUser: "randomClientUser", type: "ExampleSignal", payload: ["systemVersion": "14.0", "isSimulator": "false", "appVersion": "12.4" ])
         SignalView(signal: signal)
     }
 }

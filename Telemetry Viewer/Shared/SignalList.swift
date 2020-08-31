@@ -12,6 +12,7 @@ struct SignalList: View {
     
     var body: some View {
         List {
+            Text("Here's a list of raw signals received for this app.")
             ForEach(signals, id: \.self) { signal in
                 SignalView(signal: signal)
             }
