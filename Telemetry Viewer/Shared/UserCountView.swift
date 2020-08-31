@@ -7,14 +7,8 @@
 
 import SwiftUI
 
-struct UserCount {
-    let count: Int
-    let timeFrom: Date
-    let timeUntil: Date
-    let filterText: String
-}
 
-struct UserCounterView: View {
+struct UserCountView: View {
     let userCount: UserCount
     let numberFormatter = NumberFormatter()
     let dateComponentsFormatter: DateComponentsFormatter = {
@@ -44,8 +38,8 @@ struct UserCounterView_Previews: PreviewProvider {
     static var platform: PreviewPlatform? { return nil }
     
     static var previews: some View {
-        let userCount: UserCount = UserCount(count: 1918, timeFrom: Date(timeInterval: -3600*13, since: Date()), timeUntil: Date(), filterText: "Active Users")
+        let userCount: UserCount = UserCount(count: 1918, timeFrom: Date(timeInterval: -3600*24, since: Date()), timeUntil: Date(), filterText: "Active Users")
         
-        UserCounterView(userCount: userCount)
+        UserCountView(userCount: userCount)
     }
 }

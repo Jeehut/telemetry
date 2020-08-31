@@ -27,6 +27,13 @@ struct Signal: Codable, Hashable {
     var payload: Dictionary<String, String>?
 }
 
+struct UserCount: Codable, Hashable {
+    let count: Int
+    let timeFrom: Date
+    let timeUntil: Date
+    let filterText: String
+}
+
 var exampleOrganization: Organization = .init(name: "breakthesystem")
 var app1: TelemetryApp = .init(name: "Test App", organization: exampleOrganization)
 var app2: TelemetryApp = .init(name: "Other Test App", organization: exampleOrganization)
@@ -59,6 +66,18 @@ final class APIRepresentative: ObservableObject {
             .init(id: nil, app: app2, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: nil),
             .init(id: nil, app: app2, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: nil),
             .init(id: nil, app: app2, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: nil),
+        ]
+    ]
+    
+    @Published var userCounts: [TelemetryApp: [UserCount]] = [
+        app1: [
+            UserCount(count: 46, timeFrom: Date(timeInterval: -3600*24, since: Date()), timeUntil: Date(), filterText: "Active Users"),
+            UserCount(count: 93, timeFrom: Date(timeInterval: -3600*24*7, since: Date()), timeUntil: Date(), filterText: "Active Users"),
+            UserCount(count: 225, timeFrom: Date(timeInterval: -3600*24*30, since: Date()), timeUntil: Date(), filterText: "Active Users"),
+            UserCount(count: 108, timeFrom: Date(timeInterval: -3600*24*30, since: Date()), timeUntil: Date(), filterText: "Long-Term Users")
+        ],
+        app2: [
+            UserCount(count: 133, timeFrom: Date(timeInterval: -3600*24, since: Date()), timeUntil: Date(), filterText: "Active Users")
         ]
     ]
 }
