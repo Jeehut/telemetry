@@ -9,14 +9,14 @@ import SwiftUI
 
 @main
 struct Telemetry_ViewerApp: App {
-    @StateObject var store = APIRepresentative()
+    @StateObject var api = APIRepresentative()
     @State private var selectedApp: TelemetryApp?
     
     var body: some Scene {
         WindowGroup {
             
             NavigationView {
-                SidebarView(store: store, selectedApp: $selectedApp)
+                SidebarView(api: api, selectedApp: $selectedApp)
                 Text("Please Select an App")
                 Text("Hello world").font(.largeTitle)
             }.navigationViewStyle(DoubleColumnNavigationViewStyle())

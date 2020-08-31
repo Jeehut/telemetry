@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct TelemetryAppView: View {
-    @ObservedObject var store: APIRepresentative
+    @ObservedObject var api: APIRepresentative
     var app: TelemetryApp
     
     var body: some View {
         List {
             
             NavigationLink(
-                destination: SignalList(signals: store.allSignals[app]!),
+                destination: SignalList(signals: api.allSignals[app]!),
                 label: {
                     Label("Raw Signals", systemImage: "waveform.path.ecg.rectangle")
                 }

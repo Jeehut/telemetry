@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SidebarView: View {
-    @ObservedObject var store: APIRepresentative
+    @ObservedObject var api: APIRepresentative
     @Binding var selectedApp: TelemetryApp?
     
     var body: some View {
@@ -16,10 +16,10 @@ struct SidebarView: View {
             
             Section(header: Text("Apps")) {
             
-                ForEach(Array(store.allApps), id: \.self) { app in
+                ForEach(Array(api.allApps), id: \.self) { app in
                     
                     NavigationLink(
-                        destination: TelemetryAppView(store: store, app: app),
+                        destination: TelemetryAppView(api: api, app: app),
                         label: {
                             Label(app.name, systemImage: "dot.radiowaves.left.and.right")        
                         }
