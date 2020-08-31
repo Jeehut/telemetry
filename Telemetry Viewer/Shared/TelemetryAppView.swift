@@ -9,18 +9,43 @@ import SwiftUI
 
 struct TelemetryAppView: View {
     @ObservedObject var api: APIRepresentative
+    @State var selectedView = 0
     var app: TelemetryApp
     
-    var body: some View {
-        List {
-            
-            NavigationLink(
-                destination: SignalList(signals: api.allSignals[app]!),
-                label: {
-                    Label("Raw Signals", systemImage: "waveform.path.ecg.rectangle")
-                }
-            )
+    var calculatedNavigationTitle: String {
+        switch selectedView {
+        case 0:
+            return "Users"
+        case 1:
+            return "Insights"
+        case 2:
+            return "Signals"
+        default:
+            return "Omsn"
+
         }
+    }
+    
+    var body: some View {
+        
+        TabView(selection: $selectedView) {
+            Text("Users")
+                .tabItem {
+                    Image(systemName: "1.circle")
+                    Text("Users")
+                }.tag(0)
+            Text("Insights")
+                .tabItem {
+                    Image(systemName: "3.circle")
+                    Text("Insights")
+                }.tag(1)
+            SignalList(signals: api.allSignals[app]!)
+                .tabItem {
+                    Image(systemName: "3.circle")
+                    Text("Signals")
+                }.tag(2)
+                
+        } .navigationTitle(calculatedNavigationTitle)
         
     }
 }

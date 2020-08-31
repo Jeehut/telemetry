@@ -18,7 +18,6 @@ struct Telemetry_ViewerApp: App {
             NavigationView {
                 SidebarView(api: api, selectedApp: $selectedApp)
                 Text("Please Select an App")
-                Text("Hello world").font(.largeTitle)
             }.navigationViewStyle(DoubleColumnNavigationViewStyle())
         }
     }

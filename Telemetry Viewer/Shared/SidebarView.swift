@@ -27,9 +27,9 @@ struct SidebarView: View {
                 }
             }
             
-            Section(header: Text("Settings")) {
-                Text("Settings go here")
-            }
+//            Section(header: Text("Settings")) {
+//                Text("Settings go here")
+//            }
         }.listStyle(SidebarListStyle())
     }
 }

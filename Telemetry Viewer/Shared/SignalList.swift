@@ -13,10 +13,9 @@ struct SignalList: View {
     var body: some View {
         List {
             ForEach(signals, id: \.self) { signal in
-                    SignalView(signal: signal)
+                SignalView(signal: signal)
             }
         }
-        
     }
 }
 
