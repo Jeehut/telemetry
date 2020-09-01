@@ -10,20 +10,25 @@ import SwiftUI
 
 struct UserCountView: View {
     let userCount: UserCount
+    let descriptionText: String
+    let timeInterval: TimeInterval
+    
     let numberFormatter = NumberFormatter()
-    let dateComponentsFormatter: DateComponentsFormatter = {
-        let formatter = DateComponentsFormatter()
-        formatter.unitsStyle = .full
+    let dateIntervalFormatter: DateIntervalFormatter = {
+        let formatter = DateIntervalFormatter()
+        formatter.dateStyle = .short
+        formatter.timeStyle = .short
         return formatter
     }()
     
     var body: some View {
         VStack {
             Text(numberFormatter.string(from: NSNumber(value: userCount.count)) ?? "–").font(.system(size: 64, weight: .black, design: .monospaced))
-            Text(userCount.filterText)
+            Text(descriptionText)
             
-            let dateComponents = Calendar.autoupdatingCurrent.dateComponents([.day, .hour, .minute], from: userCount.timeFrom, to: userCount.timeUntil)
-            Text("In the last \(dateComponentsFormatter.string(from: dateComponents) ?? "—")")
+            let calculatedAt = userCount.calculatedAt
+            let calculationBeginDate = Date(timeInterval: timeInterval, since: calculatedAt)
+            Text("In the last \(dateIntervalFormatter.string(from: calculationBeginDate, to: calculatedAt))")
         }
         .padding()
         .overlay(
@@ -31,15 +36,5 @@ struct UserCountView: View {
                     .stroke(Color.blue, lineWidth: 4)
             )
         
-    }
-}
-
-struct UserCounterView_Previews: PreviewProvider {
-    static var platform: PreviewPlatform? { return nil }
-    
-    static var previews: some View {
-        let userCount: UserCount = UserCount(count: 1918, timeFrom: Date(timeInterval: -3600*24, since: Date()), timeUntil: Date(), filterText: "Active Users")
-        
-        UserCountView(userCount: userCount)
     }
 }

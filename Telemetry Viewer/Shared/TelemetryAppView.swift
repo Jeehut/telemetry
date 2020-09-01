@@ -29,7 +29,7 @@ struct TelemetryAppView: View {
     var body: some View {
         
         TabView(selection: $selectedView) {
-            UserCountList(userCounts: api.userCounts[app]!)
+            UserCountGroupView(userCountGroups: api.userCounts[app]!)
                 .tabItem {
                     Image(systemName: "person.2.square.stack")
                     Text("Users")

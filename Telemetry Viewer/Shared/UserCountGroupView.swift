@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct UserCountGroupView: View {
-    let userCounts: [UserCount]
+    let userCountGroups: [UserCountGroup]
     
     let columns = [
         GridItem(.flexible()),
@@ -18,8 +18,8 @@ struct UserCountGroupView: View {
     var body: some View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 20) {
-                ForEach(userCounts, id: \.self) { userCount in
-                    UserCountView(userCount: userCount)
+                ForEach(userCountGroups, id: \.self) { userCountGroup in
+                    UserCountView(userCount: userCountGroup.data.first!, descriptionText: userCountGroup.title, timeInterval: userCountGroup.timeInterval)
                 }
             }
             .padding(.horizontal)
