@@ -158,7 +158,7 @@ final class APIRepresentative: ObservableObject {
             ]),
             
             UserCountGroup(title: "Active Users", timeInterval: -3600*24*30, data: [
-                UserCount(count: 246, calculatedAt: Date()),
+                UserCount(count: 446, calculatedAt: Date()),
                 UserCount(count: 241, calculatedAt: Date(timeInterval: -3600*24, since: Date())),
                 UserCount(count: 263, calculatedAt: Date(timeInterval: -3600*24*2, since: Date())),
                 UserCount(count: 263, calculatedAt: Date(timeInterval: -3600*24*3, since: Date())),
@@ -172,7 +172,7 @@ final class APIRepresentative: ObservableObject {
             ]),
             
             UserCountGroup(title: "Long-Term Users", timeInterval: -3600*24*30, data: [
-                UserCount(count: 246, calculatedAt: Date()),
+                UserCount(count: 197, calculatedAt: Date()),
                 UserCount(count: 241, calculatedAt: Date(timeInterval: -3600*24, since: Date())),
                 UserCount(count: 263, calculatedAt: Date(timeInterval: -3600*24*2, since: Date())),
                 UserCount(count: 263, calculatedAt: Date(timeInterval: -3600*24*3, since: Date())),

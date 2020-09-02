@@ -16,9 +16,9 @@ struct CardView<Content>: View where Content: View {
 
     var body : some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 15, style: .continuous)
+            RoundedRectangle(cornerRadius: 25, style: .continuous)
                 .fill(Color.white)
-                .shadow(radius: 7, x: 0, y: 5)
+                .shadow(color: Color(hue: 0, saturation: 0, brightness: 0, opacity: 0.2), radius: 7, x: 0, y: 6)
             
             content
             .padding()

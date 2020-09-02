@@ -23,6 +23,14 @@ struct UserCountGroupView: View {
                 }
             }
             .padding(.horizontal)
+            
+            
+            LazyVGrid(columns: [GridItem(.flexible()),], spacing: 20) {
+                CardView {
+                    Text("Graph").frame(height: 300)
+                }
+            }
+            .padding(.horizontal)
         }
     }
 }
