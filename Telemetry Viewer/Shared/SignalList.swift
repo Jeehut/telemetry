@@ -22,7 +22,7 @@ struct SignalList: View {
 
 struct SignalList_Previews: PreviewProvider {
     static var previews: some View {
-        let signals = APIRepresentative().allSignals[app1]!
+        let signals = APIRepresentative().signals[app1]!
         
         SignalList(signals: signals)
     }

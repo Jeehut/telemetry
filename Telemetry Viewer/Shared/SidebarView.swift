@@ -16,7 +16,7 @@ struct SidebarView: View {
             
             Section(header: Text("Apps")) {
             
-                ForEach(Array(api.allApps), id: \.self) { app in
+                ForEach(Array(api.apps), id: \.self) { app in
                     
                     NavigationLink(
                         destination: TelemetryAppView(api: api, app: app),

@@ -36,10 +36,10 @@ struct TelemetryAppView: View {
                 }.tag(0)
             Text("Insights")
                 .tabItem {
-                    Image(systemName: "eyes")
+                    Image(systemName: "chart.pie")
                     Text("Insights")
                 }.tag(1)
-            SignalList(signals: api.allSignals[app]!)
+            SignalList(signals: api.signals[app]!)
                 .tabItem {
                     Image(systemName: "list.bullet.rectangle")
                     Text("Signals")

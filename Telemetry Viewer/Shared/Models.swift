@@ -66,6 +66,16 @@ struct UserCountGroup: Codable, Hashable {
     let data: [UserCount]
 }
 
+struct DerivedStatistic: Codable, Hashable {
+    let title: String
+    let statistics: [String: Int]
+}
+
+struct DerivedStatisticGroup: Codable, Hashable {
+    let title: String
+    let derivedStatistics: [DerivedStatistic]
+}
+
 var exampleOrganization: Organization = .init(name: "breakthesystem")
 var app1: TelemetryApp = .init(name: "Test App", organization: exampleOrganization)
 var app2: TelemetryApp = .init(name: "Other Test App", organization: exampleOrganization)
@@ -91,9 +101,9 @@ let examplePayload: [String: PayloadEntry] = [
 final class APIRepresentative: ObservableObject {
     @Published var organzation: Organization = exampleOrganization
     
-    @Published var allApps: [TelemetryApp] = [app1, app2]
+    @Published var apps: [TelemetryApp] = [app1, app2]
     
-    @Published var allSignals: [TelemetryApp: [Signal]] = [
+    @Published var signals: [TelemetryApp: [Signal]] = [
         app1: [
             .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
             .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
@@ -233,5 +243,18 @@ final class APIRepresentative: ObservableObject {
                 UserCount(count: 245, calculatedAt: Date(timeInterval: -3600*24*10, since: Date())),
             ])
         ],
+    ]
+    
+    @Published var statistics: [TelemetryApp: [DerivedStatisticGroup]] = [
+        app1: [
+            DerivedStatisticGroup(title: "System Information", derivedStatistics: [
+                DerivedStatistic(title: "App Version", statistics: ["8": 233, "4": 1]),
+                DerivedStatistic(title: "System Version", statistics: ["13.6": 83, "13.5.1": 81, "13.3.1": 1, "None": 1, "13.6.1": 28, "14.0": 21])
+            ]),
+            DerivedStatisticGroup(title: "Usage", derivedStatistics: [
+                DerivedStatistic(title: "Libido Description Type", statistics: ["Colorful": 197, "Neutral": 26, "None": 1]),
+                DerivedStatistic(title: "Should Send Notifications", statistics: ["False": 138, "True": 85]),
+            ])
+        ]
     ]
 }
