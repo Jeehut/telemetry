@@ -44,7 +44,7 @@ struct SignalView: View {
 
 struct SignalView_Previews: PreviewProvider {
     static var previews: some View {
-        let signal: Signal = .init(id: UUID(), app: app1, receivedAt: Date(), clientUser: "randomClientUser", type: "ExampleSignal", payload: ["systemVersion": "14.0", "isSimulator": "false", "appVersion": "12.4" ])
+        let signal: Signal = .init(id: UUID(), app: app1, receivedAt: Date(), clientUser: "randomClientUser", type: "ExampleSignal", payload: nil)
         SignalView(signal: signal)
     }
 }

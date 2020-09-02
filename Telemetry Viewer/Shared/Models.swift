@@ -18,13 +18,41 @@ struct TelemetryApp: Codable, Hashable {
     var organization: Organization
 }
 
+struct PayloadEntry: Codable, Hashable {
+    let boolValue: Bool?
+    let intValue: Int?
+    let floatValue: Float?
+    let stringValue: String?
+    let listValue: [PayloadEntry]?
+    let dictValue: [String: PayloadEntry]?
+    
+    static func p(_ bool: Bool) -> PayloadEntry {
+        return PayloadEntry(boolValue: bool, intValue: nil, floatValue: nil, stringValue: nil, listValue: nil, dictValue: nil)
+    }
+    static func p(_ int: Int) -> PayloadEntry {
+        return PayloadEntry(boolValue: nil, intValue: int, floatValue: nil, stringValue: nil, listValue: nil, dictValue: nil)
+    }
+    static func p(_ float: Float) -> PayloadEntry {
+        return PayloadEntry(boolValue: nil, intValue: nil, floatValue: float, stringValue: nil, listValue: nil, dictValue: nil)
+    }
+    static func p(_ string: String) -> PayloadEntry {
+        return PayloadEntry(boolValue: nil, intValue: nil, floatValue: nil, stringValue: nil, listValue: nil, dictValue: nil)
+    }
+    static func p(_ list: [PayloadEntry]) -> PayloadEntry {
+        return PayloadEntry(boolValue: nil, intValue: nil, floatValue: nil, stringValue: nil, listValue: list, dictValue: nil)
+    }
+    static func p(_ dict: [String: PayloadEntry]) -> PayloadEntry {
+        return PayloadEntry(boolValue: nil, intValue: nil, floatValue: nil, stringValue: nil, listValue: nil, dictValue: dict)
+    }
+}
+
 struct Signal: Codable, Hashable {
     var id: UUID?
     var app: TelemetryApp
     var receivedAt: Date
     var clientUser: String
     var type: String
-    var payload: Dictionary<String, String>?
+    var payload: Dictionary<String, PayloadEntry>?
 }
 
 struct UserCount: Codable, Hashable {
@@ -43,6 +71,22 @@ var app1: TelemetryApp = .init(name: "Test App", organization: exampleOrganizati
 var app2: TelemetryApp = .init(name: "Other Test App", organization: exampleOrganization)
 
 
+let examplePayload: [String: PayloadEntry] = [
+    "isTestFlight": .p(true),
+    "numberOfLibidoDataPoints": .p(141),
+    "isAppStore": .p(true),
+    "numberOfEnergyLevelDataPoints": .p(141),
+    "furthestOnboardingScreenSeen": .p(4),
+    "numberOfCreateDialogs": .p(4),
+    "numberOfMoodDataPoints": .p(143),
+    "systemVersion": .p("14.0"),
+    "libidoDescriptionType": .p("neutral"),
+    "shouldSendExperienceSamplingNotifications": .p(true),
+    "buildNumber": .p("278"),
+    "chartRowTypesInOverview": .p([
+        .p("libido"), .p("mood"), .p("energyLevel"), .p("sexualActivity"), .p("orgasms"),
+    ])
+]
 
 final class APIRepresentative: ObservableObject {
     @Published var organzation: Organization = exampleOrganization
@@ -51,25 +95,25 @@ final class APIRepresentative: ObservableObject {
     
     @Published var allSignals: [TelemetryApp: [Signal]] = [
         app1: [
-            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: nil),
-            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: nil),
-            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: nil),
-            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: nil),
-            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: nil),
-            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: nil),
-            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: nil),
-            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: nil),
-            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: nil),
-            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: nil),
-            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: nil),
+            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
+            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
+            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
+            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
+            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
+            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
+            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
+            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
+            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
+            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
+            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
         ],
         app2: [
-            .init(id: nil, app: app2, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: nil),
-            .init(id: nil, app: app2, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: nil),
-            .init(id: nil, app: app2, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: nil),
-            .init(id: nil, app: app2, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: nil),
-            .init(id: nil, app: app2, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: nil),
-            .init(id: nil, app: app2, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: nil),
+            .init(id: nil, app: app2, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
+            .init(id: nil, app: app2, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
+            .init(id: nil, app: app2, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
+            .init(id: nil, app: app2, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
+            .init(id: nil, app: app2, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
+            .init(id: nil, app: app2, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
         ]
     ]
     
