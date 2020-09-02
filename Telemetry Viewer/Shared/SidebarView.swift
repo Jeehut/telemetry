@@ -21,7 +21,7 @@ struct SidebarView: View {
                     NavigationLink(
                         destination: TelemetryAppView(api: api, app: app),
                         label: {
-                            Label(app.name, systemImage: "dot.radiowaves.left.and.right")
+                            Label(app.name, systemImage: "app.badge")
                         }
                     )
                 }
