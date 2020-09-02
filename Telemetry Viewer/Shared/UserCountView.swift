@@ -22,19 +22,33 @@ struct UserCountView: View {
     }()
     
     var body: some View {
-        VStack {
-            Text(numberFormatter.string(from: NSNumber(value: userCount.count)) ?? "–").font(.system(size: 64, weight: .black, design: .monospaced))
-            Text(descriptionText)
+        ZStack {
+            RoundedRectangle(cornerRadius: 15, style: .continuous)
+                .fill(Color.white)
+                .shadow(radius: 7, x: 0, y: 5)
             
-            let calculatedAt = userCount.calculatedAt
-            let calculationBeginDate = Date(timeInterval: timeInterval, since: calculatedAt)
-            Text("In the last \(dateIntervalFormatter.string(from: calculationBeginDate, to: calculatedAt))")
+            VStack {
+                Text(numberFormatter.string(from: NSNumber(value: userCount.count)) ?? "–").font(.system(size: 64, weight: .black, design: .monospaced))
+                Text(descriptionText)
+                
+                let calculatedAt = userCount.calculatedAt
+                let calculationBeginDate = Date(timeInterval: timeInterval, since: calculatedAt)
+                Text("In the last \(dateIntervalFormatter.string(from: calculationBeginDate, to: calculatedAt))")
+            }
+            .padding()
         }
         .padding()
-        .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.blue, lineWidth: 4)
-            )
         
+        
+        
+        
+        
+        
+    }
+}
+
+struct UserCountView_Previews: PreviewProvider {
+    static var previews: some View {
+        UserCountView(userCount: UserCount(count: 2401, calculatedAt: Date()), descriptionText: "Active Users", timeInterval: -3600*24)
     }
 }
