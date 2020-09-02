@@ -21,15 +21,11 @@ struct SidebarView: View {
                     NavigationLink(
                         destination: TelemetryAppView(api: api, app: app),
                         label: {
-                            Label(app.name, systemImage: "dot.radiowaves.left.and.right")        
+                            Label(app.name, systemImage: "dot.radiowaves.left.and.right")
                         }
                     )
                 }
             }
-            
-//            Section(header: Text("Settings")) {
-//                Text("Settings go here")
-//            }
         }.listStyle(SidebarListStyle())
     }
 }
