@@ -129,7 +129,7 @@ final class APIRepresentative: ObservableObject {
     
     @Published var userCounts: [TelemetryApp: [UserCountGroup]] = [
         app1: [
-            UserCountGroup(title: "Active Users, 24 Hours", timeInterval: -3600*24, data: [
+            UserCountGroup(title: "Active Users", timeInterval: -3600*24, data: [
                 UserCount(count: 46, calculatedAt: Date()),
                 UserCount(count: 41, calculatedAt: Date(timeInterval: -3600*24, since: Date())),
                 UserCount(count: 63, calculatedAt: Date(timeInterval: -3600*24*2, since: Date())),
@@ -143,7 +143,7 @@ final class APIRepresentative: ObservableObject {
                 UserCount(count: 45, calculatedAt: Date(timeInterval: -3600*24*10, since: Date())),
             ]),
             
-            UserCountGroup(title: "Active Users, 7 Days", timeInterval: -3600*24*7, data: [
+            UserCountGroup(title: "Active Users", timeInterval: -3600*24*7, data: [
                 UserCount(count: 246, calculatedAt: Date()),
                 UserCount(count: 241, calculatedAt: Date(timeInterval: -3600*24, since: Date())),
                 UserCount(count: 263, calculatedAt: Date(timeInterval: -3600*24*2, since: Date())),
@@ -157,7 +157,7 @@ final class APIRepresentative: ObservableObject {
                 UserCount(count: 245, calculatedAt: Date(timeInterval: -3600*24*10, since: Date())),
             ]),
             
-            UserCountGroup(title: "Active Users, 30 Days", timeInterval: -3600*24*30, data: [
+            UserCountGroup(title: "Active Users", timeInterval: -3600*24*30, data: [
                 UserCount(count: 246, calculatedAt: Date()),
                 UserCount(count: 241, calculatedAt: Date(timeInterval: -3600*24, since: Date())),
                 UserCount(count: 263, calculatedAt: Date(timeInterval: -3600*24*2, since: Date())),
@@ -171,7 +171,7 @@ final class APIRepresentative: ObservableObject {
                 UserCount(count: 245, calculatedAt: Date(timeInterval: -3600*24*10, since: Date())),
             ]),
             
-            UserCountGroup(title: "Long-Term Users, 30 Days", timeInterval: -3600*24*30, data: [
+            UserCountGroup(title: "Long-Term Users", timeInterval: -3600*24*30, data: [
                 UserCount(count: 246, calculatedAt: Date()),
                 UserCount(count: 241, calculatedAt: Date(timeInterval: -3600*24, since: Date())),
                 UserCount(count: 263, calculatedAt: Date(timeInterval: -3600*24*2, since: Date())),
@@ -215,7 +215,7 @@ final class APIRepresentative: ObservableObject {
                 UserCount(count: 245, calculatedAt: Date(timeInterval: -3600*24*10, since: Date())),
             ]),
             
-            UserCountGroup(title: "Active Users, 30 Days", timeInterval: -3600*24*30, data: [
+            UserCountGroup(title: "Active Users", timeInterval: -3600*24*30, data: [
                 UserCount(count: 246, calculatedAt: Date()),
                 UserCount(count: 241, calculatedAt: Date(timeInterval: -3600*24, since: Date())),
                 UserCount(count: 263, calculatedAt: Date(timeInterval: -3600*24*2, since: Date())),
