@@ -11,8 +11,7 @@ struct UserCountGroupView: View {
     let userCountGroups: [UserCountGroup]
     
     let columns = [
-        GridItem(.flexible()),
-        GridItem(.flexible())
+        GridItem(.adaptive(minimum: 250))
     ]
     
     var body: some View {
