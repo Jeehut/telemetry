@@ -7,6 +7,14 @@
 
 import Foundation
 
+struct OrganizationUser: Codable, Hashable {
+    var id: UUID
+    var firstName: String
+    var lastName: String
+    var email: String
+    var organization: Organization
+}
+
 struct Organization: Codable, Hashable {
     var id: UUID?
     var name: String
@@ -99,7 +107,7 @@ let examplePayload: [String: PayloadEntry] = [
 ]
 
 final class APIRepresentative: ObservableObject {
-    @Published var organzation: Organization = exampleOrganization
+    @Published var user: OrganizationUser?
     
     @Published var apps: [TelemetryApp] = [app1, app2]
     

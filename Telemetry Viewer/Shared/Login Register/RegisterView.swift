@@ -87,7 +87,9 @@ struct RegisterView: View {
                     
                 }
             }
-        }.disabled(isLoading)
+        }
+        .frame(maxWidth: 600)
+        .disabled(isLoading)
     }
     
     func register() {

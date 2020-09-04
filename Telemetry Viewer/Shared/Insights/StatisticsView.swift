@@ -11,7 +11,7 @@ struct StatisticsView: View {
     let statisticsGroups: [DerivedStatisticGroup]
     
     let columns = [
-        GridItem(.adaptive(minimum: 250))
+        GridItem(.adaptive(minimum: 200))
     ]
     
     var body: some View {

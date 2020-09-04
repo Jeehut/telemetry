@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SidebarView: View {
-    @ObservedObject var api: APIRepresentative
+    @EnvironmentObject var api: APIRepresentative
     @Binding var selectedApp: TelemetryApp?
     
     var body: some View {
@@ -19,13 +19,15 @@ struct SidebarView: View {
                 ForEach(Array(api.apps), id: \.self) { app in
                     
                     NavigationLink(
-                        destination: TelemetryAppView(api: api, app: app),
+                        destination: TelemetryAppView(app: app),
                         label: {
                             Label(app.name, systemImage: "app.badge")
                         }
                     )
                 }
             }
-        }.listStyle(SidebarListStyle())
+        }
+        .listStyle(SidebarListStyle())
+        .navigationTitle("All Apps")
     }
 }

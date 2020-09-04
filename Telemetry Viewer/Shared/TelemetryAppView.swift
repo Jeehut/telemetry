@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TelemetryAppView: View {
-    @ObservedObject var api: APIRepresentative
+    @EnvironmentObject var api: APIRepresentative
     @State var selectedView = 0
     var app: TelemetryApp
     
