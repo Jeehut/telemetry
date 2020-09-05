@@ -108,6 +108,7 @@ let examplePayload: [String: PayloadEntry] = [
 
 final class APIRepresentative: ObservableObject {
     @Published var user: OrganizationUser?
+    @Published var userNotLoggedIn: Bool = true
     
     @Published var apps: [TelemetryApp] = [app1, app2]
     
