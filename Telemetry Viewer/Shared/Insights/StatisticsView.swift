@@ -34,6 +34,6 @@ struct StatisticsView: View {
 
 struct StatisticsView_Previews: PreviewProvider {
     static var previews: some View {
-        StatisticsView(statisticsGroups: APIRepresentative().statistics[app1]!)
+        StatisticsView(statisticsGroups: APIRepresentative().statistics[MockData.app1]!)
     }
 }
