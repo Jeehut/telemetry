@@ -10,12 +10,20 @@ import SwiftUI
 struct RootView: View {
     @EnvironmentObject var api: APIRepresentative
     @State private var selectedApp: TelemetryApp?
+    @State var showingDetail = true
     
     var body: some View {
         NavigationView {
             SidebarView(selectedApp: $selectedApp)
             Text("Please Select an App")
-        }.navigationViewStyle(DoubleColumnNavigationViewStyle())
+        }
+        .navigationViewStyle(DoubleColumnNavigationViewStyle())
+        .sheet(isPresented: $showingDetail, onDismiss: { showingDetail = true }) {
+            
+            NavigationView {
+                WelcomeView()
+            }
+        }
     }
 }
 

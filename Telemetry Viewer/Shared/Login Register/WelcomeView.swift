@@ -9,7 +9,14 @@ import SwiftUI
 
 struct WelcomeView: View {
     var body: some View {
-        Text("Welcome")
+        
+        VStack {
+            AdaptiveStack {
+                LoginView()
+                RegisterButtonView()
+            }
+        }
+        .navigationTitle("Login to Telemetry")
     }
 }
 
