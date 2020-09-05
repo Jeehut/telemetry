@@ -37,10 +37,12 @@ struct SidebarView: View {
                 }
             }
             
-            Section(header: Text("Organization")) {
+            Section(header: Text("You")) {
                 if let apiUser = api.user {
+                    Label("\(apiUser.firstName) \(apiUser.lastName)", systemImage: "person.circle")
                     Label(apiUser.organization.name, systemImage: "app.badge")
                 } else {
+                    Label("firstName lastName", systemImage: "person.circle").redacted(reason: .placeholder)
                     Label("organization.name", systemImage: "app.badge").redacted(reason: .placeholder)
                 }
             }

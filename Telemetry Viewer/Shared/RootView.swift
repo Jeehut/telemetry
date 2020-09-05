@@ -18,7 +18,6 @@ struct RootView: View {
         }
         .navigationViewStyle(DoubleColumnNavigationViewStyle())
         .sheet(isPresented: $api.userNotLoggedIn, onDismiss: { api.userNotLoggedIn = api.userToken == nil }) {
-            
             NavigationView {
                 WelcomeView()
             }

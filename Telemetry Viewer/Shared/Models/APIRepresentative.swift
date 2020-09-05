@@ -38,12 +38,15 @@ extension APIRepresentative {
                 print(String(decoding: data, as: UTF8.self))
                 
                 if let decodedResponse = try? JSONDecoder().decode(UserToken.self, from: data) {
-                    self.userToken = decodedResponse
-                    
                     DispatchQueue.main.async {
+                        self.userToken = decodedResponse
                         self.userNotLoggedIn = false
+                        
+                        self.getUserInformation()
+                        self.getApps()
                     }
-                    
+                } else {
+                    fatalError("Could not decode a user token")
                 }
             }
         }.resume()
@@ -72,5 +75,33 @@ extension APIRepresentative {
                 }
             }
         }.resume()
+    }
+    
+    func getUserInformation() {
+        guard let url = URL(string: "http://localhost:8080/api/v1/users/me") else {
+            print("Invalid URL")
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.setValue(userToken?.bearerTokenAuthString, forHTTPHeaderField: "Authorization")
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let data = data {
+                print(String(decoding: data, as: UTF8.self))
+                
+                let decodedResponse = try! JSONDecoder().decode(OrganizationUser.self, from: data)
+                
+                DispatchQueue.main.async {
+                    self.user = decodedResponse
+                }
+                
+            }
+        }.resume()
+    }
+    
+    func getApps() {
+        
     }
 }

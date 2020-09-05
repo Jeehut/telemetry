@@ -13,6 +13,7 @@ struct OrganizationUser: Codable, Hashable {
     var lastName: String
     var email: String
     var organization: Organization
+    var passwordHash: String
 }
 
 struct Organization: Codable, Hashable {
