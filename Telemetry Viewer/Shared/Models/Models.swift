@@ -24,6 +24,7 @@ struct TelemetryApp: Codable, Hashable {
     var id: UUID?
     var name: String
     var organization: Organization
+    var isExampleData: Bool = false
 }
 
 struct PayloadEntry: Codable, Hashable {

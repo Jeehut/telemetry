@@ -17,13 +17,31 @@ struct SidebarView: View {
             Section(header: Text("Apps")) {
             
                 ForEach(Array(api.apps), id: \.self) { app in
-                    
-                    NavigationLink(
-                        destination: TelemetryAppView(app: app),
-                        label: {
-                            Label(app.name, systemImage: "app.badge")
-                        }
-                    )
+                    if app.isExampleData {
+                        
+                        NavigationLink(
+                            destination: TelemetryAppView(app: app),
+                            label: {
+                                Label(app.name, systemImage: "app.badge")
+                            }
+                        )
+                        .redacted(reason: .placeholder)
+                    } else {
+                        NavigationLink(
+                            destination: TelemetryAppView(app: app),
+                            label: {
+                                Label(app.name, systemImage: "app.badge")
+                            }
+                        )
+                    }
+                }
+            }
+            
+            Section(header: Text("Organization")) {
+                if let apiUser = api.user {
+                    Label(apiUser.organization.name, systemImage: "app.badge")
+                } else {
+                    Label("organization.name", systemImage: "app.badge").redacted(reason: .placeholder)
                 }
             }
         }

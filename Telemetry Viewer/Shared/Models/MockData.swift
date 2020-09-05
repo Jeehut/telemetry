@@ -10,8 +10,8 @@ import Foundation
 struct MockData {
     static let exampleOrganization: Organization = .init(name: "breakthesystem")
     
-    static let app1: TelemetryApp = .init(name: "Test App", organization: exampleOrganization)
-    static let app2: TelemetryApp = .init(name: "Other Test App", organization: exampleOrganization)
+    static let app1: TelemetryApp = .init(name: "Test App", organization: exampleOrganization, isExampleData: true)
+    static let app2: TelemetryApp = .init(name: "Other Test App", organization: exampleOrganization, isExampleData: true)
     
     static let examplePayload: [String: PayloadEntry] = [
         "isTestFlight": .p(true),
