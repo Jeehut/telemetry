@@ -31,31 +31,34 @@ struct LoginRequestBody {
 struct UserToken: Codable {
     var id: UUID?
     var value: String
-    var user: String
+//    var user: String
 }
 
 struct RegisterView: View {
+    @EnvironmentObject var api: APIRepresentative
     @State private var isLoading = false
     @State private var registrationRequestBody = RegistrationRequestBody()
     @State private var loginRequestBody = LoginRequestBody()
     
     var body: some View {
         Form {
-            
-            
             Section(header: Text("Your Organization")) {
                 TextField("Organization Name", text: $registrationRequestBody.organisationName)
+                    .disableAutocorrection(true)
             }
             
             Section(header: Text("You")) {
                 TextField("First Name", text: $registrationRequestBody.userFirstName)
                 TextField("Last Name", text: $registrationRequestBody.userLastName)
                 TextField("Email", text: $registrationRequestBody.userEmail)
+                    .textContentType(.emailAddress)
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
             }
             
             Section(header: Text("Your Password")) {
-                TextField("Password", text: $registrationRequestBody.userPassword)
-                TextField("Confirm Password", text: $registrationRequestBody.userPasswordConfirm)
+                SecureField("Password", text: $registrationRequestBody.userPassword)
+                SecureField("Confirm Password", text: $registrationRequestBody.userPasswordConfirm)
             }
             
             Section {
@@ -73,28 +76,10 @@ struct RegisterView: View {
     
     func register() {
         isLoading = true
-        
-        guard let url = URL(string: "http://localhost:8080/api/v1/users/register") else {
-            print("Invalid URL")
-            return
+        api.register(registrationRequestBody: registrationRequestBody) {
+            isLoading = false
         }
         
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try! JSONEncoder().encode(registrationRequestBody)
-        
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            isLoading = false
-            
-            if let data = data {
-                print(String(decoding: data, as: UTF8.self))
-                
-                if let decodedResponse = try? JSONDecoder().decode(UserToken.self, from: data) {
-                    print(decodedResponse)
-                }
-            }
-        }.resume()
     }
 }
 

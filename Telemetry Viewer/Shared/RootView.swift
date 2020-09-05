@@ -17,7 +17,7 @@ struct RootView: View {
             Text("Please Select an App")
         }
         .navigationViewStyle(DoubleColumnNavigationViewStyle())
-        .sheet(isPresented: $api.userNotLoggedIn, onDismiss: { api.userNotLoggedIn = true }) {
+        .sheet(isPresented: $api.userNotLoggedIn, onDismiss: { api.userNotLoggedIn = api.userToken == nil }) {
             
             NavigationView {
                 WelcomeView()
