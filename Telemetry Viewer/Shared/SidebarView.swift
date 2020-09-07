@@ -10,6 +10,7 @@ import SwiftUI
 struct SidebarView: View {
     @EnvironmentObject var api: APIRepresentative
     @Binding var selectedApp: TelemetryApp?
+    @State var isCreatingANewApp: Bool = false
     
     var body: some View {
         List(selection: $selectedApp) {
@@ -57,5 +58,21 @@ struct SidebarView: View {
         }
         .listStyle(SidebarListStyle())
         .navigationTitle("All Apps")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                HStack {
+                    Button(action: {
+                        isCreatingANewApp = true
+                    }) {
+                        Label("New App", systemImage: "plus.app.fill")
+                    }
+                    .sheet(isPresented: $isCreatingANewApp) {
+                        NavigationView {
+                            NewAppView()
+                        }
+                    }
+                }
+            }
+        }
     }
 }

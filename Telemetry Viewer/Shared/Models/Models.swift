@@ -24,8 +24,12 @@ struct Organization: Codable, Hashable {
 struct TelemetryApp: Codable, Hashable {
     var id: UUID?
     var name: String
-    var organization: Organization
+    var organization: [String: String]
     var isExampleData: Bool = false
+    
+    enum CodingKeys: String, CodingKey {
+        case id, name, organization
+    }
 }
 
 struct PayloadEntry: Codable, Hashable {
