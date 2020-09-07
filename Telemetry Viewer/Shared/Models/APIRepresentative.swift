@@ -53,7 +53,6 @@ extension APIRepresentative {
     }
     
     func register(registrationRequestBody: RegistrationRequestBody, callback: @escaping () -> ()) {
-        
         guard let url = URL(string: "http://localhost:8080/api/v1/users/register") else {
             print("Invalid URL")
             return
@@ -102,6 +101,26 @@ extension APIRepresentative {
     }
     
     func getApps() {
+        guard let url = URL(string: "http://localhost:8080/api/v1/apps/") else {
+            print("Invalid URL")
+            return
+        }
         
+        var request = URLRequest(url: url)
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.setValue(userToken?.bearerTokenAuthString, forHTTPHeaderField: "Authorization")
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let data = data {
+                print(String(decoding: data, as: UTF8.self))
+                
+                let decodedResponse = try! JSONDecoder().decode([TelemetryApp].self, from: data)
+                
+                DispatchQueue.main.async {
+                    self.apps = decodedResponse
+                }
+                
+            }
+        }.resume()
     }
 }

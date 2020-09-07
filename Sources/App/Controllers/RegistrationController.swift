@@ -75,5 +75,6 @@ struct RegistrationContoller: RouteCollection {
     func getUserInformation(req: Request) throws -> EventLoopFuture<User> {
         let user = try req.auth.require(User.self)
         return user.$organization.load(on: req.db).map { user }
+        // TODO: Do not return PasswordHash 
     }
 }
