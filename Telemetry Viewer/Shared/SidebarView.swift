@@ -15,7 +15,7 @@ struct SidebarView: View {
         List(selection: $selectedApp) {
             
             Section(header: Text("Apps")) {
-            
+                
                 ForEach(Array(api.apps), id: \.self) { app in
                     if app.isExampleData {
                         
@@ -38,9 +38,17 @@ struct SidebarView: View {
             }
             
             Section(header: Text("You")) {
+                
                 if let apiUser = api.user {
-                    Label("\(apiUser.firstName) \(apiUser.lastName)", systemImage: "person.circle")
-                    Label(apiUser.organization.name, systemImage: "app.badge")
+                    
+                    NavigationLink(destination: UserSettingsView(), label: {
+                        Label("\(apiUser.firstName) \(apiUser.lastName)", systemImage: "person.circle")
+                    })
+                    
+                    
+                    NavigationLink(destination: OrganizationSettingsView(), label: {
+                        Label(apiUser.organization.name, systemImage: "app.badge")
+                    })
                 } else {
                     Label("firstName lastName", systemImage: "person.circle").redacted(reason: .placeholder)
                     Label("organization.name", systemImage: "app.badge").redacted(reason: .placeholder)

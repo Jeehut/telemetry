@@ -70,6 +70,12 @@ extension APIRepresentative {
         }.resume()
     }
     
+    func logout() {
+        userToken = nil
+        apps = []
+        user = nil
+    }
+    
     func register(registrationRequestBody: RegistrationRequestBody, callback: @escaping () -> ()) {
         guard let url = URL(string: "http://localhost:8080/api/v1/users/register") else {
             print("Invalid URL")
