@@ -8,7 +8,26 @@
 import Foundation
 
 final class APIRepresentative: ObservableObject {
-    @Published var userToken: UserToken?
+    private static let userTokenStandardsKey = "org.breakthesystem.telemetry.viewer.userToken"
+    
+    init() {
+        if let encodedUserToken = UserDefaults.standard.data(forKey: APIRepresentative.userTokenStandardsKey),
+           let userToken = try? JSONDecoder().decode(UserToken.self, from: encodedUserToken) {
+            self.userToken = userToken
+            getUserInformation()
+            getApps()
+        }
+    }
+    
+    @Published var userToken: UserToken? {
+        didSet {
+            let encodedUserToken = try! JSONEncoder().encode(userToken)
+            UserDefaults.standard.setValue(encodedUserToken, forKey: APIRepresentative.userTokenStandardsKey)
+            
+            userNotLoggedIn = userToken == nil
+        }
+    }
+    
     @Published var user: OrganizationUser?
     @Published var userNotLoggedIn: Bool = true
     
@@ -40,7 +59,6 @@ extension APIRepresentative {
                 if let decodedResponse = try? JSONDecoder().decode(UserToken.self, from: data) {
                     DispatchQueue.main.async {
                         self.userToken = decodedResponse
-                        self.userNotLoggedIn = false
                         
                         self.getUserInformation()
                         self.getApps()

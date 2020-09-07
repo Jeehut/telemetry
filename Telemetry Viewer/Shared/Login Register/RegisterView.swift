@@ -32,7 +32,6 @@ struct UserToken: Codable {
     var id: UUID?
     var value: String
     var user: [String: String]
-//    var user: String // TODO
     
     var bearerTokenAuthString: String {
         return "Bearer \(value)"
