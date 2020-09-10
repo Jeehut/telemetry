@@ -35,7 +35,6 @@ final class APIRepresentative: ObservableObject {
     
     @Published var signals: [TelemetryApp: [Signal]] = [:]
     @Published var userCounts: [TelemetryApp: [UserCountGroup]] = [:]
-    
     @Published var derivedStatisticGroups: [TelemetryApp: [DerivedStatisticGroup]] = [:]
 }
 
@@ -173,5 +172,13 @@ extension APIRepresentative {
                 
             }
         }.resume()
+    }
+    
+    func update(app: TelemetryApp, newName: String) {
+        
+    }
+    
+    func delete(app: TelemetryApp) {
+        
     }
 }

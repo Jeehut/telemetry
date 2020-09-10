@@ -19,9 +19,15 @@ struct NewAppView: View {
             Text("When you're done, press the save button to create the new app.")
             
             #if os(macOS)
-            Button("Save") {
-                api.create(appNamed: newAppName)
-                self.presentationMode.wrappedValue.dismiss()
+            HStack {
+                Button("Save") {
+                    api.create(appNamed: newAppName)
+                    self.presentationMode.wrappedValue.dismiss()
+                }
+                
+                Button("Cancel") {
+                    self.presentationMode.wrappedValue.dismiss()
+                }
             }
             #endif
         }

@@ -60,7 +60,8 @@ struct SidebarView: View {
         .navigationTitle("All Apps")
         
         .toolbar {
-            ToolbarItem {
+            
+            ToolbarItem(placement: ToolbarItemPlacement.primaryAction) {
                 HStack {
                     Button(action: {
                         isCreatingANewApp = true

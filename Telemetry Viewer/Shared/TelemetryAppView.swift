@@ -11,6 +11,7 @@ struct TelemetryAppView: View {
     @EnvironmentObject var api: APIRepresentative
     @State var selectedView = 0
     var app: TelemetryApp
+    @State var isCreatingANewApp: Bool = false
     
     var calculatedNavigationTitle: String {
         switch selectedView {
@@ -22,7 +23,6 @@ struct TelemetryAppView: View {
             return "Signals"
         default:
             return "Omsn"
-
         }
     }
     
@@ -44,8 +44,24 @@ struct TelemetryAppView: View {
                     Image(systemName: "list.bullet.rectangle")
                     Text("Signals")
                 }.tag(2)
-                
-        } .navigationTitle(calculatedNavigationTitle)
+        }
+        .navigationTitle(calculatedNavigationTitle)
+        .toolbar {
+            ToolbarItem {
+                HStack {
+                    Button(action: {
+                        isCreatingANewApp = true
+                    }) {
+                        Label("App Settings", systemImage: "gear")
+                    }
+                    .sheet(isPresented: $isCreatingANewApp) {
+                        NavigationView {
+                            AppSettingsView(app: app)
+                        }
+                    }
+                }
+            }
+        }
         
     }
 }
