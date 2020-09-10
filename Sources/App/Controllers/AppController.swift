@@ -9,6 +9,7 @@ struct AppController: RouteCollection {
         apps.get(":appID", use: getSingle)
         apps.patch(":appID", use: update)
         apps.delete(":appID", use: delete)
+        apps.get(":appID", "signals", use: getSignals)
         
         apps.post(use: create)
     }
@@ -88,6 +89,17 @@ struct AppController: RouteCollection {
             .unwrap(or: Abort(.notFound))
             .flatMap { $0.delete(on: req.db) }
             .map { .ok }
+    }
+    
+    func getSignals(req: Request) throws -> EventLoopFuture<[Signal]> {
+        guard let appIDString = req.parameters.get("appID"),
+              let appID = UUID(appIDString) else {
+            throw Abort(.badRequest, reason: "Invalid parameter `appID`")
+        }
+        
+        return Signal.query(on: req.db)
+            .filter(\.$id == appID)
+            .all()
     }
 }
 

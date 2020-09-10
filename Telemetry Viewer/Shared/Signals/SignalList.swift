@@ -11,19 +11,18 @@ struct SignalList: View {
     @EnvironmentObject var api: APIRepresentative
     var app: TelemetryApp
     
-    var signals: [Signal] {
-        return api.signals[app, default: MockData.signals]
-    }
-    
     var body: some View {
         List {
-            ForEach(signals, id: \.self) { signal in
+            ForEach(api.signals[app, default: MockData.signals], id: \.self) { signal in
                 if signal.isMockData {
                     SignalView(signal: signal).redacted(reason: .placeholder)
                 } else {
                     SignalView(signal: signal)
                 }
             }
+        }
+        .onAppear {
+            api.getSignals(for: app)
         }
     }
 }
