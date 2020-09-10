@@ -20,6 +20,10 @@ struct NewAppView: View {
         }
         .padding()
         .navigationTitle("New App")
+        
+        #if os(macOS)
+        
+        #else
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("Save") {
@@ -29,5 +33,6 @@ struct NewAppView: View {
                 }
             }
         }
+        #endif
     }
 }

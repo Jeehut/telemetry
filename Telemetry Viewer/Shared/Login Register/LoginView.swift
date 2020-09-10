@@ -16,9 +16,12 @@ struct LoginView: View {
         Form {
             Section(header: Text("Login")) {
                 TextField("Email", text: $loginRequestBody.userEmail)
+                #if os(macOS)
+                #else
                     .textContentType(.emailAddress)
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
+                #endif
                 
                 SecureField("Password", text: $loginRequestBody.userPassword)
             }

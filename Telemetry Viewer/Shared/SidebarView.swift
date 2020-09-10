@@ -58,6 +58,8 @@ struct SidebarView: View {
         }
         .listStyle(SidebarListStyle())
         .navigationTitle("All Apps")
+        #if os(macOS)
+        #else
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 HStack {
@@ -74,5 +76,6 @@ struct SidebarView: View {
                 }
             }
         }
+        #endif
     }
 }

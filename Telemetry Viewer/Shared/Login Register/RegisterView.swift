@@ -55,9 +55,12 @@ struct RegisterView: View {
                 TextField("First Name", text: $registrationRequestBody.userFirstName)
                 TextField("Last Name", text: $registrationRequestBody.userLastName)
                 TextField("Email", text: $registrationRequestBody.userEmail)
+                #if os(macOS)
+                #else
                     .textContentType(.emailAddress)
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
+                #endif
             }
             
             Section(header: Text("Your Password")) {
