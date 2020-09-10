@@ -34,11 +34,11 @@ struct TelemetryAppView: View {
                     Image(systemName: "person.2.square.stack")
                     Text("Users")
                 }.tag(0)
-//            StatisticsView(statisticsGroups: api.statistics[app]!)
-//                .tabItem {
-//                    Image(systemName: "chart.pie")
-//                    Text("Insights")
-//                }.tag(1)
+            StatisticsView(app: app)
+                .tabItem {
+                    Image(systemName: "chart.pie")
+                    Text("Insights")
+                }.tag(1)
 //            SignalList(signals: api.signals[app]!)
 //                .tabItem {
 //                    Image(systemName: "list.bullet.rectangle")

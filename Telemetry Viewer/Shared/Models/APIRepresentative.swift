@@ -36,7 +36,7 @@ final class APIRepresentative: ObservableObject {
     @Published var signals: [TelemetryApp: [Signal]] = MockData.signalsMockData
     @Published var userCounts: [TelemetryApp: [UserCountGroup]] = [:]
     
-    @Published var statistics: [TelemetryApp: [DerivedStatisticGroup]] = MockData.statistics
+    @Published var derivedStatisticGroups: [TelemetryApp: [DerivedStatisticGroup]] = [:]
 }
 
 extension APIRepresentative {

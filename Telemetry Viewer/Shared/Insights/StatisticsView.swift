@@ -8,7 +8,12 @@
 import SwiftUI
 
 struct StatisticsView: View {
-    let statisticsGroups: [DerivedStatisticGroup]
+    @EnvironmentObject var api: APIRepresentative
+    var app: TelemetryApp
+    
+    var statisticsGroups: [DerivedStatisticGroup] {
+        return api.derivedStatisticGroups[app, default: MockData.derivedStatisticGroups]
+    }
     
     let columns = [
         GridItem(.adaptive(minimum: 200))
@@ -18,9 +23,19 @@ struct StatisticsView: View {
         ScrollView(.vertical) {
             LazyVGrid(columns: columns, alignment: .leading) {
                 ForEach(statisticsGroups, id: \.self) { statisticsGroup in
-                    Section(header: Text(statisticsGroup.title).font(.title)) {
-                        ForEach(statisticsGroup.derivedStatistics, id: \.self) { derivedStatistic in
-                            DerivedStatisticView(derivedStatistic: derivedStatistic)
+                    
+                    if statisticsGroup.isMockData {
+                        Section(header: Text(statisticsGroup.title).font(.title)) {
+                            ForEach(statisticsGroup.derivedStatistics, id: \.self) { derivedStatistic in
+                                DerivedStatisticView(derivedStatistic: derivedStatistic)
+                            }
+                        }.redacted(reason: .placeholder)
+                    } else {
+                    
+                        Section(header: Text(statisticsGroup.title).font(.title)) {
+                            ForEach(statisticsGroup.derivedStatistics, id: \.self) { derivedStatistic in
+                                DerivedStatisticView(derivedStatistic: derivedStatistic)
+                            }
                         }
                     }
                     
@@ -34,6 +49,6 @@ struct StatisticsView: View {
 
 struct StatisticsView_Previews: PreviewProvider {
     static var previews: some View {
-        StatisticsView(statisticsGroups: APIRepresentative().statistics[MockData.app1]!)
+        StatisticsView(app: MockData.app1)
     }
 }

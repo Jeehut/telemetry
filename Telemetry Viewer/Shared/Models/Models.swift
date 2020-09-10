@@ -85,12 +85,17 @@ struct UserCountGroup: Codable, Hashable {
     }
 }
 
-struct DerivedStatistic: Codable, Hashable {
-    let title: String
-    let statistics: [String: Int]
-}
-
 struct DerivedStatisticGroup: Codable, Hashable {
     let title: String
     let derivedStatistics: [DerivedStatistic]
+    var isMockData: Bool = false
+    
+    enum CodingKeys: String, CodingKey {
+        case title, derivedStatistics
+    }
+}
+
+struct DerivedStatistic: Codable, Hashable {
+    let title: String
+    let statistics: [String: Int]
 }

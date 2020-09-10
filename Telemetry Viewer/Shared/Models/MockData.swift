@@ -96,46 +96,19 @@ struct MockData {
                 UserCount(count: 239, calculatedAt: Date(timeInterval: -3600*24*9, since: Date())),
                 UserCount(count: 245, calculatedAt: Date(timeInterval: -3600*24*10, since: Date())),
             ], isMockData: true),
-            
-            UserCountGroup(title: "Long-Term Users", timeInterval: -3600*24*30, data: [
-                UserCount(count: 197, calculatedAt: Date()),
-                UserCount(count: 241, calculatedAt: Date(timeInterval: -3600*24, since: Date())),
-                UserCount(count: 263, calculatedAt: Date(timeInterval: -3600*24*2, since: Date())),
-                UserCount(count: 263, calculatedAt: Date(timeInterval: -3600*24*3, since: Date())),
-                UserCount(count: 258, calculatedAt: Date(timeInterval: -3600*24*4, since: Date())),
-                UserCount(count: 257, calculatedAt: Date(timeInterval: -3600*24*5, since: Date())),
-                UserCount(count: 249, calculatedAt: Date(timeInterval: -3600*24*6, since: Date())),
-                UserCount(count: 255, calculatedAt: Date(timeInterval: -3600*24*7, since: Date())),
-                UserCount(count: 247, calculatedAt: Date(timeInterval: -3600*24*8, since: Date())),
-                UserCount(count: 239, calculatedAt: Date(timeInterval: -3600*24*9, since: Date())),
-                UserCount(count: 245, calculatedAt: Date(timeInterval: -3600*24*10, since: Date())),
-            ], isMockData: true),
     ]
     
-    static let statistics: [TelemetryApp: [DerivedStatisticGroup]] = [
-        app1: [
-            DerivedStatisticGroup(title: "System Information", derivedStatistics: [
-                DerivedStatistic(title: "App Version", statistics: ["8": 233, "4": 1]),
-                DerivedStatistic(title: "System Version", statistics: ["13.6": 83, "13.5.1": 81, "13.3.1": 1, "None": 1, "13.6.1": 28, "14.0": 21])
-            ]),
-            DerivedStatisticGroup(title: "Usage", derivedStatistics: [
-                DerivedStatistic(title: "Libido Description Type", statistics: ["Colorful": 197, "Neutral": 26, "None": 1]),
-                DerivedStatistic(title: "Should Send Notifications", statistics: ["False": 138, "True": 85]),
-                DerivedStatistic(title: "Will Send Notifications", statistics: ["False": 138, "True": 85]),
-                DerivedStatistic(title: "Cool Mode", statistics: ["Off": 38, "On": 185]),
-            ]),
-        ],
-        
-        app2: [
-            DerivedStatisticGroup(title: "System Information", derivedStatistics: [
-                DerivedStatistic(title: "App Version", statistics: ["8": 233, "4": 1]),
-                DerivedStatistic(title: "System Version", statistics: ["13.6": 83, "13.5.1": 81, "13.3.1": 1, "None": 1, "13.6.1": 28, "14.0": 21])
-            ]),
-            DerivedStatisticGroup(title: "Usage", derivedStatistics: [
-                DerivedStatistic(title: "Libido Description Type", statistics: ["Colorful": 197, "Neutral": 26, "None": 1]),
-                DerivedStatistic(title: "Should Send Notifications", statistics: ["False": 138, "True": 85]),
-            ])
-        ]
+    static let derivedStatisticGroups: [DerivedStatisticGroup] = [
+        DerivedStatisticGroup(title: "System Information", derivedStatistics: [
+            DerivedStatistic(title: "App Version", statistics: ["8": 233, "4": 1]),
+            DerivedStatistic(title: "System Version", statistics: ["13.6": 83, "13.5.1": 81, "13.3.1": 1, "None": 1, "13.6.1": 28, "14.0": 21])
+        ], isMockData: true),
+        DerivedStatisticGroup(title: "Usage", derivedStatistics: [
+            DerivedStatistic(title: "Libido Description Type", statistics: ["Colorful": 197, "Neutral": 26, "None": 1]),
+            DerivedStatistic(title: "Should Send Notifications", statistics: ["False": 138, "True": 85]),
+            DerivedStatistic(title: "Will Send Notifications", statistics: ["False": 138, "True": 85]),
+            DerivedStatistic(title: "Cool Mode", statistics: ["Off": 38, "On": 185]),
+        ], isMockData: true),
     ]
 }
 
