@@ -25,7 +25,7 @@ struct TelemetryApp: Codable, Hashable {
     var id: UUID?
     var name: String
     var organization: [String: String]
-    var isExampleData: Bool = false
+    var isMockData: Bool = false
     
     enum CodingKeys: String, CodingKey {
         case id, name, organization
@@ -78,6 +78,11 @@ struct UserCountGroup: Codable, Hashable {
     let title: String
     let timeInterval: TimeInterval
     let data: [UserCount]
+    var isMockData: Bool = false
+    
+    enum CodingKeys: String, CodingKey {
+        case title, timeInterval, data
+    }
 }
 
 struct DerivedStatistic: Codable, Hashable {

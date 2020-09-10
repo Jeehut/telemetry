@@ -17,19 +17,24 @@ struct NewAppView: View {
             Text("Create a new App.")
             TextField("Name", text: $newAppName)
             Text("When you're done, press the save button to create the new app.")
+            
+            #if os(macOS)
+            Button("Save") {
+                api.create(appNamed: newAppName)
+                self.presentationMode.wrappedValue.dismiss()
+            }
+            #endif
         }
         .padding()
         .navigationTitle("New App")
         
         #if os(macOS)
-        
         #else
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("Save") {
                     api.create(appNamed: newAppName)
                     self.presentationMode.wrappedValue.dismiss()
-
                 }
             }
         }

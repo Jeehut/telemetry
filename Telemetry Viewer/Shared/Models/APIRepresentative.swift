@@ -34,7 +34,7 @@ final class APIRepresentative: ObservableObject {
     @Published var apps: [TelemetryApp] = [MockData.app1, MockData.app2]
     
     @Published var signals: [TelemetryApp: [Signal]] = MockData.signalsMockData
-    @Published var userCounts: [TelemetryApp: [UserCountGroup]] = MockData.userCounts
+    @Published var userCounts: [TelemetryApp: [UserCountGroup]] = [:]
     
     @Published var statistics: [TelemetryApp: [DerivedStatisticGroup]] = MockData.statistics
 }

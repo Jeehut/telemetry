@@ -18,7 +18,7 @@ struct SidebarView: View {
             Section(header: Text("Apps")) {
                 
                 ForEach(Array(api.apps), id: \.self) { app in
-                    if app.isExampleData {
+                    if app.isMockData {
                         
                         NavigationLink(
                             destination: TelemetryAppView(app: app),
@@ -58,10 +58,9 @@ struct SidebarView: View {
         }
         .listStyle(SidebarListStyle())
         .navigationTitle("All Apps")
-        #if os(macOS)
-        #else
+        
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem {
                 HStack {
                     Button(action: {
                         isCreatingANewApp = true
@@ -76,6 +75,5 @@ struct SidebarView: View {
                 }
             }
         }
-        #endif
     }
 }

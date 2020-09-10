@@ -29,21 +29,21 @@ struct TelemetryAppView: View {
     var body: some View {
         
         TabView(selection: $selectedView) {
-            UserCountGroupView(userCountGroups: api.userCounts[app]!)
+            UserCountGroupView(app: app)
                 .tabItem {
                     Image(systemName: "person.2.square.stack")
                     Text("Users")
                 }.tag(0)
-            StatisticsView(statisticsGroups: api.statistics[app]!)
-                .tabItem {
-                    Image(systemName: "chart.pie")
-                    Text("Insights")
-                }.tag(1)
-            SignalList(signals: api.signals[app]!)
-                .tabItem {
-                    Image(systemName: "list.bullet.rectangle")
-                    Text("Signals")
-                }.tag(2)
+//            StatisticsView(statisticsGroups: api.statistics[app]!)
+//                .tabItem {
+//                    Image(systemName: "chart.pie")
+//                    Text("Insights")
+//                }.tag(1)
+//            SignalList(signals: api.signals[app]!)
+//                .tabItem {
+//                    Image(systemName: "list.bullet.rectangle")
+//                    Text("Signals")
+//                }.tag(2)
                 
         } .navigationTitle(calculatedNavigationTitle)
         

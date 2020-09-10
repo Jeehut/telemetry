@@ -10,8 +10,8 @@ import Foundation
 struct MockData {
     static let exampleOrganization: Organization = .init(name: "breakthesystem")
     
-    static let app1: TelemetryApp = .init(name: "Test App", organization: ["id":"123"], isExampleData: true)
-    static let app2: TelemetryApp = .init(name: "Other Test App", organization: ["id":"123"], isExampleData: true)
+    static let app1: TelemetryApp = .init(name: "Test App", organization: ["id":"123"], isMockData: true)
+    static let app2: TelemetryApp = .init(name: "Other Test App", organization: ["id":"123"], isMockData: true)
     
     static let examplePayload: [String: PayloadEntry] = [
         "isTestFlight": .p(true),
@@ -54,8 +54,7 @@ struct MockData {
         ]
     ]
     
-    static let userCounts: [TelemetryApp: [UserCountGroup]] = [
-        app1: [
+    static let userCounts:  [UserCountGroup] = [
             UserCountGroup(title: "Active Users", timeInterval: -3600*24, data: [
                 UserCount(count: 46, calculatedAt: Date()),
                 UserCount(count: 41, calculatedAt: Date(timeInterval: -3600*24, since: Date())),
@@ -68,7 +67,7 @@ struct MockData {
                 UserCount(count: 47, calculatedAt: Date(timeInterval: -3600*24*8, since: Date())),
                 UserCount(count: 39, calculatedAt: Date(timeInterval: -3600*24*9, since: Date())),
                 UserCount(count: 45, calculatedAt: Date(timeInterval: -3600*24*10, since: Date())),
-            ]),
+            ], isMockData: true),
             
             UserCountGroup(title: "Active Users", timeInterval: -3600*24*7, data: [
                 UserCount(count: 246, calculatedAt: Date()),
@@ -82,7 +81,7 @@ struct MockData {
                 UserCount(count: 247, calculatedAt: Date(timeInterval: -3600*24*8, since: Date())),
                 UserCount(count: 239, calculatedAt: Date(timeInterval: -3600*24*9, since: Date())),
                 UserCount(count: 245, calculatedAt: Date(timeInterval: -3600*24*10, since: Date())),
-            ]),
+            ], isMockData: true),
             
             UserCountGroup(title: "Active Users", timeInterval: -3600*24*30, data: [
                 UserCount(count: 446, calculatedAt: Date()),
@@ -96,7 +95,7 @@ struct MockData {
                 UserCount(count: 247, calculatedAt: Date(timeInterval: -3600*24*8, since: Date())),
                 UserCount(count: 239, calculatedAt: Date(timeInterval: -3600*24*9, since: Date())),
                 UserCount(count: 245, calculatedAt: Date(timeInterval: -3600*24*10, since: Date())),
-            ]),
+            ], isMockData: true),
             
             UserCountGroup(title: "Long-Term Users", timeInterval: -3600*24*30, data: [
                 UserCount(count: 197, calculatedAt: Date()),
@@ -110,66 +109,7 @@ struct MockData {
                 UserCount(count: 247, calculatedAt: Date(timeInterval: -3600*24*8, since: Date())),
                 UserCount(count: 239, calculatedAt: Date(timeInterval: -3600*24*9, since: Date())),
                 UserCount(count: 245, calculatedAt: Date(timeInterval: -3600*24*10, since: Date())),
-            ])
-        ],
-        
-        app2: [
-            UserCountGroup(title: "Active Users, 24 Hours", timeInterval: -3600*24, data: [
-                UserCount(count: 46, calculatedAt: Date()),
-                UserCount(count: 41, calculatedAt: Date(timeInterval: -3600*24, since: Date())),
-                UserCount(count: 63, calculatedAt: Date(timeInterval: -3600*24*2, since: Date())),
-                UserCount(count: 63, calculatedAt: Date(timeInterval: -3600*24*3, since: Date())),
-                UserCount(count: 58, calculatedAt: Date(timeInterval: -3600*24*4, since: Date())),
-                UserCount(count: 57, calculatedAt: Date(timeInterval: -3600*24*5, since: Date())),
-                UserCount(count: 49, calculatedAt: Date(timeInterval: -3600*24*6, since: Date())),
-                UserCount(count: 55, calculatedAt: Date(timeInterval: -3600*24*7, since: Date())),
-                UserCount(count: 47, calculatedAt: Date(timeInterval: -3600*24*8, since: Date())),
-                UserCount(count: 39, calculatedAt: Date(timeInterval: -3600*24*9, since: Date())),
-                UserCount(count: 45, calculatedAt: Date(timeInterval: -3600*24*10, since: Date())),
-            ]),
-            
-            UserCountGroup(title: "Active Users, 7 Days", timeInterval: -3600*24*7, data: [
-                UserCount(count: 246, calculatedAt: Date()),
-                UserCount(count: 241, calculatedAt: Date(timeInterval: -3600*24, since: Date())),
-                UserCount(count: 263, calculatedAt: Date(timeInterval: -3600*24*2, since: Date())),
-                UserCount(count: 263, calculatedAt: Date(timeInterval: -3600*24*3, since: Date())),
-                UserCount(count: 258, calculatedAt: Date(timeInterval: -3600*24*4, since: Date())),
-                UserCount(count: 257, calculatedAt: Date(timeInterval: -3600*24*5, since: Date())),
-                UserCount(count: 249, calculatedAt: Date(timeInterval: -3600*24*6, since: Date())),
-                UserCount(count: 255, calculatedAt: Date(timeInterval: -3600*24*7, since: Date())),
-                UserCount(count: 247, calculatedAt: Date(timeInterval: -3600*24*8, since: Date())),
-                UserCount(count: 239, calculatedAt: Date(timeInterval: -3600*24*9, since: Date())),
-                UserCount(count: 245, calculatedAt: Date(timeInterval: -3600*24*10, since: Date())),
-            ]),
-            
-            UserCountGroup(title: "Active Users", timeInterval: -3600*24*30, data: [
-                UserCount(count: 246, calculatedAt: Date()),
-                UserCount(count: 241, calculatedAt: Date(timeInterval: -3600*24, since: Date())),
-                UserCount(count: 263, calculatedAt: Date(timeInterval: -3600*24*2, since: Date())),
-                UserCount(count: 263, calculatedAt: Date(timeInterval: -3600*24*3, since: Date())),
-                UserCount(count: 258, calculatedAt: Date(timeInterval: -3600*24*4, since: Date())),
-                UserCount(count: 257, calculatedAt: Date(timeInterval: -3600*24*5, since: Date())),
-                UserCount(count: 249, calculatedAt: Date(timeInterval: -3600*24*6, since: Date())),
-                UserCount(count: 255, calculatedAt: Date(timeInterval: -3600*24*7, since: Date())),
-                UserCount(count: 247, calculatedAt: Date(timeInterval: -3600*24*8, since: Date())),
-                UserCount(count: 239, calculatedAt: Date(timeInterval: -3600*24*9, since: Date())),
-                UserCount(count: 245, calculatedAt: Date(timeInterval: -3600*24*10, since: Date())),
-            ]),
-            
-            UserCountGroup(title: "Long-Term Users, 30 Days", timeInterval: -3600*24*30, data: [
-                UserCount(count: 246, calculatedAt: Date()),
-                UserCount(count: 241, calculatedAt: Date(timeInterval: -3600*24, since: Date())),
-                UserCount(count: 263, calculatedAt: Date(timeInterval: -3600*24*2, since: Date())),
-                UserCount(count: 263, calculatedAt: Date(timeInterval: -3600*24*3, since: Date())),
-                UserCount(count: 258, calculatedAt: Date(timeInterval: -3600*24*4, since: Date())),
-                UserCount(count: 257, calculatedAt: Date(timeInterval: -3600*24*5, since: Date())),
-                UserCount(count: 249, calculatedAt: Date(timeInterval: -3600*24*6, since: Date())),
-                UserCount(count: 255, calculatedAt: Date(timeInterval: -3600*24*7, since: Date())),
-                UserCount(count: 247, calculatedAt: Date(timeInterval: -3600*24*8, since: Date())),
-                UserCount(count: 239, calculatedAt: Date(timeInterval: -3600*24*9, since: Date())),
-                UserCount(count: 245, calculatedAt: Date(timeInterval: -3600*24*10, since: Date())),
-            ])
-        ],
+            ], isMockData: true),
     ]
     
     static let statistics: [TelemetryApp: [DerivedStatisticGroup]] = [

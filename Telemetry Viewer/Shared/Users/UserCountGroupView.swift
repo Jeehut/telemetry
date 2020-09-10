@@ -8,7 +8,12 @@
 import SwiftUI
 
 struct UserCountGroupView: View {
-    let userCountGroups: [UserCountGroup]
+    @EnvironmentObject var api: APIRepresentative
+    var app: TelemetryApp
+    
+    var userCountGroups: [UserCountGroup] {
+        return api.userCounts[app, default: MockData.userCounts]
+    }
     
     let columns = [
         GridItem(.adaptive(minimum: 250))
@@ -18,7 +23,11 @@ struct UserCountGroupView: View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 20) {
                 ForEach(userCountGroups, id: \.self) { userCountGroup in
-                    UserCountView(userCount: userCountGroup.data.first!, descriptionText: userCountGroup.title, timeInterval: userCountGroup.timeInterval)
+                    if userCountGroup.isMockData {
+                        UserCountView(userCount: userCountGroup.data.first!, descriptionText: userCountGroup.title, timeInterval: userCountGroup.timeInterval).redacted(reason: .placeholder)
+                    } else {
+                        UserCountView(userCount: userCountGroup.data.first!, descriptionText: userCountGroup.title, timeInterval: userCountGroup.timeInterval)
+                    }
                 }
             }
             .padding(.horizontal)
