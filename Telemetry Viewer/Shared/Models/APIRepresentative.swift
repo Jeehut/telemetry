@@ -33,7 +33,7 @@ final class APIRepresentative: ObservableObject {
     
     @Published var apps: [TelemetryApp] = [MockData.app1, MockData.app2]
     
-    @Published var signals: [TelemetryApp: [Signal]] = MockData.signalsMockData
+    @Published var signals: [TelemetryApp: [Signal]] = [:]
     @Published var userCounts: [TelemetryApp: [UserCountGroup]] = [:]
     
     @Published var derivedStatisticGroups: [TelemetryApp: [DerivedStatisticGroup]] = [:]
@@ -165,6 +165,7 @@ extension APIRepresentative {
                 print(String(decoding: data, as: UTF8.self))
                 
                 let decodedResponse = try! JSONDecoder().decode(TelemetryApp.self, from: data)
+                print(decodedResponse)
                 
                 DispatchQueue.main.async {
                     self.getApps()

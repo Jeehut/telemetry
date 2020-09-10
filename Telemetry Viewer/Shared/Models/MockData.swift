@@ -15,43 +15,15 @@ struct MockData {
     
     static let examplePayload: [String: PayloadEntry] = [
         "isTestFlight": .p(true),
-        "numberOfLibidoDataPoints": .p(141),
-        "isAppStore": .p(true),
-        "numberOfEnergyLevelDataPoints": .p(141),
-        "furthestOnboardingScreenSeen": .p(4),
-        "numberOfCreateDialogs": .p(4),
-        "numberOfMoodDataPoints": .p(143),
-        "systemVersion": .p("14.0"),
-        "libidoDescriptionType": .p("neutral"),
-        "shouldSendExperienceSamplingNotifications": .p(true),
-        "buildNumber": .p("278"),
-        "chartRowTypesInOverview": .p([
-            .p("libido"), .p("mood"), .p("energyLevel"), .p("sexualActivity"), .p("orgasms"),
-        ])
     ]
     
-    static let signalsMockData: [TelemetryApp: [Signal]] = [
-        app1: [
-            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
-            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
-            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
-            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
-            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
-            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
-            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
-            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
-            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
-            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
-            .init(id: nil, app: app1, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
-        ],
-        app2: [
-            .init(id: nil, app: app2, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
-            .init(id: nil, app: app2, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
-            .init(id: nil, app: app2, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
-            .init(id: nil, app: app2, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
-            .init(id: nil, app: app2, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
-            .init(id: nil, app: app2, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload),
-        ]
+    static let signals: [Signal] = [
+        .init(id: nil, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
+        .init(id: nil, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
+        .init(id: nil, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
+        .init(id: nil, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
+        .init(id: nil, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
+        .init(id: nil, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
     ]
     
     static let userCounts:  [UserCountGroup] = [

@@ -62,11 +62,15 @@ struct PayloadEntry: Codable, Hashable {
 
 struct Signal: Codable, Hashable {
     var id: UUID?
-    var app: TelemetryApp
     var receivedAt: Date
     var clientUser: String
     var type: String
     var payload: Dictionary<String, PayloadEntry>?
+    var isMockData: Bool = false
+     
+    enum CodingKeys: String, CodingKey {
+        case id, receivedAt, clientUser, type, payload
+    }
 }
 
 struct UserCount: Codable, Hashable {

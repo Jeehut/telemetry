@@ -26,9 +26,7 @@ struct SignalView: View {
                 }
                 
                 HStack(spacing: 2) {
-                    Text("From")
-                    Text(signal.app.name)
-                    Text("user")
+                    Text("from user")
                     Text(signal.clientUser).bold()
                 }
                 
@@ -44,7 +42,7 @@ struct SignalView: View {
 
 struct SignalView_Previews: PreviewProvider {
     static var previews: some View {
-        let signal: Signal = .init(id: UUID(), app: MockData.app1, receivedAt: Date(), clientUser: "randomClientUser", type: "ExampleSignal", payload: nil)
+        let signal: Signal = .init(id: UUID(), receivedAt: Date(), clientUser: "randomClientUser", type: "ExampleSignal", payload: nil)
         SignalView(signal: signal)
     }
 }

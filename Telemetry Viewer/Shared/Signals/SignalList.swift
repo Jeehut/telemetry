@@ -8,13 +8,21 @@
 import SwiftUI
 
 struct SignalList: View {
-    let signals: [Signal]
+    @EnvironmentObject var api: APIRepresentative
+    var app: TelemetryApp
+    
+    var signals: [Signal] {
+        return api.signals[app, default: MockData.signals]
+    }
     
     var body: some View {
         List {
-            Text("Here's a list of raw signals received for this app.")
             ForEach(signals, id: \.self) { signal in
-                SignalView(signal: signal)
+                if signal.isMockData {
+                    SignalView(signal: signal).redacted(reason: .placeholder)
+                } else {
+                    SignalView(signal: signal)
+                }
             }
         }
     }
@@ -22,8 +30,6 @@ struct SignalList: View {
 
 struct SignalList_Previews: PreviewProvider {
     static var previews: some View {
-        let signals = APIRepresentative().signals[MockData.app1]!
-        
-        SignalList(signals: signals)
+        SignalList(app: MockData.app1)
     }
 }

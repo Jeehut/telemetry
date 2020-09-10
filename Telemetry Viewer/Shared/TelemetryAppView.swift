@@ -39,11 +39,11 @@ struct TelemetryAppView: View {
                     Image(systemName: "chart.pie")
                     Text("Insights")
                 }.tag(1)
-//            SignalList(signals: api.signals[app]!)
-//                .tabItem {
-//                    Image(systemName: "list.bullet.rectangle")
-//                    Text("Signals")
-//                }.tag(2)
+            SignalList(app: app)
+                .tabItem {
+                    Image(systemName: "list.bullet.rectangle")
+                    Text("Signals")
+                }.tag(2)
                 
         } .navigationTitle(calculatedNavigationTitle)
         
