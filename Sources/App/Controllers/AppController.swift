@@ -8,13 +8,14 @@ struct AppController: RouteCollection {
         apps.get(use: index)
         apps.get(":appID", use: getSingle)
         apps.patch(":appID", use: update)
-
+        apps.delete(":appID", use: delete)
+        
         apps.post(use: create)
     }
     
     func index(req: Request) throws -> EventLoopFuture<[App]> {
         let user = try req.auth.require(User.self)
-
+        
         // Only show user's orgs' apps, thanks to @jhoughjr
         return App.query(on: req.db)
             .filter(\.$organization.$id == user.$organization.id)
@@ -23,7 +24,7 @@ struct AppController: RouteCollection {
     
     func getSingle(req: Request) throws -> EventLoopFuture<App> {
         guard let appIDString = req.parameters.get("appID"),
-            let appID = UUID(appIDString) else {
+              let appID = UUID(appIDString) else {
             throw Abort(.badRequest, reason: "Invalid parameter `appID`")
         }
         
@@ -59,7 +60,7 @@ struct AppController: RouteCollection {
     
     func update(req: Request) throws -> EventLoopFuture<App> {
         guard let appIDString = req.parameters.get("appID"),
-            let appID = UUID(appIDString) else {
+              let appID = UUID(appIDString) else {
             throw Abort(.badRequest, reason: "Invalid parameter `appID`")
         }
         
@@ -76,4 +77,17 @@ struct AppController: RouteCollection {
                     .map { app }
             }
     }
+    
+    func delete(req: Request) throws -> EventLoopFuture<HTTPStatus> {
+        guard let appIDString = req.parameters.get("appID"),
+              let appID = UUID(appIDString) else {
+            throw Abort(.badRequest, reason: "Invalid parameter `appID`")
+        }
+        
+        return App.find(appID, on: req.db)
+            .unwrap(or: Abort(.notFound))
+            .flatMap { $0.delete(on: req.db) }
+            .map { .ok }
+    }
 }
+

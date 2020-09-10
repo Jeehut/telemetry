@@ -179,6 +179,22 @@ extension APIRepresentative {
     }
     
     func delete(app: TelemetryApp) {
+        guard let uuidString = app.id?.uuidString,
+            let url = URL(string: "http://localhost:8080/api/v1/apps/\(uuidString)/") else {
+            print("Invalid URL")
+            return
+        }
         
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.setValue(userToken?.bearerTokenAuthString, forHTTPHeaderField: "Authorization")
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            
+            DispatchQueue.main.async {
+                self.getApps()
+            }
+        }.resume()
     }
 }

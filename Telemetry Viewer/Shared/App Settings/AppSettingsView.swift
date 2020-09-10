@@ -21,10 +21,12 @@ struct AppSettingsView: View {
                 
                 Button("Update App Name") {
                     api.update(app: app, newName: newName)
+                    self.presentationMode.wrappedValue.dismiss()
                 }
                 
                 Button("Delete App") {
                     api.delete(app: app)
+                    self.presentationMode.wrappedValue.dismiss()
                 }
                 
                 Button("Cancel") {
