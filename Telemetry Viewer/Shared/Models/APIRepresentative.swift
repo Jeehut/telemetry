@@ -175,7 +175,31 @@ extension APIRepresentative {
     }
     
     func update(app: TelemetryApp, newName: String) {
+        guard let uuidString = app.id?.uuidString,
+            let url = URL(string: "http://localhost:8080/api/v1/apps/\(uuidString)/") else {
+            print("Invalid URL")
+            return
+        }
         
+        var request = URLRequest(url: url)
+        request.httpMethod = "PATCH"
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.setValue(userToken?.bearerTokenAuthString, forHTTPHeaderField: "Authorization")
+        request.httpBody = try! JSONEncoder().encode(["name": newName])
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let data = data {
+                print(String(decoding: data, as: UTF8.self))
+                
+                let decodedResponse = try! JSONDecoder().decode(TelemetryApp.self, from: data)
+                print(decodedResponse)
+                
+                DispatchQueue.main.async {
+                    self.getApps()
+                }
+                
+            }
+        }.resume()
     }
     
     func delete(app: TelemetryApp) {
