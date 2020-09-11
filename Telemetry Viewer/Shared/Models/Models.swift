@@ -38,6 +38,7 @@ struct Signal: Codable, Hashable {
     var clientUser: String
     var type: String
     var payload: Dictionary<String, String>?
+    
     var isMockData: Bool = false
      
     enum CodingKeys: String, CodingKey {

@@ -13,10 +13,12 @@ struct SignalList: View {
     
     var body: some View {
         List {
-            ForEach(api.signals[app, default: MockData.signals], id: \.self) { signal in
-                if signal.isMockData {
+            if api.signals[app] == nil || api.signals[app]!.isEmpty {
+                ForEach(MockData.signals, id: \.self) { signal in
                     SignalView(signal: signal).redacted(reason: .placeholder)
-                } else {
+                }
+            } else {
+                ForEach(api.signals[app]!, id: \.self) { signal in
                     SignalView(signal: signal)
                 }
             }
