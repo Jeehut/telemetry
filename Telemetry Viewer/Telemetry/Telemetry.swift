@@ -129,7 +129,7 @@ extension TelemetryManager {
      
             /// CC_SHA256 performs digest calculation and places the result in the caller-supplied buffer for digest (md)
             /// Takes the strData referenced value (const unsigned char *d) and hashes it into a reference to the digest parameter.
-            strData.withUnsafeBytes {
+            _ = strData.withUnsafeBytes {
                 // CommonCrypto
                 // extern unsigned char *CC_SHA256(const void *data, CC_LONG len, unsigned char *md)  -|
                 // OpenSSL                                                                             |
@@ -142,12 +142,7 @@ extension TelemetryManager {
             for byte in digest {
                 sha256String += String(format:"%02x", UInt8(byte))
             }
-     
-            if sha256String.uppercased() == "E8721A6EBEA3B23768D943D075035C7819662B581E487456FDB1A7129C769188" {
-                print("Matching sha256 hash: E8721A6EBEA3B23768D943D075035C7819662B581E487456FDB1A7129C769188")
-            } else {
-                print("sha256 hash does not match: \(sha256String)")
-            }
+
             return sha256String
         }
         return ""
