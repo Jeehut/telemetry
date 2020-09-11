@@ -23,6 +23,7 @@ struct NewAppView: View {
                 Button("Save") {
                     api.create(appNamed: newAppName)
                     self.presentationMode.wrappedValue.dismiss()
+                    TelemetryManager().send(.telemetryAppCreated, for: api.user?.email ?? "unregistered user")
                 }
                 
                 Button("Cancel") {
@@ -41,6 +42,7 @@ struct NewAppView: View {
                 Button("Save") {
                     api.create(appNamed: newAppName)
                     self.presentationMode.wrappedValue.dismiss()
+                    TelemetryManager().send(.telemetryAppCreated, for: api.user?.email ?? "unregistered user")
                 }
             }
         }

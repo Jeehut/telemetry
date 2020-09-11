@@ -40,5 +40,8 @@ struct UserCountGroupView: View {
             }
             .padding(.horizontal)
         }
+        .onAppear {
+            TelemetryManager().send(.telemetryAppUsersShown, for: api.user?.email ?? "unregistered user")
+        }
     }
 }

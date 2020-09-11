@@ -14,6 +14,9 @@ struct OrganizationSettingsView: View {
         
         if let user = api.user {
             Text("Hello, \(user.organization.name)!").navigationTitle("Organization Settings")
+                .onAppear {
+                    TelemetryManager().send(.organizationSettingsShown, for: api.user?.email ?? "unregistered user")
+                }
         }
     }
 }

@@ -44,6 +44,9 @@ struct StatisticsView: View {
             }
             .padding()
         }
+        .onAppear {
+            TelemetryManager().send(.telemetryAppInsightsShown, for: api.user?.email ?? "unregistered user")
+        }
     }
 }
 

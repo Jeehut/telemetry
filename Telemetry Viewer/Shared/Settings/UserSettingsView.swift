@@ -34,6 +34,9 @@ struct UserSettingsView: View {
                 }
             }
             .navigationTitle("User Settings")
+            .onAppear {
+                TelemetryManager().send(.userSettingsShown, for: api.user?.email ?? "unregistered user")
+            }
         }
     }
 }

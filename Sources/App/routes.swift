@@ -30,5 +30,5 @@ func routes(_ app: Application) throws {
     try apiRoutes.grouped("users").register(collection: RegistrationContoller())
     try apiRoutes.grouped("organizations").register(collection: OrganizationAPIController())
     try apiRoutes.grouped("apps").register(collection: AppController())
-    try apiRoutes.grouped("signalDeliver").register(collection: SignalDeliveryController())
+    try apiRoutes.grouped("signals").register(collection: SignalDeliveryController())
 }

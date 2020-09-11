@@ -32,40 +32,12 @@ struct TelemetryApp: Codable, Hashable {
     }
 }
 
-struct PayloadEntry: Codable, Hashable {
-    let boolValue: Bool?
-    let intValue: Int?
-    let floatValue: Float?
-    let stringValue: String?
-    let listValue: [PayloadEntry]?
-    let dictValue: [String: PayloadEntry]?
-    
-    static func p(_ bool: Bool) -> PayloadEntry {
-        return PayloadEntry(boolValue: bool, intValue: nil, floatValue: nil, stringValue: nil, listValue: nil, dictValue: nil)
-    }
-    static func p(_ int: Int) -> PayloadEntry {
-        return PayloadEntry(boolValue: nil, intValue: int, floatValue: nil, stringValue: nil, listValue: nil, dictValue: nil)
-    }
-    static func p(_ float: Float) -> PayloadEntry {
-        return PayloadEntry(boolValue: nil, intValue: nil, floatValue: float, stringValue: nil, listValue: nil, dictValue: nil)
-    }
-    static func p(_ string: String) -> PayloadEntry {
-        return PayloadEntry(boolValue: nil, intValue: nil, floatValue: nil, stringValue: nil, listValue: nil, dictValue: nil)
-    }
-    static func p(_ list: [PayloadEntry]) -> PayloadEntry {
-        return PayloadEntry(boolValue: nil, intValue: nil, floatValue: nil, stringValue: nil, listValue: list, dictValue: nil)
-    }
-    static func p(_ dict: [String: PayloadEntry]) -> PayloadEntry {
-        return PayloadEntry(boolValue: nil, intValue: nil, floatValue: nil, stringValue: nil, listValue: nil, dictValue: dict)
-    }
-}
-
 struct Signal: Codable, Hashable {
     var id: UUID?
-    var receivedAt: Date
+    var receivedAt: String// Date
     var clientUser: String
     var type: String
-    var payload: Dictionary<String, PayloadEntry>?
+    var payload: Dictionary<String, String>?
     var isMockData: Bool = false
      
     enum CodingKeys: String, CodingKey {

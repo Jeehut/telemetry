@@ -22,7 +22,7 @@ struct SignalView: View {
                 HStack(spacing: 3) {
                     Text(signal.type).bold()
                     Text("received at")
-                    Text(dateFormatter.string(from: signal.receivedAt))
+                    Text(signal.receivedAt)
                 }
                 
                 HStack(spacing: 2) {
@@ -42,7 +42,7 @@ struct SignalView: View {
 
 struct SignalView_Previews: PreviewProvider {
     static var previews: some View {
-        let signal: Signal = .init(id: UUID(), receivedAt: Date(), clientUser: "randomClientUser", type: "ExampleSignal", payload: nil)
+        let signal: Signal = .init(id: UUID(), receivedAt: "Date()", clientUser: "randomClientUser", type: "ExampleSignal", payload: nil)
         SignalView(signal: signal)
     }
 }

@@ -23,6 +23,7 @@ struct SignalList: View {
         }
         .onAppear {
             api.getSignals(for: app)
+            TelemetryManager().send(.telemetryAppSignalsShown, for: api.user?.email ?? "unregistered user")
         }
     }
 }

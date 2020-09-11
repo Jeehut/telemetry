@@ -16,4 +16,8 @@ struct Telemetry_ViewerApp: App {
             RootView().environmentObject(api)
         }
     }
+    
+    init() {
+        TelemetryManager().send(.appLaunchedRegularly, for: api.user?.email ?? "unregistered user")
+    }
 }

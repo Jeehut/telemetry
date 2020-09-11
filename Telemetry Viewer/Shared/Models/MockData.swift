@@ -13,17 +13,17 @@ struct MockData {
     static let app1: TelemetryApp = .init(name: "Test App", organization: ["id":"123"], isMockData: true)
     static let app2: TelemetryApp = .init(name: "Other Test App", organization: ["id":"123"], isMockData: true)
     
-    static let examplePayload: [String: PayloadEntry] = [
-        "isTestFlight": .p(true),
+    static let examplePayload: [String: String] = [
+        "isTestFlight": "true",
     ]
     
     static let signals: [Signal] = [
-        .init(id: nil, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
-        .init(id: nil, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
-        .init(id: nil, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
-        .init(id: nil, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
-        .init(id: nil, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
-        .init(id: nil, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
+//        .init(id: nil, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
+//        .init(id: nil, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
+//        .init(id: nil, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
+//        .init(id: nil, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
+//        .init(id: nil, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
+//        .init(id: nil, receivedAt: Date(), clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
     ]
     
     static let userCounts:  [UserCountGroup] = [

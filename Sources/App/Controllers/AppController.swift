@@ -98,7 +98,7 @@ struct AppController: RouteCollection {
         }
         
         return Signal.query(on: req.db)
-            .filter(\.$id == appID)
+            .filter(\.$app.$id == appID)
             .all()
     }
 }
