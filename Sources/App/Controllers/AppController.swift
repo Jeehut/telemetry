@@ -7,11 +7,9 @@ struct AppController: RouteCollection {
         let apps = routes.grouped(UserToken.authenticator())
         apps.get(use: index)
         apps.get(":appID", use: getSingle)
+        apps.post(use: create)
         apps.patch(":appID", use: update)
         apps.delete(":appID", use: delete)
-        apps.get(":appID", "signals", use: getSignals)
-        
-        apps.post(use: create)
     }
     
     func index(req: Request) throws -> EventLoopFuture<[App]> {
@@ -89,17 +87,6 @@ struct AppController: RouteCollection {
             .unwrap(or: Abort(.notFound))
             .flatMap { $0.delete(on: req.db) }
             .map { .ok }
-    }
-    
-    func getSignals(req: Request) throws -> EventLoopFuture<[Signal]> {
-        guard let appIDString = req.parameters.get("appID"),
-              let appID = UUID(appIDString) else {
-            throw Abort(.badRequest, reason: "Invalid parameter `appID`")
-        }
-        
-        return Signal.query(on: req.db)
-            .filter(\.$app.$id == appID)
-            .all()
     }
 }
 

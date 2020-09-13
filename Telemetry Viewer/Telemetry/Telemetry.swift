@@ -38,7 +38,7 @@ final class TelemetryManager {
         guard !isSimulator else { return }
 
         DispatchQueue.main.async { [self] in
-            let path = "/api/v1/signals/\(TelemetryManagerConfiguation.telemetryAppID)/"
+            let path = "/api/v1/\(TelemetryManagerConfiguation.telemetryAppID)/signals/"
             let url = TelemetryManagerConfiguation.telemetryBaseURL.appendingPathComponent(path)
 
             var urlRequest = URLRequest(url: url)
