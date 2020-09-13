@@ -16,6 +16,9 @@ struct SignalsController: RouteCollection {
             throw Abort(.badRequest, reason: "Invalid parameter `appID`")
         }
         
+        let user = try req.auth.require(User.self)
+        // TODO: Only return signals for this user's org
+        
         return Signal.query(on: req.db)
             .filter(\.$app.$id == appID)
             .all()

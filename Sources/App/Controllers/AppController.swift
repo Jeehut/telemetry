@@ -65,7 +65,12 @@ struct AppController: RouteCollection {
         
         let patchAppRequestBody = try req.content.decode(PatchAppRequestBody.self)
         
-        return App.find(appID, on: req.db)
+        let user = try req.auth.require(User.self)
+
+        return App.query(on: req.db)
+            .filter(\.$organization.$id == user.$organization.id)
+            .filter(\.$id == appID)
+            .first()
             .unwrap(or: Abort(.notFound))
             .flatMap { app in
                 if let name = patchAppRequestBody.name {
@@ -83,7 +88,12 @@ struct AppController: RouteCollection {
             throw Abort(.badRequest, reason: "Invalid parameter `appID`")
         }
         
-        return App.find(appID, on: req.db)
+        let user = try req.auth.require(User.self)
+        
+        return App.query(on: req.db)
+            .filter(\.$organization.$id == user.$organization.id)
+            .filter(\.$id == appID)
+            .first()
             .unwrap(or: Abort(.notFound))
             .flatMap { $0.delete(on: req.db) }
             .map { .ok }
