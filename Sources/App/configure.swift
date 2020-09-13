@@ -19,6 +19,9 @@ public func configure(_ app: Application) throws {
 
     app.migrations.add(User.Migration())
     app.migrations.add(UserToken.Migration())
+    
+    app.migrations.add(UserCount.Migration())
+    app.migrations.add(UserCountGroup.Migration())
 
     try app.autoMigrate().wait()
 
