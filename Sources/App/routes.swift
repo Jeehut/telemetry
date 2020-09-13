@@ -23,9 +23,6 @@ func routes(_ app: Application) throws {
                 return req.view.render("page", context)
     }
 
-
-    try app.register(collection: TodoController())
-
     let apiRoutes = app.grouped("api", "v1")
     try apiRoutes.grouped("users").register(collection: RegistrationContoller())
     try apiRoutes.grouped("organizations").register(collection: OrganizationAPIController())

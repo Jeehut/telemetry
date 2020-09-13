@@ -12,9 +12,7 @@ public func configure(_ app: Application) throws {
     app.leaf.cache.isEnabled = app.environment.isRelease
 
     app.databases.use(.sqlite(.file("db.sqlite")), as: .sqlite)
-
-    app.migrations.add(CreateTodo())
-
+    
     app.migrations.add(Organization.Migration())
     app.migrations.add(App.Migration())
     app.migrations.add(Signal.Migration())
