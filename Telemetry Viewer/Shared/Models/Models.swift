@@ -67,3 +67,8 @@ struct DerivedStatistic: Codable, Hashable {
     let title: String
     let statistics: [String: Int]
 }
+
+struct UserCountGroupCreateRequestBody: Codable {
+    var title: String
+    var timeInterval: TimeInterval
+}

@@ -38,7 +38,7 @@ final class TelemetryManager {
         guard !isSimulator else { return }
 
         DispatchQueue.main.async { [self] in
-            let path = "/api/v1/\(TelemetryManagerConfiguation.telemetryAppID)/signals/"
+            let path = "/api/v1/apps/\(TelemetryManagerConfiguation.telemetryAppID)/signals/"
             let url = TelemetryManagerConfiguation.telemetryBaseURL.appendingPathComponent(path)
 
             var urlRequest = URLRequest(url: url)
@@ -54,12 +54,15 @@ final class TelemetryManager {
                 "isAppStore": "\(isAppStore)"
             ].merging(additionalPayload, uniquingKeysWith: { (_, last) in last })
             
-            let signalPostBody: SignalPostBody = SignalPostBody(type: "\(signalType)", clientUser: sha256(str: clientUser), payload: payLoad)
+            let signalPostBody: SignalPostBody = SignalPostBody(type: "\(signalType)", clientUser: clientUser, payload: payLoad)
 
             urlRequest.httpBody = try! JSONEncoder().encode(signalPostBody)
 
             let task = URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
                 if let error = error { print(error, data as Any, response as Any) }
+                if let data = data {
+                    print(String(data: data, encoding: .utf8))
+                }
             }
             task.resume()
         }

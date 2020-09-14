@@ -48,7 +48,7 @@ struct TelemetryAppView: View {
         .navigationTitle(calculatedNavigationTitle)
         .toolbar {
             ToolbarItem {
-                HStack {
+//                HStack {
                     Button(action: {
                         isCreatingANewApp = true
                     }) {
@@ -59,7 +59,7 @@ struct TelemetryAppView: View {
                             AppSettingsView(app: app)
                         }
                     }
-                }
+//                }
             }
         }
         

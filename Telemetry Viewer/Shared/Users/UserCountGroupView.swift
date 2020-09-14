@@ -10,6 +10,10 @@ import SwiftUI
 struct UserCountGroupView: View {
     @EnvironmentObject var api: APIRepresentative
     var app: TelemetryApp
+    @State var isShowingCreateUserCountGroupView = false
+    @State var userCountGroupCreateRequestBody: UserCountGroupCreateRequestBody = UserCountGroupCreateRequestBody(title: "New User Count", timeInterval: -3600*24)
+    
+    @Environment(\.presentationMode) var presentationMode
     
     let columns = [
         GridItem(.adaptive(minimum: 250))
@@ -26,13 +30,13 @@ struct UserCountGroupView: View {
                     CardView {
                         
                         Button("Create New") {
-                            api.create(userCountGroupNamed: "testGroup", for: app, withTimeInterval: -3600*24)
+                            isShowingCreateUserCountGroupView = true
                         }
                     }
                 } else {
                     ForEach(MockData.userCounts, id: \.self) { userCountGroup in
                         
-                            UserCountView(userCount: userCountGroup.data.first!, descriptionText: userCountGroup.title, timeInterval: userCountGroup.timeInterval).redacted(reason: .placeholder)
+                        UserCountView(userCount: userCountGroup.data.first!, descriptionText: userCountGroup.title, timeInterval: userCountGroup.timeInterval).redacted(reason: .placeholder)
                     }
                 }
                 
@@ -51,5 +55,37 @@ struct UserCountGroupView: View {
             api.getUserCountGroups(for: app)
             TelemetryManager().send(.telemetryAppUsersShown, for: api.user?.email ?? "unregistered user")
         }
+        .sheet(isPresented: $isShowingCreateUserCountGroupView) {
+            VStack {
+                TextField("User Count Group Title", text: $userCountGroupCreateRequestBody.title)
+                // TextField("Time Interval (negative!)", text: $userCountGroupCreateRequestBody.timeInterval)
+                
+                HStack {
+                    
+                    Button("Save") {
+                        api.create(userCountGroup: userCountGroupCreateRequestBody, for: app)
+                        isShowingCreateUserCountGroupView = false
+                    }
+                    
+                    Button("Cancel") {
+                        isShowingCreateUserCountGroupView = false
+                    }
+                }
+            }
+            .padding()
+        }
+        
+        .toolbar {
+            ToolbarItem {
+                
+                    Button(action: {
+                        isShowingCreateUserCountGroupView = true
+                    }) {
+                        Label("New User Count Group", systemImage: "rectangle.badge.plus")
+                    }
+                
+            }
+        }
+
     }
 }

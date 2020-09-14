@@ -247,11 +247,8 @@ extension APIRepresentative {
         }.resume()
     }
     
-    func create(userCountGroupNamed title: String, for app: TelemetryApp, withTimeInterval timeInterval: TimeInterval) {
-        struct UserCountCreateRequestBody: Codable {
-            let title: String
-            let timeInterval: TimeInterval
-        }
+    func create(userCountGroup: UserCountGroupCreateRequestBody, for app: TelemetryApp) {
+        
         
         guard let uuidString = app.id?.uuidString,
               let url = URL(string: "http://localhost:8080/api/v1/apps/\(uuidString)/usercountgroups/") else {
@@ -264,7 +261,7 @@ extension APIRepresentative {
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         request.setValue(userToken?.bearerTokenAuthString, forHTTPHeaderField: "Authorization")
         
-        let requestBody = UserCountCreateRequestBody(title: title, timeInterval: timeInterval)
+        let requestBody = userCountGroup
         request.httpBody = try! JSONEncoder().encode(requestBody)
         
         URLSession.shared.dataTask(with: request) { data, response, error in

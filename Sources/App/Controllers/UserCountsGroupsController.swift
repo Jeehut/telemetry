@@ -61,8 +61,10 @@ struct UserCountGroupsController: RouteCollection {
         let laterDate = Date()
         
         
+        
         return userCountGroupSaved.flatMap { userCountGroup in
-             return Signal.query(on: req.db)
+            // SELECT COUNT(client_user) FROM SIGNALS WHERE app_id="5AF9FDB3-6712-4C73-B367-958F367CC154";
+            return Signal.query(on: req.db)
                 .filter(\.$app.$id == appID)
                 .filter(\.$receivedAt > earlierDate)
                 .filter(\.$receivedAt < laterDate)
