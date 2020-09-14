@@ -18,16 +18,16 @@ struct MockData {
     ]
     
     static let signals: [Signal] = [
-        .init(id: nil, receivedAt: "Date()", clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
-        .init(id: nil, receivedAt: "Date()", clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
-        .init(id: nil, receivedAt: "Date()", clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
-        .init(id: nil, receivedAt: "Date()", clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
-        .init(id: nil, receivedAt: "Date()", clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
-        .init(id: nil, receivedAt: "Date()", clientUser: "winsmith", type: "testSignal", payload: examplePayload, isMockData: true),
+        .init(id: nil, receivedAt: "Date()", clientUser: "winsmith", type: "testSignal", payload: examplePayload),
+        .init(id: nil, receivedAt: "Date()", clientUser: "winsmith", type: "testSignal", payload: examplePayload),
+        .init(id: nil, receivedAt: "Date()", clientUser: "winsmith", type: "testSignal", payload: examplePayload),
+        .init(id: nil, receivedAt: "Date()", clientUser: "winsmith", type: "testSignal", payload: examplePayload),
+        .init(id: nil, receivedAt: "Date()", clientUser: "winsmith", type: "testSignal", payload: examplePayload),
+        .init(id: nil, receivedAt: "Date()", clientUser: "winsmith", type: "testSignal", payload: examplePayload),
     ]
     
     static let userCounts:  [UserCountGroup] = [
-            UserCountGroup(title: "Active Users", timeInterval: -3600*24, data: [
+        UserCountGroup(id: UUID(), app: nil, title: "Active Users", timeInterval: -3600*24, data: [
                 UserCount(count: 46, calculatedAt: Date()),
                 UserCount(count: 41, calculatedAt: Date(timeInterval: -3600*24, since: Date())),
                 UserCount(count: 63, calculatedAt: Date(timeInterval: -3600*24*2, since: Date())),
@@ -39,9 +39,9 @@ struct MockData {
                 UserCount(count: 47, calculatedAt: Date(timeInterval: -3600*24*8, since: Date())),
                 UserCount(count: 39, calculatedAt: Date(timeInterval: -3600*24*9, since: Date())),
                 UserCount(count: 45, calculatedAt: Date(timeInterval: -3600*24*10, since: Date())),
-            ], isMockData: true),
+            ]),
             
-            UserCountGroup(title: "Active Users", timeInterval: -3600*24*7, data: [
+        UserCountGroup(id: UUID(), app: nil, title: "Active Users", timeInterval: -3600*24*7, data: [
                 UserCount(count: 246, calculatedAt: Date()),
                 UserCount(count: 241, calculatedAt: Date(timeInterval: -3600*24, since: Date())),
                 UserCount(count: 263, calculatedAt: Date(timeInterval: -3600*24*2, since: Date())),
@@ -53,9 +53,9 @@ struct MockData {
                 UserCount(count: 247, calculatedAt: Date(timeInterval: -3600*24*8, since: Date())),
                 UserCount(count: 239, calculatedAt: Date(timeInterval: -3600*24*9, since: Date())),
                 UserCount(count: 245, calculatedAt: Date(timeInterval: -3600*24*10, since: Date())),
-            ], isMockData: true),
+            ]),
             
-            UserCountGroup(title: "Active Users", timeInterval: -3600*24*30, data: [
+        UserCountGroup(id: UUID(), app: nil, title: "Active Users", timeInterval: -3600*24*30, data: [
                 UserCount(count: 446, calculatedAt: Date()),
                 UserCount(count: 241, calculatedAt: Date(timeInterval: -3600*24, since: Date())),
                 UserCount(count: 263, calculatedAt: Date(timeInterval: -3600*24*2, since: Date())),
@@ -67,7 +67,7 @@ struct MockData {
                 UserCount(count: 247, calculatedAt: Date(timeInterval: -3600*24*8, since: Date())),
                 UserCount(count: 239, calculatedAt: Date(timeInterval: -3600*24*9, since: Date())),
                 UserCount(count: 245, calculatedAt: Date(timeInterval: -3600*24*10, since: Date())),
-            ], isMockData: true),
+            ]),
     ]
     
     static let derivedStatisticGroups: [DerivedStatisticGroup] = [

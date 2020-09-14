@@ -11,10 +11,6 @@ struct UserCountGroupView: View {
     @EnvironmentObject var api: APIRepresentative
     var app: TelemetryApp
     
-    var userCountGroups: [UserCountGroup] {
-        return api.userCounts[app, default: MockData.userCounts]
-    }
-    
     let columns = [
         GridItem(.adaptive(minimum: 250))
     ]
@@ -22,13 +18,24 @@ struct UserCountGroupView: View {
     var body: some View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 20) {
-                ForEach(userCountGroups, id: \.self) { userCountGroup in
-                    if userCountGroup.isMockData {
-                        UserCountView(userCount: userCountGroup.data.first!, descriptionText: userCountGroup.title, timeInterval: userCountGroup.timeInterval).redacted(reason: .placeholder)
-                    } else {
-                        UserCountView(userCount: userCountGroup.data.first!, descriptionText: userCountGroup.title, timeInterval: userCountGroup.timeInterval)
+                if api.userCountGroups[app] != nil {
+                    ForEach(api.userCountGroups[app]!) { userCountGroup in
+                        UserCountView(userCount: userCountGroup.data.first ?? UserCount(count: 0, calculatedAt: Date()), descriptionText: userCountGroup.title, timeInterval: userCountGroup.timeInterval)
+                    }
+                    
+                    CardView {
+                        
+                        Button("Create New") {
+                            api.create(userCountGroupNamed: "testGroup", for: app, withTimeInterval: -3600*24)
+                        }
+                    }
+                } else {
+                    ForEach(MockData.userCounts, id: \.self) { userCountGroup in
+                        
+                            UserCountView(userCount: userCountGroup.data.first!, descriptionText: userCountGroup.title, timeInterval: userCountGroup.timeInterval).redacted(reason: .placeholder)
                     }
                 }
+                
             }
             .padding(.horizontal)
             
@@ -41,6 +48,7 @@ struct UserCountGroupView: View {
             .padding(.horizontal)
         }
         .onAppear {
+            api.getUserCountGroups(for: app)
             TelemetryManager().send(.telemetryAppUsersShown, for: api.user?.email ?? "unregistered user")
         }
     }

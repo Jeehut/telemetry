@@ -12,7 +12,7 @@ final class APIRepresentative: ObservableObject {
     
     init() {
         if let encodedUserToken = UserDefaults.standard.data(forKey: APIRepresentative.userTokenStandardsKey),
-           let userToken = try? JSONDecoder().decode(UserToken.self, from: encodedUserToken) {
+           let userToken = try? JSONDecoder.telemetryDecoder.decode(UserToken.self, from: encodedUserToken) {
             self.userToken = userToken
             getUserInformation()
             getApps()
@@ -34,7 +34,7 @@ final class APIRepresentative: ObservableObject {
     @Published var apps: [TelemetryApp] = [MockData.app1, MockData.app2]
     
     @Published var signals: [TelemetryApp: [Signal]] = [:]
-    @Published var userCounts: [TelemetryApp: [UserCountGroup]] = [:]
+    @Published var userCountGroups: [TelemetryApp: [UserCountGroup]] = [:]
     @Published var derivedStatisticGroups: [TelemetryApp: [DerivedStatisticGroup]] = [:]
 }
 
@@ -55,7 +55,7 @@ extension APIRepresentative {
             if let data = data {
                 print(String(decoding: data, as: UTF8.self))
                 
-                if let decodedResponse = try? JSONDecoder().decode(UserToken.self, from: data) {
+                if let decodedResponse = try? JSONDecoder.telemetryDecoder.decode(UserToken.self, from: data) {
                     DispatchQueue.main.async {
                         self.userToken = decodedResponse
                         
@@ -92,7 +92,7 @@ extension APIRepresentative {
             if let data = data {
                 print(String(decoding: data, as: UTF8.self))
                 
-                if let decodedResponse = try? JSONDecoder().decode(UserToken.self, from: data) {
+                if let decodedResponse = try? JSONDecoder.telemetryDecoder.decode(UserToken.self, from: data) {
                     print(decodedResponse)
                 }
             }
@@ -113,7 +113,7 @@ extension APIRepresentative {
             if let data = data {
                 print(String(decoding: data, as: UTF8.self))
                 
-                let decodedResponse = try! JSONDecoder().decode(OrganizationUser.self, from: data)
+                let decodedResponse = try! JSONDecoder.telemetryDecoder.decode(OrganizationUser.self, from: data)
                 
                 DispatchQueue.main.async {
                     self.user = decodedResponse
@@ -137,7 +137,7 @@ extension APIRepresentative {
             if let data = data {
                 print(String(decoding: data, as: UTF8.self))
                 
-                let decodedResponse = try! JSONDecoder().decode([TelemetryApp].self, from: data)
+                let decodedResponse = try! JSONDecoder.telemetryDecoder.decode([TelemetryApp].self, from: data)
                 
                 DispatchQueue.main.async {
                     self.apps = decodedResponse
@@ -163,7 +163,7 @@ extension APIRepresentative {
             if let data = data {
                 print(String(decoding: data, as: UTF8.self))
                 
-                let decodedResponse = try! JSONDecoder().decode(TelemetryApp.self, from: data)
+                let decodedResponse = try! JSONDecoder.telemetryDecoder.decode(TelemetryApp.self, from: data)
                 print(decodedResponse)
                 
                 DispatchQueue.main.async {
@@ -191,7 +191,7 @@ extension APIRepresentative {
             if let data = data {
                 print(String(decoding: data, as: UTF8.self))
                 
-                let decodedResponse = try! JSONDecoder().decode(TelemetryApp.self, from: data)
+                let decodedResponse = try! JSONDecoder.telemetryDecoder.decode(TelemetryApp.self, from: data)
                 print(decodedResponse)
                 
                 DispatchQueue.main.async {
@@ -237,10 +237,66 @@ extension APIRepresentative {
             if let data = data {
                 print(String(decoding: data, as: UTF8.self))
                 
-                let decodedResponse = try! JSONDecoder().decode([Signal].self, from: data)
+                let decodedResponse = try! JSONDecoder.telemetryDecoder.decode([Signal].self, from: data)
                 
                 DispatchQueue.main.async {
                     self.signals[app] = decodedResponse
+                }
+                
+            }
+        }.resume()
+    }
+    
+    func create(userCountGroupNamed title: String, for app: TelemetryApp, withTimeInterval timeInterval: TimeInterval) {
+        struct UserCountCreateRequestBody: Codable {
+            let title: String
+            let timeInterval: TimeInterval
+        }
+        
+        guard let uuidString = app.id?.uuidString,
+              let url = URL(string: "http://localhost:8080/api/v1/apps/\(uuidString)/usercountgroups/") else {
+            print("Invalid URL")
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.setValue(userToken?.bearerTokenAuthString, forHTTPHeaderField: "Authorization")
+        
+        let requestBody = UserCountCreateRequestBody(title: title, timeInterval: timeInterval)
+        request.httpBody = try! JSONEncoder().encode(requestBody)
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let data = data {
+                print(String(decoding: data, as: UTF8.self))
+                self.getUserCountGroups(for: app)
+            }
+        }.resume()
+    }
+    
+    func getUserCountGroups(for app: TelemetryApp) {
+        guard let uuidString = app.id?.uuidString,
+            let url = URL(string: "http://localhost:8080/api/v1/apps/\(uuidString)/usercountgroups/") else {
+            print("Invalid URL")
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.setValue(userToken?.bearerTokenAuthString, forHTTPHeaderField: "Authorization")
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let data = data {
+                print(String(decoding: data, as: UTF8.self))
+                
+                
+
+                
+                let decodedResponse = try! JSONDecoder.telemetryDecoder.decode([UserCountGroup].self, from: data)
+                
+                DispatchQueue.main.async {
+                    self.userCountGroups[app] = decodedResponse
                 }
                 
             }

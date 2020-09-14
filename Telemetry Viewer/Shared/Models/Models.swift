@@ -38,12 +38,6 @@ struct Signal: Codable, Hashable {
     var clientUser: String
     var type: String
     var payload: Dictionary<String, String>?
-    
-    var isMockData: Bool = false
-     
-    enum CodingKeys: String, CodingKey {
-        case id, receivedAt, clientUser, type, payload
-    }
 }
 
 struct UserCount: Codable, Hashable {
@@ -51,15 +45,12 @@ struct UserCount: Codable, Hashable {
     let calculatedAt: Date
 }
 
-struct UserCountGroup: Codable, Hashable {
+struct UserCountGroup: Codable, Hashable, Identifiable {
+    let id: UUID
+    let app: [String: String]?
     let title: String
     let timeInterval: TimeInterval
     let data: [UserCount]
-    var isMockData: Bool = false
-    
-    enum CodingKeys: String, CodingKey {
-        case title, timeInterval, data
-    }
 }
 
 struct DerivedStatisticGroup: Codable, Hashable {

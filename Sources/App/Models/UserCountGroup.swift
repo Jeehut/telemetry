@@ -15,4 +15,7 @@ final class UserCountGroup: Model, Content {
     
     @Field(key: "time_interval")
     var timeInterval: TimeInterval
+    
+    @Children(for: \.$userCountGroup)
+    var data: [UserCount]
 }

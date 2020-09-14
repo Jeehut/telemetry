@@ -17,7 +17,7 @@ struct SignalsController: RouteCollection {
         }
         
         let user = try req.auth.require(User.self)
-        // TODO: Only return signals for this user's org
+        // TODO: Filter for user's org's apps
         
         return Signal.query(on: req.db)
             .filter(\.$app.$id == appID)
@@ -25,6 +25,9 @@ struct SignalsController: RouteCollection {
     }
     
     func postSignal(req: Request) throws -> EventLoopFuture<Signal> {
+        // This function does not check for logged in user,
+        // because signals posted don't have user ID.
+        // Instead, we rely on the App ID as a shared secret
         
         struct SignalDeliveryResponse: Content {
             let status: String
