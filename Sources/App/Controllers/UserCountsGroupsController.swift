@@ -7,6 +7,7 @@ struct UserCountGroupsController: RouteCollection {
         let userCountGroups = routes.grouped(UserToken.authenticator())
         userCountGroups.get(use: getAll)
         userCountGroups.post(use: create)
+        userCountGroups.delete(":userCountGroupID", use: delete)
     }
     
     func getAll(req: Request) throws -> EventLoopFuture<[UserCountGroup]> {
@@ -21,6 +22,7 @@ struct UserCountGroupsController: RouteCollection {
         return UserCountGroup.query(on: req.db)
             .with(\.$data)
             .filter(\.$app.$id == appID)
+            .sort(\.$timeInterval, .descending)
             .all()
     }
     
@@ -83,5 +85,22 @@ struct UserCountGroupsController: RouteCollection {
         }
 //
 //        return userCountGroupSaved
+    }
+    
+    func delete(req: Request) throws -> EventLoopFuture<HTTPStatus> {
+        guard let userCountGroupIDString = req.parameters.get("userCountGroupID"),
+              let userCountGroupID = UUID(userCountGroupIDString) else {
+            throw Abort(.badRequest, reason: "Invalid parameter `userCountGroupIDString`")
+        }
+        
+        let user = try req.auth.require(User.self)
+        
+        // TODO: Filter by user org
+        return UserCountGroup.query(on: req.db)
+            .filter(\.$id == userCountGroupID)
+            .first()
+            .unwrap(or: Abort(.notFound))
+            .flatMap { $0.delete(on: req.db) }
+            .map { .ok }
     }
 }

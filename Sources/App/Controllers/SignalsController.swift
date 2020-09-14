@@ -21,6 +21,7 @@ struct SignalsController: RouteCollection {
         
         return Signal.query(on: req.db)
             .filter(\.$app.$id == appID)
+            .sort(\.$receivedAt, .descending)
             .all()
     }
     

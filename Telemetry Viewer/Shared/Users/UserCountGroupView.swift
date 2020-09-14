@@ -24,18 +24,22 @@ struct UserCountGroupView: View {
             LazyVGrid(columns: columns, spacing: 20) {
                 if api.userCountGroups[app] != nil {
                     ForEach(api.userCountGroups[app]!) { userCountGroup in
-                        UserCountView(userCount: userCountGroup.data.first ?? UserCount(count: 0, calculatedAt: Date()), descriptionText: userCountGroup.title, timeInterval: userCountGroup.timeInterval)
+                        ZStack(alignment: Alignment.topTrailing) {
+                            UserCountView(userCount: userCountGroup.data.first ?? UserCount(count: 0, calculatedAt: Date()), descriptionText: userCountGroup.title, timeInterval: userCountGroup.timeInterval)
+                            Button("Delete") {
+                                api.delete(userCountGroup: userCountGroup, from: app)
+                            }
+                            .padding()
+                        }
                     }
                     
                     CardView {
-                        
                         Button("Create New") {
                             isShowingCreateUserCountGroupView = true
                         }
                     }
                 } else {
                     ForEach(MockData.userCounts, id: \.self) { userCountGroup in
-                        
                         UserCountView(userCount: userCountGroup.data.first!, descriptionText: userCountGroup.title, timeInterval: userCountGroup.timeInterval).redacted(reason: .placeholder)
                     }
                 }

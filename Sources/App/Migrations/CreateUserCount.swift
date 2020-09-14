@@ -18,6 +18,7 @@ extension UserCount {
                 .field("count", .int, .required)
                 .field("calculated_at", .datetime, .required)
                 .field("usercount_group_id", .uuid, .required, .references(UserCountGroup.schema, "id"))
+                .foreignKey("usercount_group_id", references: UserCountGroup.schema, "id", onDelete: .cascade, onUpdate: .noAction)
                 .create()
         }
         
