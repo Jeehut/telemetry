@@ -9,7 +9,7 @@ import SwiftUI
 
 
 struct UserCountView: View {
-    let userCount: UserCount
+    let userCount: UserCount?
     let descriptionText: String
     let timeInterval: TimeInterval
     
@@ -24,10 +24,15 @@ struct UserCountView: View {
     var body: some View {
         CardView {
             VStack {
-                Text(numberFormatter.string(from: NSNumber(value: userCount.count)) ?? "–").font(.system(size: 64, weight: .black, design: .monospaced))
+                if let count = userCount?.count, let countText = numberFormatter.string(from: NSNumber(value: count)) {
+                    Text(countText).font(.system(size: 64, weight: .black, design: .monospaced))
+                } else {
+                    Text("–").font(.system(size: 64, weight: .black, design: .monospaced))
+                }
+                
                 Text(descriptionText)
                 
-                let calculatedAt = userCount.calculatedAt
+                let calculatedAt = userCount?.calculatedAt ?? Date()
                 let calculationBeginDate = Date(timeInterval: timeInterval, since: calculatedAt)
                 
                 let dateComponents = Calendar.autoupdatingCurrent.dateComponents([.day, .hour, .minute], from: calculationBeginDate, to: calculatedAt)

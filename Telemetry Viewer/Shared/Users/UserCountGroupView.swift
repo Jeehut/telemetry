@@ -29,7 +29,7 @@ struct UserCountGroupView: View {
                 if api.userCountGroups[app] != nil {
                     ForEach(api.userCountGroups[app]!) { userCountGroup in
                         ZStack(alignment: Alignment.topTrailing) {
-                            UserCountView(userCount: userCountGroup.data.first ?? UserCount(count: 0, calculatedAt: Date()), descriptionText: userCountGroup.title, timeInterval: userCountGroup.timeInterval)
+                            UserCountView(userCount: userCountGroup.data.first, descriptionText: userCountGroup.title, timeInterval: userCountGroup.timeInterval)
                             
                             Button(
                                 action: { api.delete(userCountGroup: userCountGroup, from: app) },
