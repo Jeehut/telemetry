@@ -30,7 +30,7 @@ struct UserCountGroupView: View {
                 if api.userCountGroups[app] != nil {
                     ForEach(api.userCountGroups[app]!) { userCountGroup in
                         ZStack(alignment: Alignment.topTrailing) {
-                            UserCountView(userCount: userCountGroup.data.first, descriptionText: userCountGroup.title, timeInterval: userCountGroup.timeInterval)
+                            UserCountView(userCountGroup: userCountGroup)
                             
                             Button(
                                 action: { api.delete(userCountGroup: userCountGroup, from: app) },
@@ -42,11 +42,11 @@ struct UserCountGroupView: View {
                     }
                     
                     CardView {
-                        Button(action: { isShowingCreateUserCountGroupView = true }, label: { Label("Create New", image: "rectangle.badge.plus") })
+                        Button(action: { isShowingCreateUserCountGroupView = true }, label: { Label("Create New", systemImage: "rectangle.badge.plus") })
                     }
                 } else {
                     ForEach(MockData.userCounts, id: \.self) { userCountGroup in
-                        UserCountView(userCount: userCountGroup.data.first!, descriptionText: userCountGroup.title, timeInterval: userCountGroup.timeInterval).redacted(reason: .placeholder)
+                        UserCountView(userCountGroup: userCountGroup).redacted(reason: .placeholder)
                     }
                 }
                 

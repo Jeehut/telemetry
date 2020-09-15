@@ -19,3 +19,14 @@ final class UserCountGroup: Model, Content {
     @Children(for: \.$userCountGroup)
     var data: [UserCount]
 }
+
+struct UserCountGroupDataTransferObject: Content {
+    var id: UUID?
+    var app: [String: String]
+    var title: String
+    var timeInterval: TimeInterval
+    var data: [UserCount]
+    
+    // This is not a field, and should be calculated at retrieval time
+    var rollingCurrentCount: Int
+}

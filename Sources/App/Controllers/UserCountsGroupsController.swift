@@ -10,7 +10,7 @@ struct UserCountGroupsController: RouteCollection {
         userCountGroups.delete(":userCountGroupID", use: delete)
     }
     
-    func getAll(req: Request) throws -> EventLoopFuture<[UserCountGroup]> {
+    func getAll(req: Request) throws -> EventLoopFuture<[UserCountGroupDataTransferObject]> {
         guard let appIDString = req.parameters.get("appID"),
               let appID = UUID(appIDString) else {
             throw Abort(.badRequest, reason: "Invalid parameter `appID`")
@@ -24,7 +24,7 @@ struct UserCountGroupsController: RouteCollection {
             .filter(\.$app.$id == appID)
             .sort(\.$timeInterval, .descending)
             .all()
-            .mapEach { userCountGroup in
+            .mapEach { userCountGroup -> UserCountGroup in
                 let furthestBack = Date(timeIntervalSinceNow: -3600*24*35) // Slightly over a month ago
                 var currentDate = Date()
                 
@@ -38,7 +38,6 @@ struct UserCountGroupsController: RouteCollection {
                     }
                     
                     // If not, create and save it
-                    print("CREATE")
                     let earlierDate = Date(timeInterval: userCountGroup.timeInterval, since: currentDate)
                     let laterDate = currentDate
                     
@@ -59,6 +58,30 @@ struct UserCountGroupsController: RouteCollection {
                 }
                 
                 return userCountGroup
+            }
+            .flatMapEach(on: req.eventLoop) { userCountGroup in
+                
+                // Retrieve the value at the current time
+                let laterDate = Date()
+                let earlierDate = Date(timeInterval: userCountGroup.timeInterval, since: laterDate)
+                
+                let omsn = Signal.query(on: req.db)
+                    .filter(\.$app.$id == appID)
+                    .filter(\.$receivedAt > earlierDate)
+                    .filter(\.$receivedAt < laterDate)
+                    .unique()
+                    .count(\.$clientUser)
+                    .map { count -> UserCountGroupDataTransferObject in
+                        return UserCountGroupDataTransferObject(
+                            id: userCountGroup.id,
+                            app: ["id": userCountGroup.$app.id.uuidString],
+                            title: userCountGroup.title,
+                            timeInterval: userCountGroup.timeInterval,
+                            data: userCountGroup.data,
+                            rollingCurrentCount: count)
+                    }
+                
+                return omsn
             }
     }
     

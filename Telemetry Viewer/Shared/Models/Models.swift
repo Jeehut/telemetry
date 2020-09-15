@@ -52,6 +52,7 @@ struct UserCountGroup: Codable, Hashable, Identifiable {
     let title: String
     let timeInterval: TimeInterval
     let data: [UserCount]
+    let rollingCurrentCount: Int
 }
 
 struct DerivedStatisticGroup: Codable, Hashable {

@@ -39,7 +39,7 @@ struct MockData {
             UserCount(id: nil, count: 47, calculatedAt: Date(timeInterval: -3600*24*8, since: Date())),
             UserCount(id: nil, count: 39, calculatedAt: Date(timeInterval: -3600*24*9, since: Date())),
             UserCount(id: nil, count: 45, calculatedAt: Date(timeInterval: -3600*24*10, since: Date())),
-            ]),
+        ], rollingCurrentCount: 121),
             
         UserCountGroup(id: UUID(), app: nil, title: "Active Users", timeInterval: -3600*24*7, data: [
             UserCount(id: nil, count: 246, calculatedAt: Date()),
@@ -53,7 +53,7 @@ struct MockData {
             UserCount(id: nil, count: 247, calculatedAt: Date(timeInterval: -3600*24*8, since: Date())),
             UserCount(id: nil, count: 239, calculatedAt: Date(timeInterval: -3600*24*9, since: Date())),
             UserCount(id: nil, count: 245, calculatedAt: Date(timeInterval: -3600*24*10, since: Date())),
-            ]),
+        ], rollingCurrentCount: 123),
             
         UserCountGroup(id: UUID(), app: nil, title: "Active Users", timeInterval: -3600*24*30, data: [
             UserCount(id: nil, count: 446, calculatedAt: Date()),
@@ -67,7 +67,7 @@ struct MockData {
             UserCount(id: nil, count: 247, calculatedAt: Date(timeInterval: -3600*24*8, since: Date())),
             UserCount(id: nil, count: 239, calculatedAt: Date(timeInterval: -3600*24*9, since: Date())),
             UserCount(id: nil, count: 245, calculatedAt: Date(timeInterval: -3600*24*10, since: Date())),
-            ]),
+        ], rollingCurrentCount: 125),
     ]
     
     static let derivedStatisticGroups: [DerivedStatisticGroup] = [
