@@ -286,10 +286,7 @@ extension APIRepresentative {
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let data = data {
                 print(String(decoding: data, as: UTF8.self))
-                
-                
 
-                
                 let decodedResponse = try! JSONDecoder.telemetryDecoder.decode([UserCountGroup].self, from: data)
                 
                 DispatchQueue.main.async {
