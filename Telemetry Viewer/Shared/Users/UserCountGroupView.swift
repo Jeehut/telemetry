@@ -25,7 +25,7 @@ struct UserCountGroupView: View {
     
     var body: some View {
         ScrollView {
-            LazyVGrid(columns: columns, spacing: 20) {
+            LazyVGrid(columns: columns, spacing: 10) {
                 if api.userCountGroups[app] != nil {
                     ForEach(api.userCountGroups[app]!) { userCountGroup in
                         ZStack(alignment: Alignment.topTrailing) {
@@ -55,7 +55,7 @@ struct UserCountGroupView: View {
             if api.userCountGroups[app] != nil && !api.userCountGroups[app]!.isEmpty {
                 LazyVGrid(columns: [GridItem(.flexible()),], spacing: 20) {
                     CardView {
-                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 20))], alignment: .leading) {
+                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 30))], alignment: .leading) {
                             ForEach(api.userCountGroups[app]!) { userCountGroup in
                                 Section(header: Text(userCountGroup.title).font(.title3)) {
                                     ForEach(userCountGroup.data, id: \.self) { userCount in
