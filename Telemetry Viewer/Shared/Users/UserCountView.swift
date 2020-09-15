@@ -45,6 +45,6 @@ struct UserCountView: View {
 
 struct UserCountView_Previews: PreviewProvider {
     static var previews: some View {
-        UserCountView(userCount: UserCount(count: 2401, calculatedAt: Date()), descriptionText: "Active Users", timeInterval: -3600*24)
+        UserCountView(userCount: UserCount(id: nil, count: 2401, calculatedAt: Date()), descriptionText: "Active Users", timeInterval: -3600*24)
     }
 }

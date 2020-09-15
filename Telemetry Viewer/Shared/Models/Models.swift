@@ -41,6 +41,7 @@ struct Signal: Codable, Hashable {
 }
 
 struct UserCount: Codable, Hashable {
+    let id: UUID?
     let count: Int
     let calculatedAt: Date
 }

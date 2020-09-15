@@ -12,6 +12,7 @@ struct UserCountGroupView: View {
     var app: TelemetryApp
     @State var isShowingCreateUserCountGroupView = false
     @State var userCountGroupCreateRequestBody: UserCountGroupCreateRequestBody = UserCountGroupCreateRequestBody(title: "Active Users", timeInterval: -3600*24)
+    let timer = Timer.publish(every: 10, on: .current, in: .common).autoconnect()
     
     let columns = [
         GridItem(.adaptive(minimum: 250))
@@ -72,6 +73,9 @@ struct UserCountGroupView: View {
         .onAppear {
             api.getUserCountGroups(for: app)
             TelemetryManager().send(.telemetryAppUsersShown, for: api.user?.email ?? "unregistered user")
+        }
+        .onReceive(timer) { timer in
+            api.getUserCountGroups(for: app)
         }
         .sheet(isPresented: $isShowingCreateUserCountGroupView) {
             Form {
