@@ -69,9 +69,7 @@ struct SidebarView: View {
                         Label("New App", systemImage: "plus.app.fill")
                     }
                     .sheet(isPresented: $isCreatingANewApp) {
-                        NavigationView {
-                            NewAppView()
-                        }
+                        NewAppView(isPresented: $isCreatingANewApp)
                     }
                 }
             }
