@@ -35,7 +35,7 @@ struct NewAppView: View {
                 .padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
             #endif
             
-            Section(header: Text("App Name"), footer: Text("What is your app called?")) {
+            Section(header: Text("App Name"), footer: Text("What is your new app called?")) {
                 TextField("Name", text: $newAppName)
             }
             
