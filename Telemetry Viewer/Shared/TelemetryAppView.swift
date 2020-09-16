@@ -48,18 +48,14 @@ struct TelemetryAppView: View {
         .navigationTitle(calculatedNavigationTitle)
         .toolbar {
             ToolbarItem {
-//                HStack {
                     Button(action: {
                         isCreatingANewApp = true
                     }) {
                         Label("App Settings", systemImage: "gear")
                     }
                     .sheet(isPresented: $isCreatingANewApp) {
-                        NavigationView {
-                            AppSettingsView(app: app)
-                        }
+                            AppSettingsView(isPresented: $isCreatingANewApp, app: app)
                     }
-//                }
             }
         }
         
