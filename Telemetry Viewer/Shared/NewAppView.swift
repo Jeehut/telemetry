@@ -35,9 +35,11 @@ struct NewAppView: View {
         .padding()
         .navigationTitle("New App")
         
-        #if os(macOS)
-        #else
+        
+        
         .toolbar {
+            #if os(macOS)
+            #else 
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("Save") {
                     api.create(appNamed: newAppName)
@@ -45,7 +47,8 @@ struct NewAppView: View {
                     TelemetryManager().send(.telemetryAppCreated, for: api.user?.email ?? "unregistered user")
                 }
             }
+            #endif
         }
-        #endif
+        
     }
 }

@@ -11,18 +11,12 @@ struct UserCountGroupView: View {
     @EnvironmentObject var api: APIRepresentative
     var app: TelemetryApp
     @State var isShowingCreateUserCountGroupView = false
-    @State var userCountGroupCreateRequestBody: UserCountGroupCreateRequestBody = UserCountGroupCreateRequestBody(title: "Active Users", timeInterval: -3600*24)
+    
     let timer = Timer.publish(every: 10, on: .current, in: .common).autoconnect()
     
     let columns = [
         GridItem(.adaptive(minimum: 250))
     ]
-    
-    let dateComponentsFormatter: DateComponentsFormatter = {
-        let formatter = DateComponentsFormatter()
-        formatter.unitsStyle = .full
-        return formatter
-    }()
     
     var body: some View {
         ScrollView {
@@ -78,43 +72,7 @@ struct UserCountGroupView: View {
             api.getUserCountGroups(for: app)
         }
         .sheet(isPresented: $isShowingCreateUserCountGroupView) {
-            Form {
-                Text("User Count Groups are a named request to Telemetry to count and graph users over a specific time frame.")
-                
-                Section(header: Text("New User Count Group")) {
-                    TextField("Title", text: $userCountGroupCreateRequestBody.title)
-                }
-                
-                Section(header: Text("Time Frame")) {
-                    Text("How many seconds should we go backwards in time to look for users?")
-                    
-                    HStack {
-                        TextField("Time Frame", value: $userCountGroupCreateRequestBody.timeInterval, formatter: NumberFormatter())
-                        Button("1 Hour") { userCountGroupCreateRequestBody.timeInterval = -3600 }
-                        Button("A day") { userCountGroupCreateRequestBody.timeInterval = -3600*24 }
-                        Button("A Week") { userCountGroupCreateRequestBody.timeInterval = -3600*24*7 }
-                        Button("30 Days") { userCountGroupCreateRequestBody.timeInterval = -3600*24*30 }
-                    }
-                    
-                    let calculatedAt = Date()
-                    let calculationBeginDate = Date(timeInterval: userCountGroupCreateRequestBody.timeInterval, since: calculatedAt)
-                    let dateComponents = Calendar.autoupdatingCurrent.dateComponents([.day, .hour, .minute], from: calculationBeginDate, to: calculatedAt)
-                    Text("Look at the last \(dateComponentsFormatter.string(from: dateComponents) ?? "—")").bold()
-                    
-                    
-                    HStack {
-                        Button("Save") {
-                            api.create(userCountGroup: userCountGroupCreateRequestBody, for: app)
-                            isShowingCreateUserCountGroupView = false
-                        }
-                        
-                        Button("Cancel") {
-                            isShowingCreateUserCountGroupView = false
-                        }
-                    }
-                }
-            }
-            .padding()
+                NewUserCountGroupForm(isPresented: $isShowingCreateUserCountGroupView, app: app)
         }
         
         .toolbar {

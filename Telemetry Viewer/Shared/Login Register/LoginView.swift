@@ -15,9 +15,11 @@ struct LoginView: View {
     var body: some View {
         Form {
             Section(header: Text("Login")) {
-                TextField("Email", text: $loginRequestBody.userEmail)
+                
                 #if os(macOS)
+                    TextField("Email", text: $loginRequestBody.userEmail)
                 #else
+                    TextField("Email", text: $loginRequestBody.userEmail)
                     .textContentType(.emailAddress)
                     .autocapitalization(.none)
                     .disableAutocorrection(true)

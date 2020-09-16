@@ -22,7 +22,6 @@ struct AppSettingsView: View {
     }
     
     var body: some View {
-        NavigationView {
             VStack {
                 Text("App Settings")
                 TextField("", text: .constant(appIDString))
@@ -47,7 +46,7 @@ struct AppSettingsView: View {
                 
             }
             .padding()
-        }
+        
         .onAppear {
             newName = app.name
             TelemetryManager().send(.telemetryAppSettingsShown, for: api.user?.email ?? "unregistered user")

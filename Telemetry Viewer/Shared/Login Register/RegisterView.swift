@@ -54,9 +54,11 @@ struct RegisterView: View {
             Section(header: Text("You")) {
                 TextField("First Name", text: $registrationRequestBody.userFirstName)
                 TextField("Last Name", text: $registrationRequestBody.userLastName)
-                TextField("Email", text: $registrationRequestBody.userEmail)
+                
                 #if os(macOS)
+                    TextField("Email", text: $registrationRequestBody.userEmail)
                 #else
+                    TextField("Email", text: $registrationRequestBody.userEmail)
                     .textContentType(.emailAddress)
                     .autocapitalization(.none)
                     .disableAutocorrection(true)

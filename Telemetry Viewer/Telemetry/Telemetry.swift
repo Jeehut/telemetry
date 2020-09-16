@@ -8,6 +8,10 @@
 import Foundation
 import CommonCrypto
 
+#if os(iOS)
+import UIKit
+#endif
+
 enum TelemetryManagerConfiguation {
     static let telemetryAppID: String = "5AF9FDB3-6712-4C73-B367-958F367CC154"
     static let telemetryBaseURL: URL = URL(string: "http://127.0.0.1:8080")!
