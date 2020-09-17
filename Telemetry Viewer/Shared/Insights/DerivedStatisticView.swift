@@ -20,10 +20,10 @@ struct DerivedStatisticView: View {
             VStack(alignment: .leading) {
                 Text(derivedStatistic.title).font(.title3)
                 LazyVGrid(columns: columns, alignment: .leading) {
-                    let dictionaryKeys = Array(derivedStatistic.statistics.keys).sorted()
+                    let dictionaryKeys = Array(derivedStatistic.rollingCurrentStatistics.keys).sorted()
                     ForEach(dictionaryKeys, id: \.self) { key in
                         Text(key)
-                        Text("\(derivedStatistic.statistics[key] ?? 0)")
+                        Text("\(derivedStatistic.rollingCurrentStatistics[key] ?? 0)")
                             .font(.system(size: 17, weight: .black, design: .monospaced))
                             .frame(width: 80, alignment: .trailing)
                     }
@@ -36,6 +36,6 @@ struct DerivedStatisticView: View {
 
 struct DerivedStatisticView_Previews: PreviewProvider {
     static var previews: some View {
-        DerivedStatisticView(derivedStatistic: DerivedStatistic(title: "Libido Description Type", statistics: ["colorful": 191, "neutral": 8, "unknown": 12]))
+        DerivedStatisticView(derivedStatistic: DerivedStatistic(title: "Libido Description Type", rollingCurrentStatistics: ["colorful": 191, "neutral": 8, "unknown": 12], historicalData: []))
     }
 }

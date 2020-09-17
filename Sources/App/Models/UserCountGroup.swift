@@ -17,7 +17,7 @@ final class UserCountGroup: Model, Content {
     var timeInterval: TimeInterval
     
     @Children(for: \.$userCountGroup)
-    var data: [UserCount]
+    var historiclData: [UserCount]
 }
 
 struct UserCountGroupDataTransferObject: Content {
@@ -25,7 +25,7 @@ struct UserCountGroupDataTransferObject: Content {
     var app: [String: String]
     var title: String
     var timeInterval: TimeInterval
-    var data: [UserCount]
+    var historicalData: [UserCount]
     
     // This is not a field, and should be calculated at retrieval time
     var rollingCurrentCount: Int

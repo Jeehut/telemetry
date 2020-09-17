@@ -20,7 +20,7 @@ struct UserCountGroupsController: RouteCollection {
         // TODO: Only return apps for this user's org
         
         return UserCountGroup.query(on: req.db)
-            .with(\.$data)
+            .with(\.$historiclData)
             .filter(\.$app.$id == appID)
             .sort(\.$timeInterval, .descending)
             .all()
@@ -33,7 +33,7 @@ struct UserCountGroupsController: RouteCollection {
                     currentDate = Calendar.current.startOfDay(for: Date(timeInterval: -1, since: currentDate))
                     
                     // Check if there's a UserCount calculated at currentDate
-                    guard userCountGroup.data.filter({ userCount in return userCount.calculatedAt == currentDate }).isEmpty else {
+                    guard userCountGroup.historiclData.filter({ userCount in return userCount.calculatedAt == currentDate }).isEmpty else {
                         continue
                     }
                     
@@ -77,7 +77,7 @@ struct UserCountGroupsController: RouteCollection {
                             app: ["id": userCountGroup.$app.id.uuidString],
                             title: userCountGroup.title,
                             timeInterval: userCountGroup.timeInterval,
-                            data: userCountGroup.data,
+                            historicalData: userCountGroup.historiclData,
                             rollingCurrentCount: count)
                     }
                 

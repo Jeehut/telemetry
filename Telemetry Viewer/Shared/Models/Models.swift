@@ -51,23 +51,25 @@ struct UserCountGroup: Codable, Hashable, Identifiable {
     let app: [String: String]?
     let title: String
     let timeInterval: TimeInterval
-    let data: [UserCount]
+    let historicalData: [UserCount]
     let rollingCurrentCount: Int
 }
 
 struct DerivedStatisticGroup: Codable, Hashable {
     let title: String
     let derivedStatistics: [DerivedStatistic]
-    var isMockData: Bool = false
-    
-    enum CodingKeys: String, CodingKey {
-        case title, derivedStatistics
-    }
 }
 
 struct DerivedStatistic: Codable, Hashable {
     let title: String
+    let rollingCurrentStatistics: [String: Int]
+    let historicalData: [DerivedStatisticHistoricalData]
+}
+
+struct DerivedStatisticHistoricalData: Codable, Hashable {
+    let title: String
     let statistics: [String: Int]
+    let calculatedAt: Date
 }
 
 struct UserCountGroupCreateRequestBody: Codable {

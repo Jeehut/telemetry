@@ -53,7 +53,7 @@ struct UserCountGroupView: View {
                         LazyVGrid(columns: [GridItem(.adaptive(minimum: 30))], alignment: .leading) {
                             ForEach(api.userCountGroups[app]!) { userCountGroup in
                                 Section(header: Text(userCountGroup.title).font(.title3)) {
-                                    ForEach(userCountGroup.data, id: \.self) { userCount in
+                                    ForEach(userCountGroup.historicalData, id: \.self) { userCount in
                                         Text("\(userCount.count)").font(.system(.body, design: .monospaced))
                                     }
                                 }
