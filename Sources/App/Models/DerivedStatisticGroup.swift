@@ -7,6 +7,9 @@ final class DerivedStatisticGroup: Model, Content {
     @ID(key: .id)
     var id: UUID?
     
+    @Parent(key: "app_id")
+    var app: App
+    
     @Field(key: "title")
     var title: String
     

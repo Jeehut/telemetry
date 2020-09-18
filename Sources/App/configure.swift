@@ -22,6 +22,10 @@ public func configure(_ app: Application) throws {
     
     app.migrations.add(UserCount.Migration())
     app.migrations.add(UserCountGroup.Migration())
+    
+    app.migrations.add(DerivedStatisticGroup.Migration())
+    app.migrations.add(DerivedStatistic.Migration())
+    app.migrations.add(DerivedStatisticHistoricalData.Migration())
 
     try app.autoMigrate().wait()
 
