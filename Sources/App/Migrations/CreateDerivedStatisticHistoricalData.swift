@@ -7,10 +7,10 @@ extension DerivedStatisticHistoricalData {
         func prepare(on database: Database) -> EventLoopFuture<Void> {
             database.schema(DerivedStatisticHistoricalData.schema)
                 .id()
+                .field("statistics", .dictionary(of: .int), .required)
+                .field("calculated_at", .datetime, .required)
                 .field("derivedstatistic_id", .uuid, .required, .references(DerivedStatistic.schema, "id"))
                 .foreignKey("derivedstatistic_id", references: DerivedStatistic.schema, "id", onDelete: .cascade, onUpdate: .noAction)
-                .field("statistics", .string, .required)
-                .field("calculated_at", .datetime, .required)
                 .create()
         }
 

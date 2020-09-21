@@ -34,10 +34,6 @@ struct UserCountGroupView: View {
                                 .offset(x: -10, y: 10)
                         }
                     }
-                    
-                    CardView {
-                        Button(action: { isShowingCreateUserCountGroupView = true }, label: { Label("Create New", systemImage: "rectangle.badge.plus") })
-                    }
                 } else {
                     ForEach(MockData.userCounts, id: \.self) { userCountGroup in
                         UserCountView(userCountGroup: userCountGroup).redacted(reason: .placeholder)

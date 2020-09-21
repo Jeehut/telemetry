@@ -28,4 +28,5 @@ func routes(_ app: Application) throws {
     try apiRoutes.grouped("apps").register(collection: AppController())
     try apiRoutes.grouped("apps", ":appID", "signals").register(collection: SignalsController())
     try apiRoutes.grouped("apps", ":appID", "usercountgroups").register(collection: UserCountGroupsController())
+    try apiRoutes.grouped("apps", ":appID", "derivedstatisticgroups").register(collection: DerivedStatisticGroupController())
 }

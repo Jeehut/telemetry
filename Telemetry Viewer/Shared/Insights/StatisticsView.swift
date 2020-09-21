@@ -43,6 +43,7 @@ struct StatisticsView: View {
             .padding()
         }
         .onAppear {
+            api.getDerivedStatisticGroups(for: app)
             TelemetryManager().send(.telemetryAppInsightsShown, for: api.user?.email ?? "unregistered user")
         }
     }

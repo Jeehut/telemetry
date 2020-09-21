@@ -7,9 +7,6 @@ final class DerivedStatisticHistoricalData: Model, Content {
     @ID(key: .id)
     var id: UUID?
     
-    @Field(key: "title")
-    var title: String
-    
     @Field(key: "statistics")
     var statistics: [String: Int]
     

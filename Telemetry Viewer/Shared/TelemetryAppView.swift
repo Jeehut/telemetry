@@ -27,7 +27,6 @@ struct TelemetryAppView: View {
     }
     
     var body: some View {
-        
         TabView(selection: $selectedView) {
             UserCountGroupView(app: app)
                 .tabItem {
@@ -46,18 +45,5 @@ struct TelemetryAppView: View {
                 }.tag(2)
         }
         .navigationTitle(calculatedNavigationTitle)
-        .toolbar {
-            ToolbarItem {
-                    Button(action: {
-                        isCreatingANewApp = true
-                    }) {
-                        Label("App Settings", systemImage: "gear")
-                    }
-                    .sheet(isPresented: $isCreatingANewApp) {
-                            AppSettingsView(isPresented: $isCreatingANewApp, app: app)
-                    }
-            }
-        }
-        
     }
 }

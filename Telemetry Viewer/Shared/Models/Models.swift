@@ -67,7 +67,6 @@ struct DerivedStatistic: Codable, Hashable {
 }
 
 struct DerivedStatisticHistoricalData: Codable, Hashable {
-    let title: String
     let statistics: [String: Int]
     let calculatedAt: Date
 }
