@@ -64,8 +64,8 @@ final class TelemetryManager {
 
             let task = URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
                 if let error = error { print(error, data as Any, response as Any) }
-                if let data = data {
-                    print(String(data: data, encoding: .utf8))
+                if let data = data, let dataAsUTF8 = String(data: data, encoding: .utf8) {
+                    print(dataAsUTF8)
                 }
             }
             task.resume()

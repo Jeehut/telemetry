@@ -56,17 +56,21 @@ struct UserCountGroup: Codable, Hashable, Identifiable {
 }
 
 struct DerivedStatisticGroup: Codable, Hashable {
+    let id: UUID
     let title: String
     let derivedStatistics: [DerivedStatistic]
 }
 
 struct DerivedStatistic: Codable, Hashable {
+    var id: UUID
     let title: String
+    let payloadKey: String
     let rollingCurrentStatistics: [String: Int]
     let historicalData: [DerivedStatisticHistoricalData]
 }
 
 struct DerivedStatisticHistoricalData: Codable, Hashable {
+    var id: UUID
     let statistics: [String: Int]
     let calculatedAt: Date
 }
@@ -74,4 +78,9 @@ struct DerivedStatisticHistoricalData: Codable, Hashable {
 struct UserCountGroupCreateRequestBody: Codable {
     var title: String
     var timeInterval: TimeInterval
+}
+
+struct DerivedStatisticCreateRequestBody: Codable {
+    var title: String
+    var payloadKey: String
 }

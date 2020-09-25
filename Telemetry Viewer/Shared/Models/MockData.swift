@@ -71,15 +71,15 @@ struct MockData {
     ]
     
     static let derivedStatisticGroups: [DerivedStatisticGroup] = [
-        DerivedStatisticGroup(title: "System Information", derivedStatistics: [
-            DerivedStatistic(title: "App Version", rollingCurrentStatistics: ["8": 233, "4": 1], historicalData: []),
-            DerivedStatistic(title: "System Version", rollingCurrentStatistics: ["13.6": 83, "13.5.1": 81, "13.3.1": 1, "None": 1, "13.6.1": 28, "14.0": 21], historicalData: [])
+        DerivedStatisticGroup(id: UUID(), title: "System Information", derivedStatistics: [
+            DerivedStatistic(id: UUID(), title: "App Version", payloadKey: "omsn", rollingCurrentStatistics: ["8": 233, "4": 1], historicalData: []),
+            DerivedStatistic(id: UUID(), title: "System Version", payloadKey: "omsn", rollingCurrentStatistics: ["13.6": 83, "13.5.1": 81, "13.3.1": 1, "None": 1, "13.6.1": 28, "14.0": 21], historicalData: [])
         ]),
-        DerivedStatisticGroup(title: "Usage", derivedStatistics: [
-            DerivedStatistic(title: "Libido Description Type", rollingCurrentStatistics: ["Colorful": 197, "Neutral": 26, "None": 1], historicalData: []),
-            DerivedStatistic(title: "Should Send Notifications", rollingCurrentStatistics: ["False": 138, "True": 85], historicalData: []),
-            DerivedStatistic(title: "Will Send Notifications", rollingCurrentStatistics: ["False": 138, "True": 85], historicalData: []),
-            DerivedStatistic(title: "Cool Mode", rollingCurrentStatistics: ["Off": 38, "On": 185], historicalData: []),
+        DerivedStatisticGroup(id: UUID(), title: "Usage", derivedStatistics: [
+            DerivedStatistic(id: UUID(), title: "Libido Description Type", payloadKey: "omsn", rollingCurrentStatistics: ["Colorful": 197, "Neutral": 26, "None": 1], historicalData: []),
+            DerivedStatistic(id: UUID(), title: "Should Send Notifications", payloadKey: "omsn", rollingCurrentStatistics: ["False": 138, "True": 85], historicalData: []),
+            DerivedStatistic(id: UUID(), title: "Will Send Notifications", payloadKey: "omsn", rollingCurrentStatistics: ["False": 138, "True": 85], historicalData: []),
+            DerivedStatistic(id: UUID(), title: "Cool Mode", payloadKey: "omsn", rollingCurrentStatistics: ["Off": 38, "On": 185], historicalData: []),
         ]),
     ]
 }

@@ -85,10 +85,3 @@ struct NewUserCountGroupForm: View {
         
     }
 }
-
-//struct NewUserCountGroupForm_Previews: PreviewProvider {
-//    static var previews: some View {
-//        NewUserCountGroupForm( isPresented: <#Binding<Bool>#>, app: MockData.app1)
-//            .previewDevice("iPad Pro (9.7-inch)")
-//    }
-//}

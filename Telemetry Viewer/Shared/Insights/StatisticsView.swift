@@ -11,6 +11,9 @@ struct StatisticsView: View {
     @EnvironmentObject var api: APIRepresentative
     var app: TelemetryApp
     
+    @State var isShowingNewDerivedStatisticGroupView = false
+    @State var isShowingNewDerivedStatisticView = false
+    
     let columns = [
         GridItem(.adaptive(minimum: 200))
     ]
@@ -24,6 +27,18 @@ struct StatisticsView: View {
                         Section(header: Text(statisticsGroup.title).font(.title)) {
                             ForEach(statisticsGroup.derivedStatistics, id: \.self) { derivedStatistic in
                                 DerivedStatisticView(derivedStatistic: derivedStatistic)
+                            }
+                            
+                            CardView {
+                                Button(action: {
+                                    isShowingNewDerivedStatisticView = true
+                                }) {
+                                    Label("New Derived Statistic", systemImage: "rectangle.badge.plus")
+                                }
+                                .sheet(isPresented: $isShowingNewDerivedStatisticView) {
+                                    // TODO: The derivedStatisticGroup is always the first one here
+                                    NewDerivedStatisticView(isPresented: $isShowingNewDerivedStatisticView, app: app, derivedStatisticGroup: statisticsGroup)
+                                }
                             }
                         }
                     }
@@ -45,6 +60,19 @@ struct StatisticsView: View {
         .onAppear {
             api.getDerivedStatisticGroups(for: app)
             TelemetryManager().send(.telemetryAppInsightsShown, for: api.user?.email ?? "unregistered user")
+        }
+        .toolbar {
+            ToolbarItem {
+                Button(action: {
+                    isShowingNewDerivedStatisticGroupView = true
+                }) {
+                    Label("New Derived Statistic Group", systemImage: "rectangle.badge.plus")
+                }
+                .sheet(isPresented: $isShowingNewDerivedStatisticGroupView) {
+                        NewDerivedStatisticGroupView(isPresented: $isShowingNewDerivedStatisticGroupView, app: app)
+                }
+                
+            }
         }
     }
 }

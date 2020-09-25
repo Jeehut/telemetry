@@ -13,8 +13,13 @@ final class DerivedStatisticGroup: Model, Content {
     @Field(key: "title")
     var title: String
     
-    // rollingCurrentStatistics is calculated live
-    
     @Children(for: \.$derivedStatisticGroup)
     var derivedStatistics: [DerivedStatistic]
+}
+
+struct DerivedStatisticGroupDataTransferObject: Content {
+    let id: UUID
+    let app: [String: String]
+    let title: String
+    let derivedStatistics: [DerivedStatisticDataTransferObject]
 }

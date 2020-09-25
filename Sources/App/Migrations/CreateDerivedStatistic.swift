@@ -8,6 +8,7 @@ extension DerivedStatistic {
             database.schema(DerivedStatistic.schema)
                 .id()
                 .field("title", .string, .required)
+                .field("payloadkey", .string, .required)
                 .field("derivedstatisticgroup_id", .uuid, .required, .references(DerivedStatisticGroup.schema, "id"))
                 .foreignKey("derivedstatisticgroup_id", references: DerivedStatisticGroup.schema, "id", onDelete: .cascade, onUpdate: .noAction)
                 .create()

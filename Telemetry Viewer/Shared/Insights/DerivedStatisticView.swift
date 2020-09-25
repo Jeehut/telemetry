@@ -36,6 +36,6 @@ struct DerivedStatisticView: View {
 
 struct DerivedStatisticView_Previews: PreviewProvider {
     static var previews: some View {
-        DerivedStatisticView(derivedStatistic: DerivedStatistic(title: "Libido Description Type", rollingCurrentStatistics: ["colorful": 191, "neutral": 8, "unknown": 12], historicalData: []))
+        DerivedStatisticView(derivedStatistic: DerivedStatistic(id: UUID(), title: "Libido Description Type", payloadKey: "omsn", rollingCurrentStatistics: ["colorful": 191, "neutral": 8, "unknown": 12], historicalData: []))
     }
 }

@@ -248,8 +248,6 @@ extension APIRepresentative {
     }
     
     func create(userCountGroup: UserCountGroupCreateRequestBody, for app: TelemetryApp) {
-        
-        
         guard let uuidString = app.id?.uuidString,
               let url = URL(string: "http://localhost:8080/api/v1/apps/\(uuidString)/usercountgroups/") else {
             print("Invalid URL")
@@ -341,6 +339,52 @@ extension APIRepresentative {
                     self.derivedStatisticGroups[app] = decodedResponse
                 }
                 
+            }
+        }.resume()
+    }
+    
+    func create(derivedStatisticGroupNamed: String, for app: TelemetryApp) {
+        guard let uuidString = app.id?.uuidString,
+              let url = URL(string: "http://localhost:8080/api/v1/apps/\(uuidString)/derivedstatisticgroups/") else {
+            print("Invalid URL")
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.setValue(userToken?.bearerTokenAuthString, forHTTPHeaderField: "Authorization")
+        
+        let requestBody = ["title": derivedStatisticGroupNamed]
+        request.httpBody = try! JSONEncoder().encode(requestBody)
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let data = data {
+                print(String(decoding: data, as: UTF8.self))
+                self.getDerivedStatisticGroups(for: app)
+            }
+        }.resume()
+    }
+    
+    func create(derivedStatistic: DerivedStatisticCreateRequestBody, for derivedStatisticGroup: DerivedStatisticGroup, in app: TelemetryApp) {
+        guard let uuidString = app.id?.uuidString,
+              let url = URL(string: "http://localhost:8080/api/v1/apps/\(uuidString)/derivedstatisticgroups/\(derivedStatisticGroup.id)/derivedstatistics/") else {
+            print("Invalid URL")
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.setValue(userToken?.bearerTokenAuthString, forHTTPHeaderField: "Authorization")
+        
+        let requestBody = derivedStatistic
+        request.httpBody = try! JSONEncoder().encode(requestBody)
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let data = data {
+                print(String(decoding: data, as: UTF8.self))
+                self.getDerivedStatisticGroups(for: app)
             }
         }.resume()
     }
