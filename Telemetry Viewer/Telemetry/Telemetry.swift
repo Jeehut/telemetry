@@ -39,7 +39,7 @@ final class TelemetryManager {
 
     func send(_ signalType: TelemetrySignalType, for clientUser: String, with additionalPayload: [String: String] = [:]) {
         // Do not send telemetry from simulator
-        guard !isSimulator else { return }
+        // guard !isSimulator else { return }
 
         DispatchQueue.main.async { [self] in
             let path = "/api/v1/apps/\(TelemetryManagerConfiguation.telemetryAppID)/signals/"
@@ -98,7 +98,7 @@ extension TelemetryManager {
     
     var systemVersion: String {
         #if os(macOS)
-        return "macOS \(ProcessInfo.processInfo.operatingSystemVersion)"
+        return "macOS \(ProcessInfo.processInfo.operatingSystemVersion.majorVersion).\(ProcessInfo.processInfo.operatingSystemVersion.minorVersion).\(ProcessInfo.processInfo.operatingSystemVersion.patchVersion)"
         #elseif os(iOS)
         return "iOS  \(UIDevice.current.systemVersion)"
         #elseif os(watchOS)

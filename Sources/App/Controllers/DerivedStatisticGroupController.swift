@@ -56,6 +56,7 @@ struct DerivedStatisticGroupController: RouteCollection {
                     .filter(\.$app.$id == appID)
                     .filter(\.$receivedAt > earlierDate)
                     .filter(\.$receivedAt < laterDate)
+                    .sort(\.$receivedAt, .descending)
                     .all()
                     .map { signals in
                         (statistic, signals)
@@ -67,12 +68,16 @@ struct DerivedStatisticGroupController: RouteCollection {
                 let payloadKey = statistic.payloadKey
                 
                 var rollingStatistics: [String: Int] = [:]
+                var knownUserIdentifiers: [String] = []
                 
                 for signal in signals {
                     guard let payloadDict = signal.payload, let payloadContent = payloadDict[payloadKey] else { continue }
                     
+                    guard !knownUserIdentifiers.contains(signal.clientUser) else { continue }
+                    
                     let currentAmountInStatistics = rollingStatistics[payloadContent, default: 0]
                     rollingStatistics[payloadContent] = currentAmountInStatistics + 1
+                    knownUserIdentifiers.append(signal.clientUser)
                 }
                 
                 return DerivedStatisticDataTransferObject(id: statistic.id!, title: statistic.title, payloadKey: statistic.payloadKey, historicalData: [], rollingCurrentStatistics: rollingStatistics)

@@ -337,7 +337,7 @@ extension APIRepresentative {
         }.resume()
     }
     
-    func getAdditionalData(for statistic: DerivedStatistic, in derivedStatisticGroup: DerivedStatisticGroup, in app: TelemetryApp) {
+    func getAdditionalData(for statistic: DerivedStatistic, in derivedStatisticGroup: DerivedStatisticGroup, in app: TelemetryApp, callback: @escaping ([String: Int]) -> ()) {
         guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id)/derivedstatisticgroups/\(derivedStatisticGroup.id)/derivedstatistics/\(statistic.id)/") else {
             print("Invalid URL")
             return
@@ -354,7 +354,7 @@ extension APIRepresentative {
                 let decodedResponse = try! JSONDecoder.telemetryDecoder.decode(DerivedStatisticDataTransferObject.self, from: data)
                 
                 DispatchQueue.main.async {
-                    // TODO
+                    callback(decodedResponse.rollingCurrentStatistics)
                 }
                 
             }

@@ -13,6 +13,8 @@ struct DerivedStatisticView: View {
     let derivedStatistic: DerivedStatistic
     let app: TelemetryApp
     
+    @State var rollingCurrentStatistics: [String: Int] = [:]
+    
     let columns = [
         GridItem(.flexible()),
         GridItem(.fixed(80)),
@@ -22,20 +24,22 @@ struct DerivedStatisticView: View {
         CardView {
             VStack(alignment: .leading) {
                 Text(derivedStatistic.title).font(.title3)
-//                LazyVGrid(columns: columns, alignment: .leading) {
-//                    let dictionaryKeys = Array(derivedStatistic.rollingCurrentStatistics.keys).sorted()
-//                    ForEach(dictionaryKeys, id: \.self) { key in
-//                        Text(key)
-//                        Text("\(derivedStatistic.rollingCurrentStatistics[key] ?? 0)")
-//                            .font(.system(size: 17, weight: .black, design: .monospaced))
-//                            .frame(width: 80, alignment: .trailing)
-//                    }
-//                }
-//                Spacer()
+                LazyVGrid(columns: columns, alignment: .leading) {
+                    let dictionaryKeys = Array(rollingCurrentStatistics.keys).sorted()
+                    ForEach(dictionaryKeys, id: \.self) { key in
+                        Text(key)
+                        Text("\(rollingCurrentStatistics[key] ?? 0)")
+                            .font(.system(size: 17, weight: .black, design: .monospaced))
+                            .frame(width: 80, alignment: .trailing)
+                    }
+                }
+                Spacer()
             }
         }
         .onAppear {
-            api.getAdditionalData(for: derivedStatistic, in: derivedStatisticGroup, in: app)
+            api.getAdditionalData(for: derivedStatistic, in: derivedStatisticGroup, in: app) { dto in
+                self.rollingCurrentStatistics = dto
+            }
         }
         
     }

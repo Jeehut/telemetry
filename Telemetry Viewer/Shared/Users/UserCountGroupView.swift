@@ -12,7 +12,7 @@ struct UserCountGroupView: View {
     var app: TelemetryApp
     @State var isShowingCreateUserCountGroupView = false
     
-    let timer = Timer.publish(every: 10, on: .current, in: .common).autoconnect()
+    let timer = Timer.publish(every: 120, on: .current, in: .common).autoconnect()
     
     let columns = [
         GridItem(.adaptive(minimum: 250))
