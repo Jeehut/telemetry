@@ -9,6 +9,7 @@ struct DerivedStatisticGroupController: RouteCollection {
         derivedStatisticGroups.post(use: create)
         derivedStatisticGroups.post(":derivedStatisticGroupID", "derivedstatistics", use: createDerivedStatistic)
         derivedStatisticGroups.get(":derivedStatisticGroupID", "derivedstatistics", ":derivedStatisticID", use: getDerivedStatistic)
+        derivedStatisticGroups.delete(":derivedStatisticGroupID", "derivedstatistics", ":derivedStatisticID", use: deleteDerivedStatistic)
     }
     
     func getAll(req: Request) throws -> EventLoopFuture<[DerivedStatisticGroup]> {
@@ -138,5 +139,22 @@ struct DerivedStatisticGroupController: RouteCollection {
         derivedStatistic.$derivedStatisticGroup.id = derivedStatisticGroupID
         
         return derivedStatistic.save(on: req.db).map { derivedStatistic }
+    }
+    
+    func deleteDerivedStatistic(req: Request) throws -> EventLoopFuture<HTTPStatus> {
+        guard let derivedStatisticIDString = req.parameters.get("derivedStatisticID"),
+              let derivedStatisticID = UUID(derivedStatisticIDString) else {
+            throw Abort(.badRequest, reason: "Invalid parameter `derivedStatisticID`")
+        }
+        
+        let user = try req.auth.require(User.self)
+        
+        // TODO: Filter by user org
+        return DerivedStatistic.query(on: req.db)
+            .filter(\.$id == derivedStatisticID)
+            .first()
+            .unwrap(or: Abort(.notFound))
+            .flatMap { $0.delete(on: req.db) }
+            .map { .ok }
     }
 }

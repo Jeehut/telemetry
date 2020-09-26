@@ -26,7 +26,18 @@ struct StatisticsView: View {
                     ForEach(statisticsGroups, id: \.self) { statisticsGroup in
                         Section(header: Text(statisticsGroup.title).font(.title)) {
                             ForEach(statisticsGroup.derivedStatistics, id: \.self) { derivedStatistic in
-                                DerivedStatisticView(derivedStatisticGroup: statisticsGroup, derivedStatistic: derivedStatistic, app: app)
+                                ZStack(alignment: Alignment.topTrailing) {
+                                    DerivedStatisticView(derivedStatisticGroup: statisticsGroup, derivedStatistic: derivedStatistic, app: app)
+                                    
+                                    Button(
+                                        action: { api.delete(derivedStatistic: derivedStatistic, in: statisticsGroup, in: app) },
+                                        label: {
+                                            Image(systemName: "xmark.circle.fill")
+                                        })
+                                        .offset(x: -10, y: 10)
+                                }
+                                
+                                
                             }
                             
                             CardView {
@@ -37,7 +48,10 @@ struct StatisticsView: View {
                                 }
                                 .sheet(isPresented: $isShowingNewDerivedStatisticView) {
                                     // TODO: The derivedStatisticGroup is always the first one here
-                                    NewDerivedStatisticView(isPresented: $isShowingNewDerivedStatisticView, app: app, derivedStatisticGroup: statisticsGroup)
+                                    
+                                    let derivedStatisticsGroup = statisticsGroup
+                                    
+                                    NewDerivedStatisticView(isPresented: $isShowingNewDerivedStatisticView, app: app, derivedStatisticGroup: derivedStatisticsGroup)
                                 }
                             }
                         }

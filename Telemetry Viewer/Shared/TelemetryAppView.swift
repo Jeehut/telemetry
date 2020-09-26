@@ -20,6 +20,8 @@ struct TelemetryAppView: View {
         case 1:
             return "Insights"
         case 2:
+            return "Funnels"
+        case 3:
             return "Signals"
         default:
             return "Omsn"
@@ -40,9 +42,14 @@ struct TelemetryAppView: View {
                 }.tag(1)
             SignalList(app: app)
                 .tabItem {
+                    Image(systemName: "arrowtriangle.down.square")
+                    Text("Funnels")
+                }.tag(2)
+            SignalList(app: app)
+                .tabItem {
                     Image(systemName: "list.bullet.rectangle")
                     Text("Signals")
-                }.tag(2)
+                }.tag(3)
         }
         .navigationTitle(calculatedNavigationTitle)
     }
