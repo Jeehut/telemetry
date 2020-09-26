@@ -26,7 +26,7 @@ struct StatisticsView: View {
                     ForEach(statisticsGroups, id: \.self) { statisticsGroup in
                         Section(header: Text(statisticsGroup.title).font(.title)) {
                             ForEach(statisticsGroup.derivedStatistics, id: \.self) { derivedStatistic in
-                                DerivedStatisticView(derivedStatistic: derivedStatistic)
+                                DerivedStatisticView(derivedStatisticGroup: statisticsGroup, derivedStatistic: derivedStatistic, app: app)
                             }
                             
                             CardView {
@@ -47,7 +47,7 @@ struct StatisticsView: View {
                     ForEach(MockData.derivedStatisticGroups, id: \.self) { statisticsGroup in
                         Section(header: Text(statisticsGroup.title).font(.title)) {
                             ForEach(statisticsGroup.derivedStatistics, id: \.self) { derivedStatistic in
-                                DerivedStatisticView(derivedStatistic: derivedStatistic)
+                                DerivedStatisticView(derivedStatisticGroup: statisticsGroup, derivedStatistic: derivedStatistic, app: app)
                             }
                         }.redacted(reason: .placeholder)
                     }

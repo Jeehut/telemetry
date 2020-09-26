@@ -22,7 +22,7 @@ struct Organization: Codable, Hashable {
 }
 
 struct TelemetryApp: Codable, Hashable {
-    var id: UUID?
+    var id: UUID
     var name: String
     var organization: [String: String]
     var isMockData: Bool = false
@@ -62,6 +62,12 @@ struct DerivedStatisticGroup: Codable, Hashable {
 }
 
 struct DerivedStatistic: Codable, Hashable {
+    var id: UUID
+    let title: String
+    let payloadKey: String
+}
+
+struct DerivedStatisticDataTransferObject: Codable, Hashable {
     var id: UUID
     let title: String
     let payloadKey: String

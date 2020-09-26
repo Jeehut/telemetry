@@ -14,14 +14,6 @@ struct AppSettingsView: View {
     var app: TelemetryApp
     @State var newName: String = ""
     
-    var appIDString: String {
-        guard let appId = app.id else {
-            return "No App ID"
-        }
-        
-        return appId.uuidString
-    }
-    
     var body: some View {
         let saveButton = Button("Save Changes") {
             api.update(app: app, newName: newName)
@@ -48,7 +40,7 @@ struct AppSettingsView: View {
             
             Section(header: Text("Unique Identifier")) {
                 VStack(alignment: .leading) {
-                    TextField("", text: .constant(appIDString))
+                    TextField("", text: .constant(app.id.uuidString))
                     Text("Copy this UUID into your apps for tracking.").font(.footnote)
                 }
             }

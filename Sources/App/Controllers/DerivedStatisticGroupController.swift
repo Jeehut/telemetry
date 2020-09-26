@@ -8,9 +8,10 @@ struct DerivedStatisticGroupController: RouteCollection {
         derivedStatisticGroups.get(use: getAll)
         derivedStatisticGroups.post(use: create)
         derivedStatisticGroups.post(":derivedStatisticGroupID", "derivedstatistics", use: createDerivedStatistic)
+        derivedStatisticGroups.get(":derivedStatisticGroupID", "derivedstatistics", ":derivedStatisticID", use: getDerivedStatistic)
     }
     
-    func getAll(req: Request) throws -> EventLoopFuture<[DerivedStatisticGroupDataTransferObject]> {
+    func getAll(req: Request) throws -> EventLoopFuture<[DerivedStatisticGroup]> {
         guard let appIDString = req.parameters.get("appID"),
               let appID = UUID(appIDString) else {
             throw Abort(.badRequest, reason: "Invalid parameter `appID`")
@@ -23,27 +24,58 @@ struct DerivedStatisticGroupController: RouteCollection {
             .with(\.$derivedStatistics)
             .filter(\.$app.$id == appID)
             .all()
-            .mapEach { derivedStatisticGroup -> DerivedStatisticGroupDataTransferObject in
-                // Retrieve the value at the current time
-                let laterDate = Date()
-                let earlierDate = Date(timeInterval: -3600*24, since: laterDate)
-                
-                let dto = DerivedStatisticGroupDataTransferObject(
-                    id: derivedStatisticGroup.id!,
-                    app: ["id": derivedStatisticGroup.$app.id.uuidString],
-                    title: derivedStatisticGroup.title,
-                    derivedStatistics: derivedStatisticGroup.derivedStatistics.map {
-                        DerivedStatisticDataTransferObject(
-                            id: $0.id!,
-                            title: $0.title,
-                            payloadKey: $0.payloadKey,
-                            historicalData: [],
-                            rollingCurrentStatistics: [:]
-                        )
+    }
+    
+    func getDerivedStatistic(req: Request) throws -> EventLoopFuture<DerivedStatisticDataTransferObject> {
+        guard let appIDString = req.parameters.get("appID"),
+              let appID = UUID(appIDString),
+              let derivedStatisticIDString = req.parameters.get("derivedStatisticID"),
+              let derivedStatisticID = UUID(derivedStatisticIDString)
+        else {
+            throw Abort(.badRequest, reason: "Invalid parameter `appID`")
+        }
+        
+        let user = try req.auth.require(User.self)
+        // TODO: Only return apps for this user's org
+        
+        let timeInterval: TimeInterval = -3600*24
+        // TODO: Save timeinterval in DerivedStatistic
+        
+        // Retrieve the value at the current time
+        let laterDate = Date()
+        let earlierDate = Date(timeInterval: timeInterval, since: laterDate)
+        
+        
+        
+         return DerivedStatistic.query(on: req.db)
+            .filter(\.$id == derivedStatisticID)
+            .first()
+            .unwrap(or: Abort(.notFound))
+            .flatMap { statistic in
+                return Signal.query(on: req.db)
+                    .filter(\.$app.$id == appID)
+                    .filter(\.$receivedAt > earlierDate)
+                    .filter(\.$receivedAt < laterDate)
+                    .all()
+                    .map { signals in
+                        (statistic, signals)
                     }
-                )
-                return dto
+            }
+            .map { statisticTuple -> DerivedStatisticDataTransferObject in
+                let statistic = statisticTuple.0
+                let signals = statisticTuple.1
+                let payloadKey = statistic.payloadKey
                 
+                var rollingStatistics: [String: Int] = [:]
+                
+                for signal in signals {
+                    guard let payloadDict = signal.payload, let payloadContent = payloadDict[payloadKey] else { continue }
+                    
+                    let currentAmountInStatistics = rollingStatistics[payloadContent, default: 0]
+                    rollingStatistics[payloadContent] = currentAmountInStatistics + 1
+                }
+                
+                return DerivedStatisticDataTransferObject(id: statistic.id!, title: statistic.title, payloadKey: statistic.payloadKey, historicalData: [], rollingCurrentStatistics: rollingStatistics)
             }
     }
     

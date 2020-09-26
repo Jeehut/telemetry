@@ -175,8 +175,8 @@ extension APIRepresentative {
     }
     
     func update(app: TelemetryApp, newName: String) {
-        guard let uuidString = app.id?.uuidString,
-            let url = URL(string: "http://localhost:8080/api/v1/apps/\(uuidString)/") else {
+        guard
+            let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/") else {
             print("Invalid URL")
             return
         }
@@ -203,8 +203,7 @@ extension APIRepresentative {
     }
     
     func delete(app: TelemetryApp) {
-        guard let uuidString = app.id?.uuidString,
-            let url = URL(string: "http://localhost:8080/api/v1/apps/\(uuidString)/") else {
+        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/") else {
             print("Invalid URL")
             return
         }
@@ -223,8 +222,7 @@ extension APIRepresentative {
     }
     
     func getSignals(for app: TelemetryApp) {
-        guard let uuidString = app.id?.uuidString,
-            let url = URL(string: "http://localhost:8080/api/v1/apps/\(uuidString)/signals/") else {
+        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/signals/") else {
             print("Invalid URL")
             return
         }
@@ -248,8 +246,7 @@ extension APIRepresentative {
     }
     
     func create(userCountGroup: UserCountGroupCreateRequestBody, for app: TelemetryApp) {
-        guard let uuidString = app.id?.uuidString,
-              let url = URL(string: "http://localhost:8080/api/v1/apps/\(uuidString)/usercountgroups/") else {
+        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/usercountgroups/") else {
             print("Invalid URL")
             return
         }
@@ -271,8 +268,7 @@ extension APIRepresentative {
     }
     
     func getUserCountGroups(for app: TelemetryApp) {
-        guard let uuidString = app.id?.uuidString,
-            let url = URL(string: "http://localhost:8080/api/v1/apps/\(uuidString)/usercountgroups/") else {
+        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/usercountgroups/") else {
             print("Invalid URL")
             return
         }
@@ -296,8 +292,7 @@ extension APIRepresentative {
     }
     
     func delete(userCountGroup: UserCountGroup, from app: TelemetryApp) {
-        guard let appUuidString = app.id?.uuidString,
-              let url = URL(string: "http://localhost:8080/api/v1/apps/\(appUuidString)/usercountgroups/\(userCountGroup.id.uuidString)/") else {
+        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/usercountgroups/\(userCountGroup.id.uuidString)/") else {
             print("Invalid URL")
             return
         }
@@ -319,8 +314,7 @@ extension APIRepresentative {
     }
     
     func getDerivedStatisticGroups(for app: TelemetryApp) {
-        guard let uuidString = app.id?.uuidString,
-            let url = URL(string: "http://localhost:8080/api/v1/apps/\(uuidString)/derivedstatisticgroups/") else {
+        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/derivedstatisticgroups/") else {
             print("Invalid URL")
             return
         }
@@ -343,9 +337,32 @@ extension APIRepresentative {
         }.resume()
     }
     
+    func getAdditionalData(for statistic: DerivedStatistic, in derivedStatisticGroup: DerivedStatisticGroup, in app: TelemetryApp) {
+        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id)/derivedstatisticgroups/\(derivedStatisticGroup.id)/derivedstatistics/\(statistic.id)/") else {
+            print("Invalid URL")
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.setValue(userToken?.bearerTokenAuthString, forHTTPHeaderField: "Authorization")
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let data = data {
+                print(String(decoding: data, as: UTF8.self))
+
+                let decodedResponse = try! JSONDecoder.telemetryDecoder.decode(DerivedStatisticDataTransferObject.self, from: data)
+                
+                DispatchQueue.main.async {
+                    // TODO
+                }
+                
+            }
+        }.resume()
+    }
+    
     func create(derivedStatisticGroupNamed: String, for app: TelemetryApp) {
-        guard let uuidString = app.id?.uuidString,
-              let url = URL(string: "http://localhost:8080/api/v1/apps/\(uuidString)/derivedstatisticgroups/") else {
+        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/derivedstatisticgroups/") else {
             print("Invalid URL")
             return
         }
@@ -367,8 +384,7 @@ extension APIRepresentative {
     }
     
     func create(derivedStatistic: DerivedStatisticCreateRequestBody, for derivedStatisticGroup: DerivedStatisticGroup, in app: TelemetryApp) {
-        guard let uuidString = app.id?.uuidString,
-              let url = URL(string: "http://localhost:8080/api/v1/apps/\(uuidString)/derivedstatisticgroups/\(derivedStatisticGroup.id)/derivedstatistics/") else {
+        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/derivedstatisticgroups/\(derivedStatisticGroup.id)/derivedstatistics/") else {
             print("Invalid URL")
             return
         }
