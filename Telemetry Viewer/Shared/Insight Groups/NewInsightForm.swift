@@ -26,9 +26,9 @@ struct NewInsightForm: View {
     
     @State private var selectedTypeIndex = 0
 
-    @State private var breakdownPayloadKeyword: String = "systemVersion" {
+    @State private var breakdownpayloadKey: String = "systemVersion" {
         didSet {
-            insightCreateRequestBody.configuration["breakdown.payloadKeyword"] = breakdownPayloadKeyword
+            insightCreateRequestBody.configuration["breakdown.payloadKey"] = breakdownpayloadKey
         }
     }
     
@@ -38,6 +38,8 @@ struct NewInsightForm: View {
     var body: some View {
         
         let saveButton = Button("Save") {
+            insightCreateRequestBody.configuration["breakdown.payloadKey"] = breakdownpayloadKey
+            insightCreateRequestBody.insightType = insightTypesValues[selectedTypeIndex]
             api.create(insightWith: insightCreateRequestBody, in: insightGroup, for: app)
             //            api.create(derivedStatistic: derivedStatisticCreateRequestBody, for: derivedStatisticGroup, in: app)
             isPresented = false
@@ -68,7 +70,7 @@ struct NewInsightForm: View {
             
             if insightTypesValues[selectedTypeIndex] == .breakdown {
                 Section(header: Text("Payload Keyword"), footer: Text("What's the payload keyword you want a breakdown for? E.g. 'systemVersion' for a breakdown of system versions")) {
-                    TextField("Payload Keyword", text: $breakdownPayloadKeyword)
+                    TextField("Payload Keyword", text: $breakdownpayloadKey)
                         
                 }
             } else {

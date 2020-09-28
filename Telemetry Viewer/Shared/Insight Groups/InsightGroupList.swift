@@ -16,7 +16,7 @@ struct InsightGroupList: View {
     
     var body: some View {
         ScrollView(.vertical) {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 200))], alignment: .leading) {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 300))], alignment: .leading) {
                 if let insightGroups = api.insightGroups[app] {
                     ForEach(insightGroups, id: \.id) { insightGroup in
                         Section(header: HStack {
