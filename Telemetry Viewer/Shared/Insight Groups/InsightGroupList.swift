@@ -31,18 +31,22 @@ struct InsightGroupList: View {
                                         Text(insight.title)
                                     }
                                     
-//                                    Button(
-//                                        action: { api.delete(derivedStatistic: derivedStatistic, in: statisticsGroup, in: app) },
-//                                        label: {
-//                                            Image(systemName: "xmark.circle.fill")
-//                                        })
-//                                        .offset(x: -10, y: 10)
+                                    Button(
+                                        action: {
+//                                            api.delete(derivedStatistic: derivedStatistic, in: statisticsGroup, in: app)
+                                            
+                                        },
+                                        label: {
+                                            Image(systemName: "xmark.circle.fill")
+                                        })
+                                        .offset(x: -10, y: 10)
                                 }
                             }
                         }
                     }
                 }
             }
+            .padding()
         }
         .onAppear {
             api.getInsightGroups(for: app)

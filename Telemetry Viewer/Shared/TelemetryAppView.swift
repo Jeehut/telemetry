@@ -30,6 +30,12 @@ struct TelemetryAppView: View {
         }
     }
     
+    #if os(macOS)
+    let paddingAmount: CGFloat = 16
+    #else
+    let paddingAmount: CGFloat = 0
+    #endif
+    
     var body: some View {
         TabView(selection: $selectedView) {
             InsightGroupList(app: app)
@@ -59,5 +65,6 @@ struct TelemetryAppView: View {
                 }.tag(4)
         }
         .navigationTitle(calculatedNavigationTitle)
+        .padding(paddingAmount)
     }
 }
