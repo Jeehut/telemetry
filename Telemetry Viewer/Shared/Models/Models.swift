@@ -100,4 +100,11 @@ struct InsightGroup: Codable {
 struct Insight: Codable {
     var id: UUID
     var title: String
+    var configuration: [String: String]
+    var historicalData: [InsightHistoricalData]
+}
+
+struct InsightHistoricalData: Codable {
+    var id: UUID
+    var data: [String: Float]
 }
