@@ -3,7 +3,7 @@ import Vapor
 
 final class Insight: Model, Content {
     enum InsightType: String, Codable {
-        case statistic
+        case breakdown
         case mean
     }
     

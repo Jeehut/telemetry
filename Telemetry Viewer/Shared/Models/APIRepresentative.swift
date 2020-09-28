@@ -513,4 +513,68 @@ extension APIRepresentative {
             }
         }.resume()
     }
+    
+    func getInsightData(for insight: Insight, in insightGroup: InsightGroup, in app: TelemetryApp, completion: @escaping (InsightDataTransferObject) -> ()) {
+        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id)/insightgroups/\(insightGroup.id)/insights/\(insight.id)/") else {
+            print("Invalid URL")
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.setValue(userToken?.bearerTokenAuthString, forHTTPHeaderField: "Authorization")
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let data = data {
+                print(String(decoding: data, as: UTF8.self))
+                
+                let decodedResponse = try! JSONDecoder.telemetryDecoder.decode(InsightDataTransferObject.self, from: data)
+                
+                DispatchQueue.main.async {
+                    completion(decodedResponse)
+                }
+                
+            }
+        }.resume()
+    }
+    
+    func create(insightWith requestBody: InsightCreateRequestBody, in insightGroup: InsightGroup, for app: TelemetryApp) {
+        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id)/insightgroups/\(insightGroup.id)/insights/") else {
+            print("Invalid URL")
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.setValue(userToken?.bearerTokenAuthString, forHTTPHeaderField: "Authorization")
+        
+        request.httpBody = try! JSONEncoder().encode(requestBody)
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let data = data {
+                print(String(decoding: data, as: UTF8.self))
+                self.getInsightGroups(for: app)
+            }
+        }.resume()
+    }
+    
+    func delete(insight: Insight, in insightGroup: InsightGroup, in app: TelemetryApp) {
+        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/insightgroups/\(insightGroup.id)/insights/\(insight.id)/") else {
+            print("Invalid URL")
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.setValue(userToken?.bearerTokenAuthString, forHTTPHeaderField: "Authorization")
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            
+            DispatchQueue.main.async {
+                self.getInsightGroups(for: app)
+            }
+        }.resume()
+    }
 }

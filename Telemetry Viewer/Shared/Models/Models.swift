@@ -101,10 +101,29 @@ struct Insight: Codable {
     var id: UUID
     var title: String
     var configuration: [String: String]
-    var historicalData: [InsightHistoricalData]
+    var historicalData: [InsightHistoricalData]?
 }
 
 struct InsightHistoricalData: Codable {
     var id: UUID
     var data: [String: Float]
+}
+
+enum InsightType: String, Codable {
+    case breakdown
+    case mean
+}
+
+struct InsightDataTransferObject: Codable {
+    let id: UUID
+    let title: String
+    let insightType: InsightType
+    let configuration: [String: String]
+    let data: [String: Float]
+}
+
+struct InsightCreateRequestBody: Codable {
+    var title: String
+    var insightType: InsightType
+    var configuration: [String: String]
 }

@@ -18,6 +18,9 @@ struct DashedCardView<Content>: View where Content: View {
         ZStack {
             RoundedRectangle(cornerRadius: 25, style: .continuous)
                 .strokeBorder(style: StrokeStyle(lineWidth: 4, dash: [10]))
+                .opacity(0.4)
+                
+                
             
             content
             .padding()

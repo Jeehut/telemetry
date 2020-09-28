@@ -11,7 +11,8 @@ struct InsightGroupList: View {
     @EnvironmentObject var api: APIRepresentative
     var app: TelemetryApp
     
-    @State var isShowingNewDerivedStatisticGroupView = false
+    @State var isShowingNewInsightGroupView = false
+    @State var isShowingNewInsightForm = false
     
     var body: some View {
         ScrollView(.vertical) {
@@ -28,18 +29,28 @@ struct InsightGroupList: View {
                             ForEach(insightGroup.insights, id: \.id) { insight in
                                 ZStack(alignment: Alignment.topTrailing) {
                                     CardView {
-                                        Text(insight.title)
+                                        InsightView(app: app, insightGroup: insightGroup, insight: insight)
                                     }
                                     
                                     Button(
                                         action: {
-//                                            api.delete(derivedStatistic: derivedStatistic, in: statisticsGroup, in: app)
-                                            
+                                            api.delete(insight: insight, in: insightGroup, in: app)
                                         },
                                         label: {
                                             Image(systemName: "xmark.circle.fill")
                                         })
                                         .offset(x: -10, y: 10)
+                                }
+                            }
+                            
+                            DashedCardView {
+                                Button(action: {
+                                    isShowingNewInsightForm = true
+                                }) {
+                                    Label("New Insight", systemImage: "rectangle.badge.plus")
+                                }
+                                .sheet(isPresented: $isShowingNewInsightForm) {
+                                    NewInsightForm(app: app, insightGroup: insightGroup, isPresented: $isShowingNewInsightForm)
                                 }
                             }
                         }
@@ -55,12 +66,12 @@ struct InsightGroupList: View {
         .toolbar {
             ToolbarItem {
                 Button(action: {
-                    isShowingNewDerivedStatisticGroupView = true
+                    isShowingNewInsightGroupView = true
                 }) {
-                    Label("New Derived Statistic Group", systemImage: "rectangle.badge.plus")
+                    Label("New Insight Group", systemImage: "rectangle.badge.plus")
                 }
-                .sheet(isPresented: $isShowingNewDerivedStatisticGroupView) {
-                        NewInsightGroupView(isPresented: $isShowingNewDerivedStatisticGroupView, app: app)
+                .sheet(isPresented: $isShowingNewInsightGroupView) {
+                    NewInsightGroupView(isPresented: $isShowingNewInsightGroupView, app: app)
                 }
                 
             }
