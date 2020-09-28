@@ -16,12 +16,14 @@ struct TelemetryAppView: View {
     var calculatedNavigationTitle: String {
         switch selectedView {
         case 0:
-            return "Users"
+            return "Insights"
         case 1:
-            return "Statistics"
+            return "Users"
         case 2:
-            return "Funnels"
+            return "Statistics"
         case 3:
+            return "Funnels"
+        case 4:
             return "Signals"
         default:
             return "Omsn"
@@ -30,26 +32,31 @@ struct TelemetryAppView: View {
     
     var body: some View {
         TabView(selection: $selectedView) {
+            InsightGroupList(app: app)
+                .tabItem {
+                    Image(systemName: "list.bullet.rectangle")
+                    Text("Insights")
+                }.tag(0)
             UserCountGroupView(app: app)
                 .tabItem {
                     Image(systemName: "person.2.square.stack")
                     Text("Users")
-                }.tag(0)
+                }.tag(1)
             StatisticsView(app: app)
                 .tabItem {
                     Image(systemName: "chart.pie")
                     Text("Statistics")
-                }.tag(1)
+                }.tag(2)
             Text("Funnels")
                 .tabItem {
                     Image(systemName: "arrowtriangle.down.square")
                     Text("Funnels")
-                }.tag(2)
+                }.tag(3)
             SignalList(app: app)
                 .tabItem {
                     Image(systemName: "list.bullet.rectangle")
                     Text("Signals")
-                }.tag(3)
+                }.tag(4)
         }
         .navigationTitle(calculatedNavigationTitle)
     }

@@ -509,7 +509,7 @@ extension APIRepresentative {
         URLSession.shared.dataTask(with: request) { data, response, error in
             
             DispatchQueue.main.async {
-                self.getDerivedStatisticGroups(for: app)
+                self.getInsightGroups(for: app)
             }
         }.resume()
     }
