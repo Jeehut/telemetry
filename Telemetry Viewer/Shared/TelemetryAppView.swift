@@ -18,7 +18,7 @@ struct TelemetryAppView: View {
         case 0:
             return "Users"
         case 1:
-            return "Insights"
+            return "Statistics"
         case 2:
             return "Funnels"
         case 3:
@@ -38,9 +38,9 @@ struct TelemetryAppView: View {
             StatisticsView(app: app)
                 .tabItem {
                     Image(systemName: "chart.pie")
-                    Text("Insights")
+                    Text("Statistics")
                 }.tag(1)
-            SignalList(app: app)
+            Text("Funnels")
                 .tabItem {
                     Image(systemName: "arrowtriangle.down.square")
                     Text("Funnels")

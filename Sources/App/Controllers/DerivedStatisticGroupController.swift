@@ -7,8 +7,10 @@ struct DerivedStatisticGroupController: RouteCollection {
         let derivedStatisticGroups = routes.grouped(UserToken.authenticator())
         derivedStatisticGroups.get(use: getAll)
         derivedStatisticGroups.post(use: create)
-        derivedStatisticGroups.post(":derivedStatisticGroupID", "derivedstatistics", use: createDerivedStatistic)
+        derivedStatisticGroups.delete(":derivedStatisticGroupID", use: deleteDerivedStatisticGroup)
+        
         derivedStatisticGroups.get(":derivedStatisticGroupID", "derivedstatistics", ":derivedStatisticID", use: getDerivedStatistic)
+        derivedStatisticGroups.post(":derivedStatisticGroupID", "derivedstatistics", use: createDerivedStatistic)
         derivedStatisticGroups.delete(":derivedStatisticGroupID", "derivedstatistics", ":derivedStatisticID", use: deleteDerivedStatistic)
     }
     
@@ -152,6 +154,23 @@ struct DerivedStatisticGroupController: RouteCollection {
         // TODO: Filter by user org
         return DerivedStatistic.query(on: req.db)
             .filter(\.$id == derivedStatisticID)
+            .first()
+            .unwrap(or: Abort(.notFound))
+            .flatMap { $0.delete(on: req.db) }
+            .map { .ok }
+    }
+    
+    func deleteDerivedStatisticGroup(req: Request) throws -> EventLoopFuture<HTTPStatus> {
+        guard let derivedStatisticGroupIDString = req.parameters.get("derivedStatisticGroupID"),
+              let derivedStatisticGroupID = UUID(derivedStatisticGroupIDString) else {
+            throw Abort(.badRequest, reason: "Invalid parameter `derivedStatisticGroupID`")
+        }
+        
+        let user = try req.auth.require(User.self)
+        
+        // TODO: Filter by user org
+        return DerivedStatisticGroup.query(on: req.db)
+            .filter(\.$id == derivedStatisticGroupID)
             .first()
             .unwrap(or: Abort(.notFound))
             .flatMap { $0.delete(on: req.db) }

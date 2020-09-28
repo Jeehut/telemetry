@@ -24,7 +24,13 @@ struct StatisticsView: View {
                 
                 if let statisticsGroups = api.derivedStatisticGroups[app] {
                     ForEach(statisticsGroups, id: \.self) { statisticsGroup in
-                        Section(header: Text(statisticsGroup.title).font(.title)) {
+                        Section(header: HStack {
+                            Text(statisticsGroup.title).font(.title)
+                            Button(
+                                action: { api.delete(derivedStatisticGroup: statisticsGroup, in: app) },
+                                label: { Image(systemName: "xmark.circle.fill") })
+                            
+                        }) {
                             ForEach(statisticsGroup.derivedStatistics, id: \.self) { derivedStatistic in
                                 ZStack(alignment: Alignment.topTrailing) {
                                     DerivedStatisticView(derivedStatisticGroup: statisticsGroup, derivedStatistic: derivedStatistic, app: app)
@@ -40,7 +46,7 @@ struct StatisticsView: View {
                                 
                             }
                             
-                            CardView {
+                            DashedCardView {
                                 Button(action: {
                                     isShowingNewDerivedStatisticView = true
                                 }) {

@@ -90,3 +90,14 @@ struct DerivedStatisticCreateRequestBody: Codable {
     var title: String
     var payloadKey: String
 }
+
+struct InsightGroup: Codable {
+    var id: UUID
+    var title: String
+    var insights: [Insight] = []
+}
+
+struct Insight: Codable {
+    var id: UUID
+    var title: String
+}

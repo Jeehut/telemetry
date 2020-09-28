@@ -26,6 +26,10 @@ public func configure(_ app: Application) throws {
     app.migrations.add(DerivedStatisticGroup.Migration())
     app.migrations.add(DerivedStatistic.Migration())
     app.migrations.add(DerivedStatisticHistoricalData.Migration())
+    
+    app.migrations.add(InsightGroup.Migration())
+    app.migrations.add(Insight.Migration())
+    app.migrations.add(InsightHistoricalData.Migration())
 
     try app.autoMigrate().wait()
 
