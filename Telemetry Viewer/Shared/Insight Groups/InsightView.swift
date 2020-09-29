@@ -17,8 +17,14 @@ struct InsightView: View {
     @State var insightData: InsightDataTransferObject?
     @State var insightAgeText: String = "Loading..."
     
-    let timer = Timer.publish(
+    let insightAgeTextTimer = Timer.publish(
         every: 1, // second
+        on: .main,
+        in: .common
+    ).autoconnect()
+       
+    let refreshTimer = Timer.publish(
+        every: 60*5, // 5 minutes
         on: .main,
         in: .common
     ).autoconnect()
@@ -87,7 +93,7 @@ struct InsightView: View {
             HStack(spacing: 2) {
                 Image(systemName: "arrow.counterclockwise.circle")
                 Text(insightAgeText)
-                    .onReceive(timer) { _ in
+                    .onReceive(insightAgeTextTimer) { _ in
                         insightAgeText = newInsightAgeText
                     }
             }
@@ -102,6 +108,12 @@ struct InsightView: View {
             }
         }
         .onAppear {
+            api.getInsightData(for: insight, in: insightGroup, in: app) { insightData in
+                self.insightData = insightData
+                insightAgeText = "Updated just now"
+            }
+        }
+        .onReceive(refreshTimer) { _ in
             api.getInsightData(for: insight, in: insightGroup, in: app) { insightData in
                 self.insightData = insightData
                 insightAgeText = "Updated just now"
