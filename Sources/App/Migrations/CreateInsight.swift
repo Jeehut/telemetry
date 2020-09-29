@@ -11,6 +11,7 @@ extension Insight {
                 .foreignKey("group_id", references: InsightGroup.schema, "id", onDelete: .cascade, onUpdate: .noAction)
                 .field("title", .string, .required)
                 .field("insight_type", .string, .required)
+                .field("time_interval", .double)
                 .field("configuration", .dictionary(of: .string))
                 .create()
         }

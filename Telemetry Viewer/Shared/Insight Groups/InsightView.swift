@@ -16,42 +16,64 @@ struct InsightView: View {
     
     @State var insightData: InsightDataTransferObject?
     
+    let dateComponentsFormatter: DateComponentsFormatter = {
+        let formatter = DateComponentsFormatter()
+        formatter.unitsStyle = .full
+        return formatter
+    }()
+    
     var body: some View {
-        if insightData == nil {
-            #if os (macOS)
-            let grayColor = Color(NSColor.systemGray)
-            #else
-            let grayColor = Color(UIColor.systemGray)
-            #endif
+        
+        #if os (macOS)
+        let grayColor = Color(NSColor.systemGray)
+        #else
+        let grayColor = Color(UIColor.systemGray)
+        #endif
+        
+        VStack(alignment: .leading) {
+            Text(insight.title).font(.title3)
             
-            VStack(alignment: .leading) {
-                Text(insight.title).font(.title3)
-
-                Text("Content is Loading")
-                    .font(.footnote)
-                    .foregroundColor(grayColor)
+            
+            
+            let calculatedAt = Date()
+            let calculationBeginDate = Date(timeInterval: insight.timeInterval, since: calculatedAt)
+            
+            let dateComponents = Calendar.autoupdatingCurrent.dateComponents([.day, .hour, .minute], from: calculationBeginDate, to: calculatedAt)
+            Text("\(insight.insightType.humanReadableName) of signals less than \(dateComponentsFormatter.string(from: dateComponents) ?? "—") old")
+                .font(.footnote)
+                .foregroundColor(grayColor)
+            
+            if insightData == nil {
+                
+                Text("Oh yes we are still Loading and it is taking some time but oh well look at these nice redacted things")
                     .redacted(reason: .placeholder)
-                Text("Oh yes we are still Loading and it is taking some time but oh well look at these nice redacted things").redacted(reason: .placeholder)
                     .onAppear {
                         api.getInsightData(for: insight, in: insightGroup, in: app) { insightData in
                             self.insightData = insightData
                         }
                     }
+                
+                Text("This data was calculated by elves")
+                    .redacted(reason: .placeholder)
+                    .font(.footnote)
+                    .foregroundColor(grayColor)
             }
+            
+            else {
+                switch insightData!.insightType {
+                case .breakdown:
+                    InsightBreakdownView(insightData: insightData!)
+                default:
+                    VStack(alignment: .leading) {
+                        Text(insight.title).font(.title3)
+                        Text("This Insight Type is not supported yet")
+                    }
+                    
+                }
+            }
+            
         }
         
-        else {
-            switch insightData!.insightType {
-            case .breakdown:
-                InsightBreakdownView(insightData: insightData!)
-            default:    
-                VStack(alignment: .leading) {
-                    Text(insight.title).font(.title3)
-                    Text("This Insight Type is not supported yet")
-                }
-                
-            }
-        }
         
     }
 }
@@ -63,9 +85,10 @@ struct InsightView_Previews: PreviewProvider {
         InsightView(
             app: MockData.app1,
             insightGroup: InsightGroup(id: UUID(), title: "Test Insight Group"),
-            insight: Insight(id: UUID(), title: "System Version", configuration: ["breakdown.payloadKey": "systemVersion"], historicalData: [])
+            insight: Insight(id: UUID(), title: "System Version", insightType: .breakdown, timeInterval: -3600*24, configuration: ["breakdown.payloadKey": "systemVersion"], historicalData: [])
         )
+        .padding()
         .environmentObject(APIRepresentative())
-        .previewLayout(.fixed(width: 200, height: 200))
+        .previewLayout(.fixed(width: 400, height: 200))
     }
 }

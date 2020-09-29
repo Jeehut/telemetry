@@ -23,6 +23,9 @@ final class Insight: Model, Content {
     @Field(key: "insight_type")
     var insightType: InsightType
     
+    @Field(key: "time_interval")
+    var timeInterval: TimeInterval
+    
     @Field(key: "configuration")
     var configuration: [String: String]
     
@@ -34,6 +37,8 @@ struct InsightDataTransferObject: Content {
     let id: UUID
     let title: String
     let insightType: Insight.InsightType
+    let timeInterval: TimeInterval
     let configuration: [String: String]
     let data: [String: Float]
+    let calculatedAt: Date
 }

@@ -100,6 +100,8 @@ struct InsightGroup: Codable {
 struct Insight: Codable {
     var id: UUID
     var title: String
+    let insightType: InsightType
+    let timeInterval: TimeInterval
     var configuration: [String: String]
     var historicalData: [InsightHistoricalData]?
 }
@@ -112,18 +114,30 @@ struct InsightHistoricalData: Codable {
 enum InsightType: String, Codable {
     case breakdown
     case mean
+    
+    var humanReadableName: String {
+        switch self {
+        case .breakdown:
+            return "Breakdown"
+        case .mean:
+            return "Mean"
+        }
+    }
 }
 
 struct InsightDataTransferObject: Codable {
     let id: UUID
     let title: String
     let insightType: InsightType
+    let timeInterval: TimeInterval
     let configuration: [String: String]
     let data: [String: Float]
+    let calculatedAt: Date
 }
 
 struct InsightCreateRequestBody: Codable {
     var title: String
     var insightType: InsightType
+    let timeInterval: TimeInterval
     var configuration: [String: String]
 }

@@ -22,6 +22,7 @@ struct NewInsightForm: View {
     @State var insightCreateRequestBody: InsightCreateRequestBody = InsightCreateRequestBody(
         title: "New Insight",
         insightType: .breakdown,
+        timeInterval: -3600*24,
         configuration: [:])
     
     @State private var selectedTypeIndex = 0

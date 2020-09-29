@@ -43,8 +43,10 @@ class InsightsController: RouteCollection {
                         id: insight.id!,
                         title: insight.title,
                         insightType: insight.insightType,
+                        timeInterval: insight.timeInterval,
                         configuration: insight.configuration,
-                        data: ["unknown type": 0])
+                        data: ["unknown type": 0],
+                        calculatedAt: Date())
                     
                     return req.eventLoop.makeSucceededFuture(dto)
                 }
@@ -87,8 +89,10 @@ class InsightsController: RouteCollection {
                     id: insight.id!,
                     title: insight.title,
                     insightType: insight.insightType,
+                    timeInterval: insight.timeInterval,
                     configuration: insight.configuration,
-                    data: breakdownStatistics)
+                    data: breakdownStatistics,
+                    calculatedAt: Date())
             }
     }
     
@@ -96,6 +100,7 @@ class InsightsController: RouteCollection {
         struct InsightCreateRequestBody: Content, Validatable {
             let title: String
             let insightType: Insight.InsightType
+            let timeInterval: TimeInterval
             let configuration: [String: String]
             
             static func validations(_ validations: inout Validations) {
@@ -116,6 +121,7 @@ class InsightsController: RouteCollection {
         insight.$group.id = insightGroupID
         insight.title = insightCreateRequestBody.title
         insight.insightType = insightCreateRequestBody.insightType
+        insight.timeInterval = insightCreateRequestBody.timeInterval
         insight.configuration = insightCreateRequestBody.configuration
         
         return insight.save(on: req.db).map { insight }
