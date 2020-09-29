@@ -9,10 +9,17 @@ import SwiftUI
 
 struct SignalList: View {
     @EnvironmentObject var api: APIRepresentative
+    @Binding var isPresented: Bool
     var app: TelemetryApp
     
     var body: some View {
-        List {
+        
+        let closeButton = Button("Close") {
+            isPresented = false
+        }
+        .keyboardShortcut(.cancelAction)
+        
+        let list = List {
             if api.signals[app] == nil {
                 ForEach(MockData.signals, id: \.self) { signal in
                     SignalView(signal: signal).redacted(reason: .placeholder)
@@ -27,11 +34,20 @@ struct SignalList: View {
             api.getSignals(for: app)
             TelemetryManager().send(.telemetryAppSignalsShown, for: api.user?.email)
         }
-    }
-}
-
-struct SignalList_Previews: PreviewProvider {
-    static var previews: some View {
-        SignalList(app: MockData.app1)
+        
+        #if os(macOS)
+        VStack {
+            list
+            closeButton
+        }
+            .frame(minWidth: 800, minHeight: 600)
+            .padding()
+        #else
+        NavigationView {
+            list
+                .navigationTitle("Raw Signals")
+                .navigationBarItems(trailing: closeButton)
+        }
+        #endif
     }
 }

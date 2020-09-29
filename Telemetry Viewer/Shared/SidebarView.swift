@@ -22,7 +22,7 @@ struct SidebarView: View {
                     if app.isMockData {
                         
                         NavigationLink(
-                            destination: TelemetryAppView(app: app),
+                            destination: InsightGroupList(app: app),
                             label: {
                                 Label(app.name, systemImage: "app.badge")
                             }
@@ -30,7 +30,7 @@ struct SidebarView: View {
                         .redacted(reason: .placeholder)
                     } else {
                         NavigationLink(
-                            destination: TelemetryAppView(app: app),
+                            destination: InsightGroupList(app: app),
                             label: {
                                 Label(app.name, systemImage: "app.badge")
                             }

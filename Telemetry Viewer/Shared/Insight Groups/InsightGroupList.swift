@@ -11,6 +11,7 @@ struct InsightGroupList: View {
     @EnvironmentObject var api: APIRepresentative
     var app: TelemetryApp
     
+    @State var isShowingRawSignalsView = false
     @State var isShowingNewInsightGroupView = false
     @State var isShowingNewInsightForm = false
     
@@ -63,6 +64,7 @@ struct InsightGroupList: View {
             api.getInsightGroups(for: app)
             TelemetryManager().send(.telemetryAppInsightsShown, for: api.user?.email)
         }
+        .navigationTitle(app.name)
         .toolbar {
             ToolbarItem {
                 Button(action: {
@@ -72,6 +74,18 @@ struct InsightGroupList: View {
                 }
                 .sheet(isPresented: $isShowingNewInsightGroupView) {
                     NewInsightGroupView(isPresented: $isShowingNewInsightGroupView, app: app)
+                }
+                
+            }
+            
+            ToolbarItem {
+                Button(action: {
+                    isShowingRawSignalsView = true
+                }) {
+                    Label("Raw Signals", systemImage: "waveform")
+                }
+                .sheet(isPresented: $isShowingRawSignalsView) {
+                    SignalList(isPresented: $isShowingRawSignalsView, app: app)
                 }
                 
             }
