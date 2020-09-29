@@ -141,6 +141,6 @@ struct InsightDataTransferObject: Codable {
 struct InsightCreateRequestBody: Codable {
     var title: String
     var insightType: InsightType
-    let timeInterval: TimeInterval
+    var timeInterval: TimeInterval
     var configuration: [String: String]
 }

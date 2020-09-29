@@ -18,6 +18,6 @@ struct Telemetry_ViewerApp: App {
     }
     
     init() {
-        TelemetryManager().send(.appLaunchedRegularly, for: api.user?.email ?? "unregistered user")
+        TelemetryManager().send(.appLaunchedRegularly, for: api.user?.email)
     }
 }

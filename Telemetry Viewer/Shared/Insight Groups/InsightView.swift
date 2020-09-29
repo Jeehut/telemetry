@@ -81,22 +81,32 @@ struct InsightView: View {
             else {
                 Text("Oh yes we are still Loading and it is taking some time so here's a secret: This data was crunched by elves!").redacted(reason: .placeholder)
             }
-
-            Text(insightAgeText)
-                .font(.footnote)
-                .foregroundColor(grayColor)
-                .onReceive(timer) { _ in
-                    insightAgeText = newInsightAgeText
-                }
             
+            Spacer()
+
+            HStack(spacing: 2) {
+                Image(systemName: "arrow.counterclockwise.circle")
+                Text(insightAgeText)
+                    .onReceive(timer) { _ in
+                        insightAgeText = newInsightAgeText
+                    }
+            }
+            .font(.footnote)
+            .foregroundColor(grayColor)
+            .onTapGesture {
+                insightData = nil
+                api.getInsightData(for: insight, in: insightGroup, in: app) { insightData in
+                    self.insightData = insightData
+                    insightAgeText = "Updated just now"
+                }
+            }
         }
         .onAppear {
             api.getInsightData(for: insight, in: insightGroup, in: app) { insightData in
                 self.insightData = insightData
+                insightAgeText = "Updated just now"
             }
         }
-        
-        
     }
 }
 

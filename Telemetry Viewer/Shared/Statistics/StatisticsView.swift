@@ -79,7 +79,7 @@ struct StatisticsView: View {
         }
         .onAppear {
             api.getDerivedStatisticGroups(for: app)
-            TelemetryManager().send(.telemetryAppInsightsShown, for: api.user?.email ?? "unregistered user")
+            TelemetryManager().send(.telemetryAppInsightsShown, for: api.user?.email)
         }
         .toolbar {
             ToolbarItem {

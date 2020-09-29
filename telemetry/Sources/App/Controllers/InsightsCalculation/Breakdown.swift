@@ -2,7 +2,7 @@ import Vapor
 import Fluent
 
 extension InsightsController {
-    func getBreakdown(insight: Insight, req: Request, appID: UUID) -> EventLoopFuture<InsightDataTransferObject> {
+    func getBreakdown(insight: Insight, conditions: [InsightFilterCondition], req: Request, appID: UUID) -> EventLoopFuture<InsightDataTransferObject> {
 
         let laterDate = Date()
         let earlierDate = Date(timeInterval: insight.timeInterval, since: laterDate)
@@ -27,7 +27,9 @@ extension InsightsController {
                 for signal in signals {
                     guard let payloadDict = signal.payload, let payloadContent = payloadDict[payloadKey] else { continue }
                     
-                    guard !knownUserIdentifiers.contains(signal.clientUser) else { continue }
+                    if conditions.contains(.uniqueUser) {
+                        guard !knownUserIdentifiers.contains(signal.clientUser) else { continue }
+                    }
                     
                     let currentAmountInStatistics = breakdownStatistics[payloadContent, default: 0]
                     breakdownStatistics[payloadContent] = currentAmountInStatistics + 1

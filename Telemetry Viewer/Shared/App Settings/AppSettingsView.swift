@@ -18,7 +18,7 @@ struct AppSettingsView: View {
         let saveButton = Button("Save Changes") {
             api.update(app: app, newName: newName)
             isPresented = false
-            TelemetryManager().send(.telemetryAppUpdated, for: api.user?.email ?? "unregistered user")
+            TelemetryManager().send(.telemetryAppUpdated, for: api.user?.email)
         }
         .keyboardShortcut(.defaultAction)
         
@@ -49,7 +49,7 @@ struct AppSettingsView: View {
                 Button("Delete App \"\(app.name)\"") {
                     api.delete(app: app)
                     isPresented = false
-                    TelemetryManager().send(.telemetryAppDeleted, for: api.user?.email ?? "unregistered user")
+                    TelemetryManager().send(.telemetryAppDeleted, for: api.user?.email)
                 }.accentColor(.red)
             }
             
@@ -75,7 +75,7 @@ struct AppSettingsView: View {
         }
         .onAppear {
             newName = app.name
-            TelemetryManager().send(.telemetryAppSettingsShown, for: api.user?.email ?? "unregistered user")
+            TelemetryManager().send(.telemetryAppSettingsShown, for: api.user?.email)
         }
         #endif
         

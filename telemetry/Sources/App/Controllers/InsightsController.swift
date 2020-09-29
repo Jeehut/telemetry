@@ -8,6 +8,11 @@
 import Fluent
 import Vapor
 
+enum InsightFilterCondition: Equatable {
+    case uniqueUser
+    case keywordEquals(keyword: String, targetValue: String)
+}
+
 class InsightsController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let insights = routes.grouped(UserToken.authenticator())
@@ -33,11 +38,15 @@ class InsightsController: RouteCollection {
             .first()
             .unwrap(or: Abort(.notFound))
             .flatMap { insight in
+                // Parse Conditions
+                let conditions = self.parseConditions(from: insight.configuration["conditions"])
+                
+                // Route to Calculation Method
                 switch insight.insightType {
                 case .breakdown:
-                    return self.getBreakdown(insight: insight, req: req, appID: appID)
+                    return self.getBreakdown(insight: insight, conditions: conditions, req: req, appID: appID)
                 case .count:
-                    return self.getCount(insight: insight, req: req, appID: appID)
+                    return self.getCount(insight: insight, conditions: conditions, req: req, appID: appID)
                 default:
                     let dto = InsightDataTransferObject(
                         id: insight.id!,
@@ -51,6 +60,34 @@ class InsightsController: RouteCollection {
                     return req.eventLoop.makeSucceededFuture(dto)
                 }
             }
+    }
+    
+    func parseConditions(from conditions: String?) -> [InsightFilterCondition] {
+        var returnConditions: [InsightFilterCondition] = []
+        
+        guard let conditions = conditions else { return returnConditions }
+                
+        for fragment in conditions.split(separator: ";") {
+            let cleanedFragment = fragment.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+            
+            if cleanedFragment == "unique-user" {
+                returnConditions.append(.uniqueUser)
+            }
+            
+            else if cleanedFragment.contains("==") {
+                let fragmentParts = cleanedFragment.split(separator: "=")
+                guard let payloadKey = fragmentParts.first else { continue }
+                guard let payloadValue = fragmentParts.last else { continue }
+                returnConditions.append(.keywordEquals(keyword: String(payloadKey), targetValue: String(payloadValue)))
+            }
+            
+            else {
+                print("Unknown Fragment, \(cleanedFragment) Skipping.")
+            }
+            
+        }
+        
+        return returnConditions
     }
     
     func create(req: Request) throws -> EventLoopFuture<Insight> {

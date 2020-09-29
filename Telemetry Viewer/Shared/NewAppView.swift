@@ -18,7 +18,7 @@ struct NewAppView: View {
         let saveButton = Button("Save") {
             api.create(appNamed: newAppName)
             self.presentationMode.wrappedValue.dismiss()
-            TelemetryManager().send(.telemetryAppCreated, for: api.user?.email ?? "unregistered user")
+            TelemetryManager().send(.telemetryAppCreated, for: api.user?.email)
         }
         .keyboardShortcut(.defaultAction)
         

@@ -62,7 +62,7 @@ struct UserCountGroupView: View {
         }
         .onAppear {
             api.getUserCountGroups(for: app)
-            TelemetryManager().send(.telemetryAppUsersShown, for: api.user?.email ?? "unregistered user")
+            TelemetryManager().send(.telemetryAppUsersShown, for: api.user?.email)
         }
         .onReceive(timer) { timer in
             api.getUserCountGroups(for: app)

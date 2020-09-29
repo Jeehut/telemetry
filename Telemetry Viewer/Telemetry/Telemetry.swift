@@ -37,7 +37,7 @@ final class TelemetryManager {
         let payload: Dictionary<String, String>?
     }
 
-    func send(_ signalType: TelemetrySignalType, for clientUser: String, with additionalPayload: [String: String] = [:]) {
+    func send(_ signalType: TelemetrySignalType, for clientUser: String?, with additionalPayload: [String: String] = [:]) {
         // Do not send telemetry from simulator
         // guard !isSimulator else { return }
 
@@ -50,15 +50,17 @@ final class TelemetryManager {
             urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
             
             let payLoad: [String: String] = [
+                "platform": platform,
                 "systemVersion": systemVersion,
                 "appVersion": appVersion,
                 "buildNumber": buildNumber,
                 "isSimulator": "\(isSimulator)",
                 "isTestFlight": "\(isTestFlight)",
-                "isAppStore": "\(isAppStore)"
+                "isAppStore": "\(isAppStore)",
+                "meaninglessRandomNumber": "\(Int.random(in: 0...1000))",
             ].merging(additionalPayload, uniquingKeysWith: { (_, last) in last })
             
-            let signalPostBody: SignalPostBody = SignalPostBody(type: "\(signalType)", clientUser: clientUser, payload: payLoad)
+            let signalPostBody: SignalPostBody = SignalPostBody(type: "\(signalType)", clientUser: clientUser ?? defaultUserIdentifier, payload: payLoad)
 
             urlRequest.httpBody = try! JSONEncoder().encode(signalPostBody)
 
@@ -98,15 +100,29 @@ extension TelemetryManager {
     
     var systemVersion: String {
         #if os(macOS)
-        return "macOS \(ProcessInfo.processInfo.operatingSystemVersion.majorVersion).\(ProcessInfo.processInfo.operatingSystemVersion.minorVersion).\(ProcessInfo.processInfo.operatingSystemVersion.patchVersion)"
+        return "\(platform) \(ProcessInfo.processInfo.operatingSystemVersion.majorVersion).\(ProcessInfo.processInfo.operatingSystemVersion.minorVersion).\(ProcessInfo.processInfo.operatingSystemVersion.patchVersion)"
         #elseif os(iOS)
-        return "iOS  \(UIDevice.current.systemVersion)"
+        return "\(platform)  \(UIDevice.current.systemVersion)"
         #elseif os(watchOS)
-        return "watchOS \(UIDevice.current.systemVersion)"
+        return "\(platform) \(UIDevice.current.systemVersion)"
         #elseif os(tvOS)
-        return "tvOS \(UIDevice.current.systemVersion)"
+        return "\(platform) \(UIDevice.current.systemVersion)"
         #else
-        return "Unknown system version"
+        return "\(platform)"
+        #endif
+    }
+    
+    var platform: String {
+        #if os(macOS)
+        return "macOS"
+        #elseif os(iOS)
+        return "iOS"
+        #elseif os(watchOS)
+        return "watchOS"
+        #elseif os(tvOS)
+        return "tvOS"
+        #else
+        return "Unknown Platform"
         #endif
     }
 
@@ -118,6 +134,14 @@ extension TelemetryManager {
     var buildNumber: String {
         let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
         return buildNumber ?? "0"
+    }
+    
+    var defaultUserIdentifier: String {
+        #if os(macOS)
+        return "unknown user \(systemVersion) \(buildNumber)"
+        #else
+        return UIDevice.current.identifierForVendor?.uuidString ?? "unknown user \(systemVersion) \(buildNumber)"
+        #endif
     }
 }
 

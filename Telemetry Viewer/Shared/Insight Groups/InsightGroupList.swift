@@ -61,7 +61,7 @@ struct InsightGroupList: View {
         }
         .onAppear {
             api.getInsightGroups(for: app)
-            TelemetryManager().send(.telemetryAppInsightsShown, for: api.user?.email ?? "unregistered user")
+            TelemetryManager().send(.telemetryAppInsightsShown, for: api.user?.email)
         }
         .toolbar {
             ToolbarItem {
