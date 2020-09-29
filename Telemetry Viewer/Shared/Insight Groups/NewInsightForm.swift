@@ -33,16 +33,15 @@ struct NewInsightForm: View {
         }
     }
     
-    let insightTypes = ["Breakdown", "Mean"]
-    let insightTypesValues: [InsightType] = [.breakdown, .mean]
+    let insightTypes: [InsightType] = [.breakdown, .count, .mean]
     
     var body: some View {
         
         let saveButton = Button("Save") {
             insightCreateRequestBody.configuration["breakdown.payloadKey"] = breakdownpayloadKey
-            insightCreateRequestBody.insightType = insightTypesValues[selectedTypeIndex]
+            insightCreateRequestBody.insightType = insightTypes[selectedTypeIndex]
+            
             api.create(insightWith: insightCreateRequestBody, in: insightGroup, for: app)
-            //            api.create(derivedStatistic: derivedStatisticCreateRequestBody, for: derivedStatisticGroup, in: app)
             isPresented = false
         }
         .keyboardShortcut(.defaultAction)
@@ -64,12 +63,12 @@ struct NewInsightForm: View {
             Section(header: Text("Type"), footer: Text("What kind of insight is your insight?")) {
                 Picker(selection: $selectedTypeIndex, label: Text("Please choose a type")) {
                     ForEach(0 ..< insightTypes.count) {
-                        Text(self.insightTypes[$0])
+                        Text(self.insightTypes[$0].humanReadableName)
                     }
                 }
             }
             
-            if insightTypesValues[selectedTypeIndex] == .breakdown {
+            if insightTypes[selectedTypeIndex] == .breakdown {
                 Section(header: Text("Payload Keyword"), footer: Text("What's the payload keyword you want a breakdown for? E.g. 'systemVersion' for a breakdown of system versions")) {
                     TextField("Payload Keyword", text: $breakdownpayloadKey)
                         

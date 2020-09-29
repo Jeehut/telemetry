@@ -116,7 +116,16 @@ extension APIRepresentative {
             if let data = data {
                 print(String(decoding: data, as: UTF8.self))
                 
-                let decodedResponse = try! JSONDecoder.telemetryDecoder.decode(OrganizationUser.self, from: data)
+                if let httpURLResponse = response as? HTTPURLResponse {
+                    if httpURLResponse.statusCode != 200 {
+                        self.logout()
+                    }
+                }
+                
+                guard let decodedResponse = try? JSONDecoder.telemetryDecoder.decode(OrganizationUser.self, from: data) else {
+                    self.logout()
+                    return
+                }
                 
                 DispatchQueue.main.async {
                     self.user = decodedResponse

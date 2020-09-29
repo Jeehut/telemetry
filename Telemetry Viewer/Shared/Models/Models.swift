@@ -113,12 +113,15 @@ struct InsightHistoricalData: Codable {
 
 enum InsightType: String, Codable {
     case breakdown
+    case count
     case mean
     
     var humanReadableName: String {
         switch self {
         case .breakdown:
             return "Breakdown"
+        case .count:
+            return "Count"
         case .mean:
             return "Mean"
         }

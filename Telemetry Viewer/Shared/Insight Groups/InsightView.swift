@@ -15,15 +15,44 @@ struct InsightView: View {
     let insight: Insight
     
     @State var insightData: InsightDataTransferObject?
+    @State var insightAgeText: String = "Loading..."
+    
+    let timer = Timer.publish(
+        every: 1, // second
+        on: .main,
+        in: .common
+    ).autoconnect()
+    
+    var newInsightAgeText: String {
+        if let insightData = insightData {
+            return "Updated \(relativeDateFormatter.localizedString(for: insightData.calculatedAt, relativeTo: Date()))"
+        }
+        
+        else {
+            return "Loading..."
+        }
+    }
     
     let dateComponentsFormatter: DateComponentsFormatter = {
         let formatter = DateComponentsFormatter()
         formatter.unitsStyle = .full
         return formatter
     }()
+        
+    let relativeDateFormatter: RelativeDateTimeFormatter = {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .full
+        return formatter
+    }()
+    
+    var humanreadableTimeInterval: String {
+        let calculatedAt = Date()
+        let calculationBeginDate = Date(timeInterval: insight.timeInterval, since: calculatedAt)
+        let dateComponents = Calendar.autoupdatingCurrent.dateComponents([.day, .hour, .minute], from: calculationBeginDate, to: calculatedAt)
+        return dateComponentsFormatter.string(from: dateComponents) ?? "—"
+    }
     
     var body: some View {
-        
         #if os (macOS)
         let grayColor = Color(NSColor.systemGray)
         #else
@@ -32,46 +61,39 @@ struct InsightView: View {
         
         VStack(alignment: .leading) {
             Text(insight.title).font(.title3)
-            
-            
-            
-            let calculatedAt = Date()
-            let calculationBeginDate = Date(timeInterval: insight.timeInterval, since: calculatedAt)
-            
-            let dateComponents = Calendar.autoupdatingCurrent.dateComponents([.day, .hour, .minute], from: calculationBeginDate, to: calculatedAt)
-            Text("\(insight.insightType.humanReadableName) of signals less than \(dateComponentsFormatter.string(from: dateComponents) ?? "—") old")
+            Text("\(insight.insightType.humanReadableName) of signals less than \(humanreadableTimeInterval) old")
                 .font(.footnote)
                 .foregroundColor(grayColor)
             
-            if insightData == nil {
+            
+            if let insightData = insightData {
                 
-                Text("Oh yes we are still Loading and it is taking some time but oh well look at these nice redacted things")
-                    .redacted(reason: .placeholder)
-                    .onAppear {
-                        api.getInsightData(for: insight, in: insightGroup, in: app) { insightData in
-                            self.insightData = insightData
-                        }
+                    switch insightData.insightType {
+                    case .breakdown:
+                        InsightBreakdownView(insightData: insightData)
+                    case .count:
+                        InsightCountView(insightData: insightData)
+                    default:
+                        Text("This Insight Type is not supported yet in this version.")
                     }
-                
-                Text("This data was calculated by elves")
-                    .redacted(reason: .placeholder)
-                    .font(.footnote)
-                    .foregroundColor(grayColor)
             }
             
             else {
-                switch insightData!.insightType {
-                case .breakdown:
-                    InsightBreakdownView(insightData: insightData!)
-                default:
-                    VStack(alignment: .leading) {
-                        Text(insight.title).font(.title3)
-                        Text("This Insight Type is not supported yet")
-                    }
-                    
-                }
+                Text("Oh yes we are still Loading and it is taking some time so here's a secret: This data was crunched by elves!").redacted(reason: .placeholder)
             }
+
+            Text(insightAgeText)
+                .font(.footnote)
+                .foregroundColor(grayColor)
+                .onReceive(timer) { _ in
+                    insightAgeText = newInsightAgeText
+                }
             
+        }
+        .onAppear {
+            api.getInsightData(for: insight, in: insightGroup, in: app) { insightData in
+                self.insightData = insightData
+            }
         }
         
         

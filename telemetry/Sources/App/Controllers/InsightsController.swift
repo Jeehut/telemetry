@@ -28,8 +28,6 @@ class InsightsController: RouteCollection {
         let user = try req.auth.require(User.self)
         // TODO: Only return apps for this user's org
         
-        
-        
         return Insight.query(on: req.db)
             .filter(\.$id == insightID)
             .first()
@@ -38,6 +36,8 @@ class InsightsController: RouteCollection {
                 switch insight.insightType {
                 case .breakdown:
                     return self.getBreakdown(insight: insight, req: req, appID: appID)
+                case .count:
+                    return self.getCount(insight: insight, req: req, appID: appID)
                 default:
                     let dto = InsightDataTransferObject(
                         id: insight.id!,
@@ -50,49 +50,6 @@ class InsightsController: RouteCollection {
                     
                     return req.eventLoop.makeSucceededFuture(dto)
                 }
-            }
-    }
-    
-    func getBreakdown(insight: Insight, req: Request, appID: UUID) -> EventLoopFuture<InsightDataTransferObject> {
-        // TODO: Insights should have a timeInterval property
-        let laterDate = Date()
-        let earlierDate = Date(timeInterval: -3600*24, since: laterDate)
-        
-        return Signal.query(on: req.db)
-            .filter(\.$app.$id == appID)
-            .filter(\.$receivedAt > earlierDate)
-            .filter(\.$receivedAt < laterDate)
-            .sort(\.$receivedAt, .descending)
-            .all()
-            .map { signals in
-                (insight, signals)
-            }
-            .map { insightTuple -> InsightDataTransferObject in
-                let insight = insightTuple.0
-                let signals = insightTuple.1
-                let payloadKey = insight.configuration["breakdown.payloadKey"] ?? "no payload key!"
-                
-                var breakdownStatistics: [String: Float] = [:]
-                var knownUserIdentifiers: [String] = []
-                
-                for signal in signals {
-                    guard let payloadDict = signal.payload, let payloadContent = payloadDict[payloadKey] else { continue }
-                    
-                    guard !knownUserIdentifiers.contains(signal.clientUser) else { continue }
-                    
-                    let currentAmountInStatistics = breakdownStatistics[payloadContent, default: 0]
-                    breakdownStatistics[payloadContent] = currentAmountInStatistics + 1
-                    knownUserIdentifiers.append(signal.clientUser)
-                }
-                
-                return InsightDataTransferObject(
-                    id: insight.id!,
-                    title: insight.title,
-                    insightType: insight.insightType,
-                    timeInterval: insight.timeInterval,
-                    configuration: insight.configuration,
-                    data: breakdownStatistics,
-                    calculatedAt: Date())
             }
     }
     
@@ -144,3 +101,4 @@ class InsightsController: RouteCollection {
             .map { .ok }
     }
 }
+

@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct InsightBreakdownView: View {
-    @EnvironmentObject var api: APIRepresentative
     let insightData: InsightDataTransferObject
     
     let numberFormatter: NumberFormatter = {
@@ -16,19 +15,7 @@ struct InsightBreakdownView: View {
         return numberFormatter
     }()
     
-    let relativeDateFormatter: RelativeDateTimeFormatter = {
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .full
-        return formatter
-    }()
-    
     var body: some View {
-        #if os (macOS)
-        let grayColor = Color(NSColor.systemGray)
-        #else
-        let grayColor = Color(UIColor.systemGray)
-        #endif
-        
         VStack(alignment: .leading) {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading) {
                 let dictionaryKeys = Array(insightData.data.keys).sorted()
@@ -44,15 +31,6 @@ struct InsightBreakdownView: View {
                     }
                 }
             }
-            Spacer()
-            
-            HStack {
-                Text(insightData.configuration["breakdown.payloadKey"] ?? "–")
-                    .font(.system(.footnote, design: .monospaced))
-                Text("\(relativeDateFormatter.localizedString(for: insightData.calculatedAt, relativeTo: Date()))")
-            }
-            .font(.footnote)
-            .foregroundColor(grayColor)
         }
     }
 }

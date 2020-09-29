@@ -4,6 +4,7 @@ import Vapor
 final class Insight: Model, Content {
     enum InsightType: String, Codable {
         case breakdown
+        case count
         case mean
     }
     
