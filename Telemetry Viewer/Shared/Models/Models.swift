@@ -108,7 +108,8 @@ struct Insight: Codable {
 
 struct InsightHistoricalData: Codable {
     var id: UUID
-    var data: [String: Float]
+    var calculatetAt: Date
+    var data: [String: Double]
 }
 
 enum InsightType: String, Codable {
@@ -134,7 +135,7 @@ struct InsightDataTransferObject: Codable {
     let insightType: InsightType
     let timeInterval: TimeInterval
     let configuration: [String: String]
-    let data: [String: Float]
+    let data: [String: Double]
     let calculatedAt: Date
 }
 
@@ -143,4 +144,9 @@ struct InsightCreateRequestBody: Codable {
     var insightType: InsightType
     var timeInterval: TimeInterval
     var configuration: [String: String]
+}
+
+struct ChartDataPoint: Hashable {
+    let date: Date
+    let value: Double
 }
