@@ -57,7 +57,7 @@ final class TelemetryManager {
                 "isSimulator": "\(isSimulator)",
                 "isTestFlight": "\(isTestFlight)",
                 "isAppStore": "\(isAppStore)",
-                "meaninglessRandomNumber": "\(Int.random(in: 0...1000))",
+                "meaninglessRandomNumber": "\(Int.random(in: 0...30))",
             ].merging(additionalPayload, uniquingKeysWith: { (_, last) in last })
             
             let signalPostBody: SignalPostBody = SignalPostBody(type: "\(signalType)", clientUser: clientUser ?? defaultUserIdentifier, payload: payLoad)

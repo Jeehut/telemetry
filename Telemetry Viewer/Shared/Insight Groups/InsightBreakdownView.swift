@@ -17,6 +17,7 @@ struct InsightBreakdownView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
+            ScrollView {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading) {
                 let dictionaryKeys = Array(insightData.data.keys).sorted()
                 ForEach(dictionaryKeys, id: \.self) { key in
@@ -31,6 +32,8 @@ struct InsightBreakdownView: View {
                     }
                 }
             }
+            }
+            .frame(maxHeight: 155)
         }
     }
 }

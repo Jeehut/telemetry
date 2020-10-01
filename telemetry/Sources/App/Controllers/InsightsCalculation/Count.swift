@@ -2,15 +2,14 @@ import Vapor
 import Fluent
 
 extension InsightsController {
-    func getCount(insight: Insight, conditions: [InsightFilterCondition], req: Request, appID: UUID) -> EventLoopFuture<InsightDataTransferObject> {
+    func getCount(insight: Insight, conditions: [InsightFilterCondition], calculatedAtDate: Date = Date(), req: Request, appID: UUID) -> EventLoopFuture<InsightDataTransferObject> {
         
-        let laterDate = Date()
-        let earlierDate = Date(timeInterval: insight.timeInterval, since: laterDate)
+        let earlierDate = Date(timeInterval: insight.timeInterval, since: calculatedAtDate)
         
         return Signal.query(on: req.db)
             .filter(\.$app.$id == appID)
             .filter(\.$receivedAt > earlierDate)
-            .filter(\.$receivedAt < laterDate)
+            .filter(\.$receivedAt < calculatedAtDate)
             .sort(\.$receivedAt, .descending)
             .all()
             .map { signals in
@@ -59,7 +58,7 @@ extension InsightsController {
                     timeInterval: insight.timeInterval,
                     configuration: insight.configuration,
                     data: ["count": userCount],
-                    calculatedAt: Date())
+                    calculatedAt: calculatedAtDate)
             }
     }
 }

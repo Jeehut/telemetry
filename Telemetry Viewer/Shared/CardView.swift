@@ -21,7 +21,6 @@ struct CardView<Content>: View where Content: View {
                 .shadow(color: Color(hue: 0, saturation: 0, brightness: 0, opacity: 0.2), radius: 7, x: 0, y: 6)
             
             content
-            .padding()
         }
         .padding()
     }

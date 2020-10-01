@@ -9,6 +9,7 @@ extension InsightHistoricalData {
                 .id()
                 .field("insight_id", .uuid, .required, .references(Insight.schema, "id"))
                 .foreignKey("insight_id", references: Insight.schema, "id", onDelete: .cascade, onUpdate: .noAction)
+                .field("calculated_at", .datetime, .required)
                 .field("data", .dictionary(of: .float))
                 .create()
         }

@@ -10,6 +10,9 @@ final class InsightHistoricalData: Model, Content {
     @Parent(key: "insight_id")
     var insight: Insight
     
+    @Field(key: "calculated_at")
+    var calculatedAt: Date
+    
     @Field(key: "data")
     var data: [String: Float]
 }

@@ -108,7 +108,7 @@ struct Insight: Codable {
 
 struct InsightHistoricalData: Codable {
     var id: UUID
-    var calculatetAt: Date
+    var calculatedAt: Date
     var data: [String: Double]
 }
 

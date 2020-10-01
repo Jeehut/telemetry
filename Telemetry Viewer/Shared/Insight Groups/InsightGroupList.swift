@@ -31,7 +31,9 @@ struct InsightGroupList: View {
                                 ZStack(alignment: Alignment.topTrailing) {
                                     CardView {
                                         InsightView(app: app, insightGroup: insightGroup, insight: insight)
+                                            .clipShape(RoundedRectangle(cornerRadius: 25, style: .continuous))
                                     }
+                                    
                                     
                                     Button(
                                         action: {

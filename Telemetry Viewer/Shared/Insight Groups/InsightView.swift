@@ -14,23 +14,16 @@ struct InsightView: View {
     let insightGroup: InsightGroup
     let insight: Insight
     
-    @State var insightData: InsightDataTransferObject?
     @State var insightAgeText: String = "Loading..."
     
-    let insightAgeTextTimer = Timer.publish(
-        every: 1, // second
-        on: .main,
-        in: .common
-    ).autoconnect()
-       
     let refreshTimer = Timer.publish(
-        every: 60*5, // 5 minutes
+        every: 1, // second
         on: .main,
         in: .common
     ).autoconnect()
     
     var newInsightAgeText: String {
-        if let insightData = insightData {
+        if let insightData = api.insightData[insight.id] {
             return "Updated \(relativeDateFormatter.localizedString(for: insightData.calculatedAt, relativeTo: Date()))"
         }
         
@@ -72,13 +65,12 @@ struct InsightView: View {
                 .foregroundColor(grayColor)
             
             
-            if let insightData = insightData {
-                
+            if let insightData = api.insightData[insight.id] {
                     switch insightData.insightType {
                     case .breakdown:
                         InsightBreakdownView(insightData: insightData)
                     case .count:
-                        InsightCountView(insightData: insightData)
+                        InsightCountView(insightData: insightData, insightHistoricalData: api.insightHistoricalData[insight.id] ?? [])
                     default:
                         Text("This Insight Type is not supported yet in this version.")
                     }
@@ -93,32 +85,45 @@ struct InsightView: View {
             HStack(spacing: 2) {
                 Image(systemName: "arrow.counterclockwise.circle")
                 Text(insightAgeText)
-                    .onReceive(insightAgeTextTimer) { _ in
-                        insightAgeText = newInsightAgeText
-                    }
             }
             .font(.footnote)
             .foregroundColor(grayColor)
+            .shadow(color: Color("CardBackgroundColor"), radius: 3, x: 0.0, y: 0.0)
+            .shadow(color: Color("CardBackgroundColor"), radius: 1, x: 0.0, y: 0.0)
+            .shadow(color: Color("CardBackgroundColor"), radius: 5, x: 0.0, y: 0.0)
             .onTapGesture {
-                insightData = nil
-                api.getInsightData(for: insight, in: insightGroup, in: app) { insightData in
-                    self.insightData = insightData
-                    insightAgeText = "Updated just now"
-                }
+                insightAgeText = "Reloading..."
+                api.getInsightData(for: insight, in: insightGroup, in: app)
+                api.getInsightHistoricalData(for: insight, in: insightGroup, in: app)
             }
         }
-        .onAppear {
-            api.getInsightData(for: insight, in: insightGroup, in: app) { insightData in
-                self.insightData = insightData
-                insightAgeText = "Updated just now"
-            }
+        .padding()
+        .onAppear() {
+            updateIfNecessary()
         }
         .onReceive(refreshTimer) { _ in
-            api.getInsightData(for: insight, in: insightGroup, in: app) { insightData in
-                self.insightData = insightData
-                insightAgeText = "Updated just now"
-            }
+            updateIfNecessary()
         }
+    }
+    
+    func updateIfNecessary() {
+        if let insightData = api.insightData[insight.id] {
+            if abs(insightData.calculatedAt.timeIntervalSinceNow) > 60*5 { // data is over 5 minutes old
+                api.getInsightData(for: insight, in: insightGroup, in: app)
+            }
+        } else {
+            api.getInsightData(for: insight, in: insightGroup, in: app)
+        }
+        
+        if let insightHistoricalData = api.insightHistoricalData[insight.id] {
+            if let lastEntry = insightHistoricalData.sorted(by: { $0.calculatedAt < $1.calculatedAt }).last, abs(lastEntry.calculatedAt.timeIntervalSinceNow) > 3600*24 { // There should be a new historical entry available
+                api.getInsightHistoricalData(for: insight, in: insightGroup, in: app)
+            }
+        } else {
+            api.getInsightHistoricalData(for: insight, in: insightGroup, in: app)
+        }
+        
+        insightAgeText = newInsightAgeText
     }
 }
 

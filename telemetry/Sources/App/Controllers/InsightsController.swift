@@ -17,6 +17,7 @@ class InsightsController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let insights = routes.grouped(UserToken.authenticator())
         insights.get(":insightID", use: get)
+        insights.get(":insightID", "historicaldata", use: getHistoricalData)
         insights.post(use: create)
         insights.delete(":insightID", use: delete)
     }
@@ -59,6 +60,70 @@ class InsightsController: RouteCollection {
                     
                     return req.eventLoop.makeSucceededFuture(dto)
                 }
+            }
+    }
+    
+    func getHistoricalData(req: Request) throws -> EventLoopFuture<[InsightHistoricalData]> {
+        // TODO: Export this into a function
+        guard let appIDString = req.parameters.get("appID"),
+              let appID = UUID(appIDString),
+              let insightIDString = req.parameters.get("insightID"),
+              let insightID = UUID(insightIDString) else {
+            throw Abort(.badRequest, reason: "Invalid parameter `appID`")
+        }
+        
+        let user = try req.auth.require(User.self)
+        // TODO: Only return apps for this user's org
+        
+        return Insight.query(on: req.db)
+            .filter(\.$id == insightID)
+            .with(\.$historicalData)
+            .first()
+            .unwrap(or: Abort(.notFound))
+            .flatMap { insight in
+                let furthestBack = Date(timeIntervalSinceNow: -3600*24*35) // Slightly over a month ago
+                var currentDate = Date()
+                
+                // Calculate Historical Data
+                while currentDate > furthestBack {
+                    // Calculate the canonical start of day for the previous day
+                    currentDate = Calendar.current.startOfDay(for: Date(timeInterval: -1, since: currentDate))
+                    
+                    // Check if there's a UserCount calculated at currentDate
+                    guard insight.historicalData.filter({ historicalData in return historicalData.calculatedAt == currentDate }).isEmpty else {
+                        continue
+                    }
+                    
+                    // If not, create and save it
+                    
+                    // Parse Conditions
+                    let conditions = self.parseConditions(from: insight.configuration["conditions"])
+                    
+                    // Route to Calculation Method
+                    var insightDTOFuture: EventLoopFuture<InsightDataTransferObject>? = nil
+                    switch insight.insightType {
+                    case .breakdown:
+                        insightDTOFuture = self.getBreakdown(insight: insight, conditions: conditions, calculatedAtDate: currentDate, req: req, appID: appID)
+                    case .count:
+                        insightDTOFuture = self.getCount(insight: insight, conditions: conditions, calculatedAtDate: currentDate,  req: req, appID: appID)
+                    default:
+                        break
+                    }
+                    
+                    _ = insightDTOFuture?.map { insightDTO in
+                        let insightHistoricalData = InsightHistoricalData()
+                        insightHistoricalData.calculatedAt = insightDTO.calculatedAt
+                        insightHistoricalData.data = insightDTO.data
+                        insightHistoricalData.$insight.id = insightDTO.id
+                        _ = insightHistoricalData.save(on: req.db)
+                    }
+                }
+                
+                return InsightHistoricalData.query(on: req.db)
+                    .filter(\.$insight.$id == insightID)
+                    .filter(\.$calculatedAt > furthestBack)
+                    .sort(\.$calculatedAt, .ascending)
+                    .all()
             }
     }
     

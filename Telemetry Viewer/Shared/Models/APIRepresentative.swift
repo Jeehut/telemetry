@@ -35,6 +35,8 @@ final class APIRepresentative: ObservableObject {
     
     @Published var signals: [TelemetryApp: [Signal]] = [:]
     @Published var insightGroups: [TelemetryApp: [InsightGroup]] = [:]
+    @Published var insightData: [UUID: InsightDataTransferObject] = [:]
+    @Published var insightHistoricalData: [UUID: [InsightHistoricalData]] = [:]
     
     
     @Published var userCountGroups: [TelemetryApp: [UserCountGroup]] = [:]
@@ -523,7 +525,7 @@ extension APIRepresentative {
         }.resume()
     }
     
-    func getInsightData(for insight: Insight, in insightGroup: InsightGroup, in app: TelemetryApp, completion: @escaping (InsightDataTransferObject) -> ()) {
+    func getInsightData(for insight: Insight, in insightGroup: InsightGroup, in app: TelemetryApp) {
         guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id)/insightgroups/\(insightGroup.id)/insights/\(insight.id)/") else {
             print("Invalid URL")
             return
@@ -540,7 +542,36 @@ extension APIRepresentative {
                 let decodedResponse = try! JSONDecoder.telemetryDecoder.decode(InsightDataTransferObject.self, from: data)
                 
                 DispatchQueue.main.async {
-                    completion(decodedResponse)
+                    self.insightData[decodedResponse.id] = decodedResponse
+                }
+                
+            }
+        }.resume()
+    }
+    
+    func getInsightHistoricalData(for insight: Insight, in insightGroup: InsightGroup, in app: TelemetryApp) {
+        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id)/insightgroups/\(insightGroup.id)/insights/\(insight.id)/historicaldata/") else {
+            print("Invalid URL")
+            return
+        }
+        
+        // Set an empty value to show we're loading
+        if insightHistoricalData[insight.id] == nil {
+            insightHistoricalData[insight.id] = []
+        }
+        
+        var request = URLRequest(url: url)
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.setValue(userToken?.bearerTokenAuthString, forHTTPHeaderField: "Authorization")
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let data = data {
+                print(String(decoding: data, as: UTF8.self))
+                
+                guard let decodedResponse = try? JSONDecoder.telemetryDecoder.decode([InsightHistoricalData].self, from: data) else { return }
+                
+                DispatchQueue.main.async {
+                    self.insightHistoricalData[insight.id] = decodedResponse
                 }
                 
             }
