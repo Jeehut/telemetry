@@ -38,8 +38,10 @@ final class APIRepresentative: ObservableObject {
     @Published var insightData: [UUID: InsightDataTransferObject] = [:]
     @Published var insightHistoricalData: [UUID: [InsightHistoricalData]] = [:]
     
-    @available(*, deprecated, message: "Use insights instead of user counts and derived statistics")
+    @available(*, deprecated, message: "Use insights instead of user counts")
     @Published var userCountGroups: [TelemetryApp: [UserCountGroup]] = [:]
+    
+    @available(*, deprecated, message: "Use insights instead of derived statistics")
     @Published var derivedStatisticGroups: [TelemetryApp: [DerivedStatisticGroup]] = [:]
 }
 
