@@ -10,6 +10,7 @@ extension App  {
                 .id()
                 .field("name", .string, .required)
                 .field("organization_id", .uuid, .required, .references("organizations", "id"))
+                .foreignKey("organization_id", references: Organization.schema, "id", onDelete: .cascade, onUpdate: .noAction)
                 .create()
         }
 
