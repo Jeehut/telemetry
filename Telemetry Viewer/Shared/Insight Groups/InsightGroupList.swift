@@ -45,17 +45,6 @@ struct InsightGroupList: View {
                                         .offset(x: -10, y: 10)
                                 }
                             }
-                            
-                            DashedCardView {
-                                Button(action: {
-                                    isShowingNewInsightForm = true
-                                }) {
-                                    Label("New Insight", systemImage: "rectangle.badge.plus")
-                                }
-                                .sheet(isPresented: $isShowingNewInsightForm) {
-                                    NewInsightForm(app: app, insightGroup: insightGroup, isPresented: $isShowingNewInsightForm)
-                                }
-                            }
                         }
                     }
                 }
@@ -68,7 +57,7 @@ struct InsightGroupList: View {
         }
         .navigationTitle(app.name)
         .toolbar {
-            ToolbarItem {
+            HStack {
                 Button(action: {
                     isShowingNewInsightGroupView = true
                 }) {
@@ -78,9 +67,15 @@ struct InsightGroupList: View {
                     NewInsightGroupView(isPresented: $isShowingNewInsightGroupView, app: app)
                 }
                 
-            }
-            
-            ToolbarItem {
+                Button(action: {
+                    isShowingNewInsightForm = true
+                }) {
+                    Label("New Insight", systemImage: "plus.viewfinder")
+                }
+                .sheet(isPresented: $isShowingNewInsightForm) {
+                    NewInsightForm(app: app, isPresented: $isShowingNewInsightForm)
+                }
+                
                 Button(action: {
                     isShowingRawSignalsView = true
                 }) {
@@ -89,7 +84,6 @@ struct InsightGroupList: View {
                 .sheet(isPresented: $isShowingRawSignalsView) {
                     SignalList(isPresented: $isShowingRawSignalsView, app: app)
                 }
-                
             }
         }
     }

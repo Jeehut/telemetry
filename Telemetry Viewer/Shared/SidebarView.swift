@@ -61,7 +61,6 @@ struct SidebarView: View {
         .navigationTitle("All Apps")
         
         .toolbar {
-            
             ToolbarItem(placement: ToolbarItemPlacement.primaryAction) {
                 HStack {
                     Button(action: {
@@ -83,7 +82,6 @@ struct SidebarView: View {
                 }
                 .sheet(isPresented: $isShowingAppSettingsView) {
                     if let app = $selectedApp.wrappedValue {
-                        
                         AppSettingsView(isPresented: $isShowingAppSettingsView, app: app)
                     }
                 }

@@ -13,7 +13,6 @@ struct NewInsightForm: View {
     
     // Initialization Constants
     let app: TelemetryApp
-    let insightGroup: InsightGroup
     
     // Bindings
     @Binding var isPresented: Bool
@@ -26,6 +25,7 @@ struct NewInsightForm: View {
         configuration: [:])
     
     let insightTypes: [InsightType] = [.breakdown, .count, .mean]
+    @State private var selectedInsightGroupIndex = 0
     @State private var selectedInsightTypeIndex = 0
     @State private var breakdownpayloadKey: String = "systemVersion"
     @State private var timeInterval: TimeInterval = 3600*24
@@ -47,6 +47,7 @@ struct NewInsightForm: View {
             insightCreateRequestBody.insightType = insightTypes[selectedInsightTypeIndex]
             insightCreateRequestBody.timeInterval = -timeInterval
             
+            guard let insightGroup = api.insightGroups[app]?[selectedInsightGroupIndex] else { return }
             api.create(insightWith: insightCreateRequestBody, in: insightGroup, for: app)
             isPresented = false
         }
@@ -66,6 +67,15 @@ struct NewInsightForm: View {
                 TextField("Title", text: $insightCreateRequestBody.title)
             }
             
+            
+            Section(header: Text("Group"), footer: Text("Which group does this insight belong to?")) {
+                Picker(selection: $selectedInsightGroupIndex, label: Text("Please choose a group")) {
+                    ForEach(0 ..< (api.insightGroups[app]?.count ?? 0)) {
+                        Text(api.insightGroups[app]?[$0].title ?? "No Title")
+                    }
+                }
+            }
+            
             Section(header: Text("Type"), footer: Text("What kind of insight is your insight?")) {
                 Picker(selection: $selectedInsightTypeIndex, label: Text("Please choose a type")) {
                     ForEach(0 ..< insightTypes.count) {
@@ -76,7 +86,7 @@ struct NewInsightForm: View {
             
             Section(header: Text("Time Frame"), footer: Text("How far should we go backwards in time to look for signals to include in this insight?")) {
                 VStack {
-                    Slider(value: $timeInterval, in: 3600...3600*24*30, step: 3600)
+                    Slider(value: $timeInterval, in: 0...3600*24*30, step: 3600*24)
                     
                     let calculatedAt = Date()
                     let calculationBeginDate = Date(timeInterval: -timeInterval, since: calculatedAt)
@@ -106,11 +116,6 @@ struct NewInsightForm: View {
                 Text("Sorry that Insight Type is not implemented yet :( ")
             }
             
-            Section(header: Text("Debug"), footer: Text("Debug Info")) {
-                Text("App: \(app.name)")
-                Text("Insight Group: \(insightGroup.title)")
-            }
-            
             #if os(macOS)
             HStack {
                 Spacer()
@@ -137,7 +142,7 @@ struct NewInsightForm_Previews: PreviewProvider {
     static var platform: PreviewPlatform? = nil
     
     static var previews: some View {
-        NewInsightForm(app: MockData.app1, insightGroup: InsightGroup.init(id: UUID(), title: "Test Insight Group"), isPresented: .constant(true))
+        NewInsightForm(app: MockData.app1, isPresented: .constant(true))
             .environmentObject(APIRepresentative())
             .previewLayout(.fixed(width: 600, height: 1000))
     }

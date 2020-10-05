@@ -67,6 +67,10 @@ struct AppSettingsView: View {
         #if os(macOS)
         form
             .padding()
+            .onAppear {
+                newName = app.name
+                TelemetryManager().send(.telemetryAppSettingsShown, for: api.user?.email)
+            }
         #else
         NavigationView {
             form
