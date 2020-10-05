@@ -40,21 +40,6 @@ struct Signal: Codable, Hashable {
     var payload: Dictionary<String, String>?
 }
 
-struct UserCount: Codable, Hashable {
-    let id: UUID?
-    let count: Int
-    let calculatedAt: Date
-}
-
-struct UserCountGroup: Codable, Hashable, Identifiable {
-    let id: UUID
-    let app: [String: String]?
-    let title: String
-    let timeInterval: TimeInterval
-    let historicalData: [UserCount]
-    let rollingCurrentCount: Int
-}
-
 struct DerivedStatisticGroup: Codable, Hashable {
     let id: UUID
     let title: String

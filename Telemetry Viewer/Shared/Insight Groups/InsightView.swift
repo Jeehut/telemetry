@@ -95,6 +95,7 @@ struct InsightView: View {
                 insightAgeText = "Reloading..."
                 api.getInsightData(for: insight, in: insightGroup, in: app)
                 api.getInsightHistoricalData(for: insight, in: insightGroup, in: app)
+                TelemetryManager().send(.insightUpdatedManually, for: api.user?.email)
             }
         }
         .padding()
@@ -107,12 +108,16 @@ struct InsightView: View {
     }
     
     func updateIfNecessary() {
+        
+        
         if let insightData = api.insightData[insight.id] {
             if abs(insightData.calculatedAt.timeIntervalSinceNow) > 60*5 { // data is over 5 minutes old
                 api.getInsightData(for: insight, in: insightGroup, in: app)
+                TelemetryManager().send(.insightUpdatedAutomatically, for: api.user?.email)
             }
         } else {
             api.getInsightData(for: insight, in: insightGroup, in: app)
+            TelemetryManager().send(.insightUpdatedAutomatically, for: api.user?.email)
         }
         
         if let insightHistoricalData = api.insightHistoricalData[insight.id] {

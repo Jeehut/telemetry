@@ -28,6 +28,8 @@ enum TelemetrySignalType: String {
     case telemetryAppSettingsShown
     case userSettingsShown
     case organizationSettingsShown
+    case insightUpdatedAutomatically
+    case insightUpdatedManually
 }
 
 final class TelemetryManager {
@@ -37,7 +39,7 @@ final class TelemetryManager {
         let payload: Dictionary<String, String>?
     }
 
-    func send(_ signalType: TelemetrySignalType, for clientUser: String?, with additionalPayload: [String: String] = [:]) {
+    func send(_ signalType: TelemetrySignalType, for clientUser: String? = nil, with additionalPayload: [String: String] = [:]) {
         // Do not send telemetry from simulator
         // guard !isSimulator else { return }
 
