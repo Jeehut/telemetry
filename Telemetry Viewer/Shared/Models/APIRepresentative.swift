@@ -9,6 +9,7 @@ import Foundation
 import Combine
 
 final class APIRepresentative: ObservableObject {
+    private static let baseURLString = "http://138.197.191.142/api/v1/"
     private static let userTokenStandardsKey = "org.breakthesystem.telemetry.viewer.userToken"
     
     init() {
@@ -50,11 +51,8 @@ final class APIRepresentative: ObservableObject {
 
 extension APIRepresentative {
     func login(loginRequestBody: LoginRequestBody, callback: @escaping () -> ()) {
-        
-        guard let url = URL(string: "http://localhost:8080/api/v1/users/login") else {
-            print("Invalid URL")
-            return
-        }
+        let url = urlForPath("users", "login")
+
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue(loginRequestBody.basicHTMLAuthString, forHTTPHeaderField: "Authorization")
@@ -86,10 +84,7 @@ extension APIRepresentative {
     }
     
     func register(registrationRequestBody: RegistrationRequestBody, callback: @escaping () -> ()) {
-        guard let url = URL(string: "http://localhost:8080/api/v1/users/register") else {
-            print("Invalid URL")
-            return
-        }
+        let url = urlForPath("users", "register")
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -110,10 +105,7 @@ extension APIRepresentative {
     }
     
     func getUserInformation() {
-        guard let url = URL(string: "http://localhost:8080/api/v1/users/me") else {
-            print("Invalid URL")
-            return
-        }
+        let url = urlForPath("users", "me")
         
         var request = URLRequest(url: url)
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
@@ -144,10 +136,7 @@ extension APIRepresentative {
     }
     
     func create(appNamed name: String) {
-        guard let url = URL(string: "http://localhost:8080/api/v1/apps/") else {
-            print("Invalid URL")
-            return
-        }
+        let url = urlForPath("apps")
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -171,11 +160,7 @@ extension APIRepresentative {
     }
     
     func update(app: TelemetryApp, newName: String) {
-        guard
-            let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/") else {
-            print("Invalid URL")
-            return
-        }
+        let url = urlForPath("apps", app.id.uuidString)
         
         var request = URLRequest(url: url)
         request.httpMethod = "PATCH"
@@ -199,10 +184,7 @@ extension APIRepresentative {
     }
     
     func delete(app: TelemetryApp) {
-        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/") else {
-            print("Invalid URL")
-            return
-        }
+        let url = urlForPath("apps", app.id.uuidString)
         
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
@@ -223,10 +205,7 @@ extension APIRepresentative {
     }
     
     func create(userCountGroup: UserCountGroupCreateRequestBody, for app: TelemetryApp) {
-        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/usercountgroups/") else {
-            print("Invalid URL")
-            return
-        }
+        let url = urlForPath("apps", app.id.uuidString, "usercountgroups")
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -245,10 +224,7 @@ extension APIRepresentative {
     }
     
     func getUserCountGroups(for app: TelemetryApp) {
-        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/usercountgroups/") else {
-            print("Invalid URL")
-            return
-        }
+        let url = urlForPath("apps", app.id.uuidString, "usercountgroups")
         
         var request = URLRequest(url: url)
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
@@ -269,10 +245,7 @@ extension APIRepresentative {
     }
     
     func delete(userCountGroup: UserCountGroup, from app: TelemetryApp) {
-        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/usercountgroups/\(userCountGroup.id.uuidString)/") else {
-            print("Invalid URL")
-            return
-        }
+        let url = urlForPath("apps", app.id.uuidString, "usercountgroups", userCountGroup.id.uuidString)
         
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
@@ -290,11 +263,9 @@ extension APIRepresentative {
         }.resume()
     }
     
+    @available(*, deprecated, message: "Use insights instead of derived statistics")
     func getDerivedStatisticGroups(for app: TelemetryApp) {
-        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/derivedstatisticgroups/") else {
-            print("Invalid URL")
-            return
-        }
+        let url = urlForPath("apps", app.id.uuidString, "derivedstatisticgroups")
         
         var request = URLRequest(url: url)
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
@@ -314,6 +285,7 @@ extension APIRepresentative {
         }.resume()
     }
     
+    @available(*, deprecated, message: "Use insights instead of derived statistics")
     func getAdditionalData(for statistic: DerivedStatistic, in derivedStatisticGroup: DerivedStatisticGroup, in app: TelemetryApp, callback: @escaping ([String: Int]) -> ()) {
         guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id)/derivedstatisticgroups/\(derivedStatisticGroup.id)/derivedstatistics/\(statistic.id)/") else {
             print("Invalid URL")
@@ -338,6 +310,7 @@ extension APIRepresentative {
         }.resume()
     }
     
+    @available(*, deprecated, message: "Use insights instead of derived statistics")
     func create(derivedStatisticGroupNamed: String, for app: TelemetryApp) {
         guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/derivedstatisticgroups/") else {
             print("Invalid URL")
@@ -360,6 +333,7 @@ extension APIRepresentative {
         }.resume()
     }
     
+    @available(*, deprecated, message: "Use insights instead of derived statistics")
     func create(derivedStatistic: DerivedStatisticCreateRequestBody, for derivedStatisticGroup: DerivedStatisticGroup, in app: TelemetryApp) {
         guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/derivedstatisticgroups/\(derivedStatisticGroup.id)/derivedstatistics/") else {
             print("Invalid URL")
@@ -382,6 +356,7 @@ extension APIRepresentative {
         }.resume()
     }
     
+    @available(*, deprecated, message: "Use insights instead of derived statistics")
     func delete(derivedStatistic: DerivedStatistic, in derivedStatisticGroup: DerivedStatisticGroup, in app: TelemetryApp) {
         guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/derivedstatisticgroups/\(derivedStatisticGroup.id)/derivedstatistics/\(derivedStatistic.id)/") else {
             print("Invalid URL")
@@ -401,7 +376,7 @@ extension APIRepresentative {
         }.resume()
     }
     
-    
+    @available(*, deprecated, message: "Use insights instead of derived statistics")
     func delete(derivedStatisticGroup: DerivedStatisticGroup, in app: TelemetryApp) {
         guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/derivedstatisticgroups/\(derivedStatisticGroup.id)/") else {
             print("Invalid URL")
@@ -428,10 +403,7 @@ extension APIRepresentative {
     }
     
     func create(insightGroupNamed: String, for app: TelemetryApp) {
-        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/insightgroups/") else {
-            print("Invalid URL")
-            return
-        }
+        let url = urlForPath("apps", app.id.uuidString, "insightgroups")
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -450,10 +422,7 @@ extension APIRepresentative {
     }
     
     func delete(insightGroup: InsightGroup, in app: TelemetryApp) {
-        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/insightgroups/\(insightGroup.id)/") else {
-            print("Invalid URL")
-            return
-        }
+        let url = urlForPath("apps", app.id.uuidString, "insightgroups", insightGroup.id.uuidString)
         
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
@@ -469,10 +438,7 @@ extension APIRepresentative {
     }
     
     func getInsightData(for insight: Insight, in insightGroup: InsightGroup, in app: TelemetryApp) {
-        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id)/insightgroups/\(insightGroup.id)/insights/\(insight.id)/") else {
-            print("Invalid URL")
-            return
-        }
+        let url = urlForPath("apps", app.id.uuidString, "insightgroups", insightGroup.id.uuidString, "insights", insight.id.uuidString)
         
         var request = URLRequest(url: url)
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
@@ -493,10 +459,7 @@ extension APIRepresentative {
     }
     
     func getInsightHistoricalData(for insight: Insight, in insightGroup: InsightGroup, in app: TelemetryApp) {
-        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id)/insightgroups/\(insightGroup.id)/insights/\(insight.id)/historicaldata/") else {
-            print("Invalid URL")
-            return
-        }
+        let url = urlForPath("apps", app.id.uuidString, "insightgroups", insightGroup.id.uuidString, "insights", insight.id.uuidString, "historicaldata")
         
         // Set an empty value to show we're loading
         if insightHistoricalData[insight.id] == nil {
@@ -522,10 +485,7 @@ extension APIRepresentative {
     }
     
     func create(insightWith requestBody: InsightCreateRequestBody, in insightGroup: InsightGroup, for app: TelemetryApp) {
-        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id)/insightgroups/\(insightGroup.id)/insights/") else {
-            print("Invalid URL")
-            return
-        }
+        let url = urlForPath("apps", app.id.uuidString, "insightgroups", insightGroup.id.uuidString, "insights")
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -543,10 +503,7 @@ extension APIRepresentative {
     }
     
     func delete(insight: Insight, in insightGroup: InsightGroup, in app: TelemetryApp) {
-        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/insightgroups/\(insightGroup.id)/insights/\(insight.id)/") else {
-            print("Invalid URL")
-            return
-        }
+        let url = urlForPath("apps", app.id.uuidString, "insightgroups", insightGroup.id.uuidString, "insights", insight.id.uuidString)
         
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
@@ -565,21 +522,23 @@ extension APIRepresentative {
 // MARK: - Generic Methods
 extension APIRepresentative {
     func urlForPath(_ path: String...) -> URL {
-        let baseURLString = "http://localhost:8080/api/v1/"
-        let url = URL(string: baseURLString + path.joined(separator: "/") + "/")!
+        let url = URL(string: APIRepresentative.baseURLString + path.joined(separator: "/") + "/")!
         
         print(url)
         
         return url
     }
     
-    func authenticatedURLRequest(for url: URL) -> URLRequest {
+    func authenticatedURLRequest(for url: URL, contentType: String = "application/json; charset=utf-8") -> URLRequest {
         var request = URLRequest(url: url)
-        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.setValue(contentType, forHTTPHeaderField: "Content-Type")
         request.setValue(userToken?.bearerTokenAuthString, forHTTPHeaderField: "Authorization")
         return request
     }
-    
+}
+
+// MARK: - Downloading
+extension APIRepresentative {
     func fetch<T: Decodable>(_ url: URL, defaultValue: T, setterKeyPath: ReferenceWritableKeyPath<APIRepresentative, T>) {
         let request = authenticatedURLRequest(for: url)
         
@@ -588,6 +547,7 @@ extension APIRepresentative {
             .map(\.data)
             .decode(type: T.self, decoder: JSONDecoder.telemetryDecoder)
             .replaceError(with: defaultValue)
+            .receive(on: DispatchQueue.main)
             .assign(to: setterKeyPath, on: self)
             .store(in: &requests)
     }
@@ -604,5 +564,35 @@ extension APIRepresentative {
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: completion)
             .store(in: &requests)
+    }
+}
+
+// MARK: - Uploading
+extension APIRepresentative {
+    enum UploadError: Error {
+        case uploadFailed
+        case decodeFailed
+    }
+    
+    func upload<Input: Encodable, Output: Decodable>(_ data: Input, to url: URL, httpMethod: String = "POST", contentType: String = "application/json", completion: @escaping (Result<Output, UploadError>) -> Void) {
+        var request = authenticatedURLRequest(for: url)
+        request.httpBody = try? JSONEncoder.telemetryEncoder.encode(data)
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            DispatchQueue.main.async {
+                if let data = data {
+                    do {
+                        let decoded = try JSONDecoder.telemetryDecoder.decode(Output.self, from: data)
+                        completion(.success(decoded))
+                    } catch {
+                        completion(.failure(.decodeFailed))
+                    }
+                } else if error != nil {
+                    completion(.failure(.uploadFailed))
+                } else {
+                    print("Unknown result: no data and no error!")
+                }
+            }
+        }.resume()
     }
 }
