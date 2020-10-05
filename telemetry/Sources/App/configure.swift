@@ -13,6 +13,7 @@ public func configure(_ app: Application) throws {
     app.leaf.cache.isEnabled = app.environment.isRelease
 
     app.databases.use(.sqlite(.file("db.sqlite")), as: .sqlite)
+    // try app.databases.use(.postgres(url: ""), as: .psql)
     
     app.migrations.add(Organization.Migration())
     app.migrations.add(App.Migration())
