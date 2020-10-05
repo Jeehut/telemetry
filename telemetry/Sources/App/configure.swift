@@ -12,12 +12,13 @@ public func configure(_ app: Application) throws {
     app.views.use(.leaf)
     app.leaf.cache.isEnabled = app.environment.isRelease
 
-    app.databases.use(.sqlite(.file("db.sqlite")), as: .sqlite)
-    // try app.databases.use(.postgres(url: ""), as: .psql)
+    // app.databases.use(.sqlite(.file("db.sqlite")), as: .sqlite)
+    try app.databases.use(.postgres(url: "postgresql://breakthesystem@localhost:5432/breakthesystem"), as: .psql)
     
     app.migrations.add(Organization.Migration())
     app.migrations.add(App.Migration())
     app.migrations.add(Signal.Migration())
+    app.migrations.add(Signal.UpdateReceivedAt())
 
     app.migrations.add(User.Migration())
     app.migrations.add(UserToken.Migration())

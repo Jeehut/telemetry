@@ -22,3 +22,19 @@ extension Signal  {
         }
     }
 }
+
+extension Signal {
+    struct UpdateReceivedAt: Fluent.Migration {
+        func prepare(on database: Database) -> EventLoopFuture<Void> {
+            database.schema(schema)
+                .updateField("received_at", .datetime)
+                .update()
+        }
+
+        func revert(on database: Database) -> EventLoopFuture<Void> {
+            database.schema(schema)
+                .updateField("received_at", .date)
+                .update()
+        }
+    }
+}

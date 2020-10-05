@@ -44,7 +44,9 @@ struct SignalsController: RouteCollection {
                 let signal = Signal()
                 signal.clientUser = self.clientUser // TODO: This hash returns a new value each time WTF try Bcrypt.hash(self.clientUser)
                 signal.type = self.type
-                signal.payload = self.payload
+                
+                let resolvedPayload = self.payload ?? [:]
+                signal.payload = resolvedPayload.merging(["signalType": self.type, "signalClientUser": self.clientUser], uniquingKeysWith: { (_, last) in last })
                 return signal
             }
         }
