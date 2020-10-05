@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 final class APIRepresentative: ObservableObject {
     private static let userTokenStandardsKey = "org.breakthesystem.telemetry.viewer.userToken"
@@ -27,6 +28,8 @@ final class APIRepresentative: ObservableObject {
             userNotLoggedIn = userToken == nil
         }
     }
+    
+    @Published var requests = Set<AnyCancellable>()
     
     @Published var user: OrganizationUser?
     @Published var userNotLoggedIn: Bool = true
@@ -116,51 +119,28 @@ extension APIRepresentative {
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         request.setValue(userToken?.bearerTokenAuthString, forHTTPHeaderField: "Authorization")
         
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let data = data {
-                print(String(decoding: data, as: UTF8.self))
-                
-                if let httpURLResponse = response as? HTTPURLResponse {
-                    if httpURLResponse.statusCode != 200 {
-                        self.logout()
-                    }
-                }
-                
-                guard let decodedResponse = try? JSONDecoder.telemetryDecoder.decode(OrganizationUser.self, from: data) else {
+        URLSession.shared.dataTaskPublisher(for: request)
+            .validateStatusCode({ (200..<300).contains($0) })
+            .map(\.data)
+            .decode(type: OrganizationUser.self, decoder: JSONDecoder.telemetryDecoder)
+//            .assign(to: \.user, on: self)
+            .sink(receiveCompletion: { error in
+                switch error {
+                case .finished:
+                    break
+                case .failure(_):
                     self.logout()
-                    return
+                    print(error)
                 }
-                
-                DispatchQueue.main.async {
-                    self.user = decodedResponse
-                }
-                
-            }
-        }.resume()
+            }, receiveValue: { organizationUser in
+                DispatchQueue.main.async { self.user = organizationUser }
+            })
+            .store(in: &requests)
     }
     
     func getApps() {
-        guard let url = URL(string: "http://localhost:8080/api/v1/apps/") else {
-            print("Invalid URL")
-            return
-        }
-        
-        var request = URLRequest(url: url)
-        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        request.setValue(userToken?.bearerTokenAuthString, forHTTPHeaderField: "Authorization")
-        
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let data = data {
-                print(String(decoding: data, as: UTF8.self))
-                
-                let decodedResponse = try! JSONDecoder.telemetryDecoder.decode([TelemetryApp].self, from: data)
-                
-                DispatchQueue.main.async {
-                    self.apps = decodedResponse
-                }
-                
-            }
-        }.resume()
+        let url = urlForPath("apps")
+        fetch(url, defaultValue: [], setterKeyPath: \.apps)
     }
     
     func create(appNamed name: String) {
@@ -238,27 +218,8 @@ extension APIRepresentative {
     }
     
     func getSignals(for app: TelemetryApp) {
-        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/signals/") else {
-            print("Invalid URL")
-            return
-        }
-        
-        var request = URLRequest(url: url)
-        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        request.setValue(userToken?.bearerTokenAuthString, forHTTPHeaderField: "Authorization")
-        
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let data = data {
-                print(String(decoding: data, as: UTF8.self))
-                
-                let decodedResponse = try! JSONDecoder.telemetryDecoder.decode([Signal].self, from: data)
-                
-                DispatchQueue.main.async {
-                    self.signals[app] = decodedResponse
-                }
-                
-            }
-        }.resume()
+        let url = urlForPath("apps", app.id.uuidString, "signals")
+        fetch(url, defaultValue: [Signal]()) { self.signals[app] = $0 }
     }
     
     func create(userCountGroup: UserCountGroupCreateRequestBody, for app: TelemetryApp) {
@@ -461,29 +422,9 @@ extension APIRepresentative {
     }
     
     
-    
     func getInsightGroups(for app: TelemetryApp) {
-        guard let url = URL(string: "http://localhost:8080/api/v1/apps/\(app.id.uuidString)/insightgroups/") else {
-            print("Invalid URL")
-            return
-        }
-        
-        var request = URLRequest(url: url)
-        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-        request.setValue(userToken?.bearerTokenAuthString, forHTTPHeaderField: "Authorization")
-        
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let data = data {
-                print(String(decoding: data, as: UTF8.self))
-                
-                let decodedResponse = try! JSONDecoder.telemetryDecoder.decode([InsightGroup].self, from: data)
-                
-                DispatchQueue.main.async {
-                    self.insightGroups[app] = decodedResponse
-                }
-                
-            }
-        }.resume()
+        let url = urlForPath("apps", app.id.uuidString, "insightgroups")
+        fetch(url, defaultValue: [InsightGroup]()) { self.insightGroups[app] = $0 }
     }
     
     func create(insightGroupNamed: String, for app: TelemetryApp) {
@@ -618,5 +559,50 @@ extension APIRepresentative {
                 self.getInsightGroups(for: app)
             }
         }.resume()
+    }
+}
+
+// MARK: - Generic Methods
+extension APIRepresentative {
+    func urlForPath(_ path: String...) -> URL {
+        let baseURLString = "http://localhost:8080/api/v1/"
+        let url = URL(string: baseURLString + path.joined(separator: "/") + "/")!
+        
+        print(url)
+        
+        return url
+    }
+    
+    func authenticatedURLRequest(for url: URL) -> URLRequest {
+        var request = URLRequest(url: url)
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.setValue(userToken?.bearerTokenAuthString, forHTTPHeaderField: "Authorization")
+        return request
+    }
+    
+    func fetch<T: Decodable>(_ url: URL, defaultValue: T, setterKeyPath: ReferenceWritableKeyPath<APIRepresentative, T>) {
+        let request = authenticatedURLRequest(for: url)
+        
+        URLSession.shared.dataTaskPublisher(for: request)
+            .validateStatusCode({ (200..<300).contains($0) })
+            .map(\.data)
+            .decode(type: T.self, decoder: JSONDecoder.telemetryDecoder)
+            .replaceError(with: defaultValue)
+            .assign(to: setterKeyPath, on: self)
+            .store(in: &requests)
+    }
+    
+    func fetch<T: Decodable>(_ url: URL, defaultValue: T, completion: @escaping (T) -> Void) {
+        let request = authenticatedURLRequest(for: url)
+        
+        URLSession.shared.dataTaskPublisher(for: request)
+            .retry(1)
+            .validateStatusCode({ (200..<300).contains($0) })
+            .map(\.data)
+            .decode(type: T.self, decoder: JSONDecoder.telemetryDecoder)
+            .replaceError(with: defaultValue)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: completion)
+            .store(in: &requests)
     }
 }
