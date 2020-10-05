@@ -13,7 +13,7 @@ import UIKit
 #endif
 
 enum TelemetryManagerConfiguation {
-    static let telemetryAppID: String = "1003C692-29C7-4D62-9962-F7236A9361D4"
+    static let telemetryAppID: String = "C84BED21-825A-4217-9F73-78F78F9A5415"
     static let telemetryBaseURL: URL = URL(string: "http://138.197.191.142")!
 }
 
