@@ -1,13 +1,65 @@
 #extend("base"):
     #export("body"):
-        <div class="jumbotron">
-            <h1 class="display-4">#(index.title)</h1>
-            <p class="lead">Welcome to Telemetry, your black box for App Telemetry. No privacy problems, no dependencies, no third party SDKs</p>
-            <hr class="my-4">
-            <p>#(page.content)</p>
-            <p class="lead">
-                <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
-            </p>
+
+        <section class="hero-section over-curve pt-5 py-md-5">
+            <div class="container">
+                <div class="hero-content-holder z-index-10 position-relative">
+                    <h1 class="site-headline mb-3">#(index.title)</h1>
+                    <div class="site-tagline mb-4">#(page.content)</strong></div>
+                    <div class="site-tagline mb-4"><span class="badge badge-secondary">Early Beta</span> No public signup right now. If you're interested in trying out Telemetry, contact the auther, Daniel, on twitter, who would <em>love</em> to give free access especially to indie developers. ♥️</div>
+                    <div class="cta-btns mb-lg-3">
+                        <a class="btn btn-gradient mr-2 mb-3" href="http://twitter.com/breakthesystem/">Contact Daniel on Twitter</a>
+                    </div>
+
+                </div><!--//hero-content-holder-->
+            </div><!--//container-->
+            <div class="hero-figure-holder">
+                <img src="assets/images/product/product-hero-1.png" alt="product">
+            </div><!--//hero-figure-holder-->
+        </section><!--//hero-section-->
+
+    <section class="cta-section text-center py-5 theme-bg-gradient position-relative">
+        <div class="curve-containers">
+            <div class="curve-top"></div>
+            <div class="curve-bottom"></div>
+        </div><!--//curve-container-->
+        <div class="container py-4">
+
+            <h3 class="section-title text-white mb-3">Look, Numbers!</h3>
+            <div class="section-intro mb-5 text-white single-col-max mx-auto">Just like your app, Telemetry itself will grow over time. Right now these are kinda small.</div>
+
+            <div class="data-box mb-3">
+                <div class="row">
+                    <div class="item col-12 col-lg-4">
+                        <div class="item-inner p-3 text-white">
+                            <div class="icon dripicons-cloud"></div>
+                            <div class="number">#(additionalData.numberOfOrganizations)</div>
+                            <div class="desc">Developers</div>
+                        </div>
+                    </div><!--//item-->
+                    <div class="item col-12 col-lg-4">
+                        <div class="item-inner p-3 text-white">
+                            <div class="icon dripicons-view-apps"></div>
+                            <div class="number">#(additionalData.numberOfApps)</div>
+                            <div class="desc">Apps</div>
+                        </div>
+                    </div><!--//item-->
+                    <div class="item col-12 col-lg-4">
+                        <div class="p-3 text-white">
+                            <div class="icon dripicons-meter"></div>
+                            <div class="number">#(additionalData.numberOfSignals)</div>
+                            <div class="desc">Signals</div>
+                        </div>
+                    </div><!--//item-->
+
+                </div><!--//row-->
+            </div><!--//data-box-->
+            <div class="pt-3 text-center">
+                <a class="btn btn-inverse" href="http://twitter.com/breakthesystem/">Seriously, Talk to Daniel</a>
+                <p class="small text-white mt-2">This SAAS business template for bootstrap is way to interested in calls-to-action. Sorry about that.</p>
+            </div>
         </div>
+    </section><!--//cta-section-->
+
     #endexport
 #endextend
