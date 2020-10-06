@@ -50,9 +50,16 @@ func routes(_ app: Application) throws {
                                       page: .init(content: "Telemetry is a new service that helps app and web developers improve their product by supplying immediate, accurate telemetry data while users use your app. And the best part: <strong>It's all anonymized so your user's data stays private!"),
                                       additionalData: ["numberOfOrganizations": "\(orgAppSignalCount.0)", "numberOfApps": "\(orgAppSignalCount.1)", "numberOfSignals": "\(orgAppSignalCount.2)"]
                 )
-                               
                 
-                if req.remoteAddress?.description.contains("127.0.0.1") == false {
+                
+                #if os(Linux)
+                // Linux means we're hosted on a server, not in development
+                let shouldReportVisits = true
+                #else
+                let shouldReportVisits = false
+                #endif
+                
+                if shouldReportVisits {
                     let url = URL(string:"https://apptelemetry.io/api/v1/apps/D7AD678E-46F7-4A44-BC32-4B11B90206C3/signals/")!
                     
                     var urlRequest = URLRequest(url: url)
