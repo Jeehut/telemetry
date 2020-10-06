@@ -6,7 +6,7 @@
                 <div class="hero-content-holder z-index-10 position-relative">
                     <h1 class="site-headline mb-3">#(index.title)</h1>
                     <div class="site-tagline mb-4">#(page.content)</strong></div>
-                    <div class="site-tagline mb-4"><span class="badge badge-secondary">Early Beta</span> No public signup right now. If you're interested in trying out Telemetry, contact the auther, Daniel, on twitter, who would <em>love</em> to give free access especially to indie developers. ♥️</div>
+                    <div class="site-tagline mb-4"><span class="badge badge-secondary">Early Beta</span> No public signup right now. If you're interested in trying out Telemetry, contact the author, Daniel, on twitter, who would <em>love</em> to give free access especially to indie developers. ♥️</div>
                     <div class="cta-btns mb-lg-3">
                         <a class="btn btn-gradient mr-2 mb-3" href="http://twitter.com/breakthesystem/">Contact Daniel on Twitter</a>
                     </div>
