@@ -1,6 +1,10 @@
 import Fluent
 import Vapor
 
+#if os(Linux)
+import FoundationNetworking
+#endif
+
 func routes(_ app: Application) throws {
     
     app.get { req -> EventLoopFuture<View> in
