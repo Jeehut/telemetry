@@ -19,11 +19,16 @@ struct InsightBreakdownView: View {
         VStack(alignment: .leading) {
             ScrollView {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], alignment: .leading) {
+                let breakdowns = insightData.data
+                    .map { ($0.key, $0.value) }
+                    .sorted { $0.1 > $1.1 }
+                
+                
                 let dictionaryKeys = Array(insightData.data.keys).sorted()
-                ForEach(dictionaryKeys, id: \.self) { key in
-                    Text(key)
+                ForEach(breakdowns, id: \.0) { breakdown in
+                    Text(breakdown.0)
                     
-                    if let insightData = insightData.data[key] {
+                    if let insightData = breakdown.1 {
                         Text("\(numberFormatter.string(from: NSNumber(value: insightData)) ?? "–")")
                             .font(.system(size: 17, weight: .black, design: .monospaced))
                             .frame(width: 80, alignment: .trailing)

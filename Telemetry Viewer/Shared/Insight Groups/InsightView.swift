@@ -117,7 +117,6 @@ struct InsightView: View {
             }
         } else {
             api.getInsightData(for: insight, in: insightGroup, in: app)
-            TelemetryManager().send(.insightUpdatedAutomatically, for: api.user?.email)
         }
         
         if let insightHistoricalData = api.insightHistoricalData[insight.id] {
