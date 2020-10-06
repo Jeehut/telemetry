@@ -18,6 +18,12 @@ func routes(_ app: Application) throws {
             var page: Page
             var additionalData: [String: String] = [:]
         }
+        
+        struct SignalPostBody: Codable {
+            let type: String
+            let clientUser: String
+            let payload: Dictionary<String, String>?
+        }
 
         return Signal.query(on: req.db)
             .count()
@@ -40,6 +46,33 @@ func routes(_ app: Application) throws {
                                       page: .init(content: "Telemetry is a new service that helps app and web developers improve their product by supplying immediate, accurate telemetry data while users use your app. And the best part: <strong>It's all anonymized so your user's data stays private!"),
                                       additionalData: ["numberOfOrganizations": "\(orgAppSignalCount.0)", "numberOfApps": "\(orgAppSignalCount.1)", "numberOfSignals": "\(orgAppSignalCount.2)"]
                 )
+                               
+                
+                if req.remoteAddress?.description.contains("127.0.0.1") == false {
+                    let url = URL(string:"https://apptelemetry.io/api/v1/apps/D7AD678E-46F7-4A44-BC32-4B11B90206C3/signals/")!
+                    
+                    var urlRequest = URLRequest(url: url)
+                    urlRequest.httpMethod = "POST"
+                    urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
+                    
+                    let payLoad: [String: String] = [
+                        "numberOfOrganizations": "\(orgAppSignalCount.0)",
+                        "numberOfApps": "\(orgAppSignalCount.1)",
+                        "numberOfSignals": "\(orgAppSignalCount.2)"
+                    ]
+                    
+                    let signalPostBody: SignalPostBody = SignalPostBody(type: "frontPageVisited", clientUser: "\(req.remoteAddress?.description ?? "")", payload: payLoad)
+                    
+                    urlRequest.httpBody = try! JSONEncoder().encode(signalPostBody)
+                    
+                    let task = URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
+                        if let error = error { print(error, data as Any, response as Any) }
+                        if let data = data, let dataAsUTF8 = String(data: data, encoding: .utf8) {
+                            print(dataAsUTF8)
+                        }
+                    }
+                    task.resume()
+                }
 
                 return req.view.render("page", context)
             }
