@@ -199,16 +199,7 @@ class InsightsController: RouteCollection {
             .filter(\.$id == insightID)
             .first()
             .unwrap(or: Abort(.notFound))
-            .flatMap { foundInsight in
-                InsightHistoricalData
-                    .query(on: req.db)
-                    .filter(\.$id == foundInsight.id!)
-                    //                    .all()
-                    .delete()
-                    .map {
-                        foundInsight.delete(on: req.db)
-                    }
-            }
+            .flatMap { $0.delete(on: req.db) }
             .map { .ok }
     }
 }
