@@ -19,8 +19,6 @@ final class Insight: Model, Content {
     @Field(key: "title")
     var title: String
     
-    // TODO: This should be a database backed enum,
-    //       see https://docs.vapor.codes/4.0/fluent/model/#enum
     @Field(key: "insight_type")
     var insightType: InsightType
     
