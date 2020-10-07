@@ -18,7 +18,7 @@ public func configure(_ app: Application) throws {
     app.migrations.add(Organization.Migration())
     app.migrations.add(App.Migration())
     app.migrations.add(Signal.Migration())
-//    app.migrations.add(Signal.UpdateReceivedAt())
+    app.migrations.add(Signal.UpdateReceivedAt())
 
     app.migrations.add(User.Migration())
     app.migrations.add(UserToken.Migration())
@@ -26,6 +26,7 @@ public func configure(_ app: Application) throws {
     app.migrations.add(InsightGroup.Migration())
     app.migrations.add(Insight.Migration())
     app.migrations.add(InsightHistoricalData.Migration())
+    app.migrations.add(InsightHistoricalData.Migration2())
 
     try app.autoMigrate().wait()
 

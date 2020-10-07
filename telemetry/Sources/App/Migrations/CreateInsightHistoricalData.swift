@@ -18,4 +18,23 @@ extension InsightHistoricalData {
             database.schema(Insight.schema).delete()
         }
     }
+    
+    struct Migration2: Fluent.Migration {
+        var name: String { "InsightHistoricalData_002" }
+
+        func prepare(on database: Database) -> EventLoopFuture<Void> {
+            database.schema(Insight.schema).delete()
+            
+            database.schema(InsightHistoricalData.schema)
+                .id()
+                .field("insight_id", .uuid, .required, .references(Insight.schema, "id", onDelete: .cascade, onUpdate: .noAction))
+                .field("calculated_at", .datetime, .required)
+                .field("data", .dictionary(of: .float))
+                .create()
+        }
+
+        func revert(on database: Database) -> EventLoopFuture<Void> {
+            database.schema(Insight.schema).delete()
+        }
+    }
 }
