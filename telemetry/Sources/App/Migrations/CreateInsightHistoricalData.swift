@@ -15,7 +15,7 @@ extension InsightHistoricalData {
         }
 
         func revert(on database: Database) -> EventLoopFuture<Void> {
-            database.schema(Insight.schema).delete()
+            database.schema(InsightHistoricalData.schema).delete()
         }
     }
     
@@ -23,9 +23,9 @@ extension InsightHistoricalData {
         var name: String { "InsightHistoricalData_002" }
 
         func prepare(on database: Database) -> EventLoopFuture<Void> {
-            database.schema(Insight.schema).delete()
+            database.schema(InsightHistoricalData.schema).delete()
             
-            database.schema(InsightHistoricalData.schema)
+            return database.schema(InsightHistoricalData.schema)
                 .id()
                 .field("insight_id", .uuid, .required, .references(Insight.schema, "id", onDelete: .cascade, onUpdate: .noAction))
                 .field("calculated_at", .datetime, .required)
@@ -34,7 +34,7 @@ extension InsightHistoricalData {
         }
 
         func revert(on database: Database) -> EventLoopFuture<Void> {
-            database.schema(Insight.schema).delete()
+            database.schema(InsightHistoricalData.schema).delete()
         }
     }
 }
