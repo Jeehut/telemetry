@@ -19,6 +19,7 @@ class InsightsController: RouteCollection {
         insights.get(":insightID", use: get)
         insights.get(":insightID", "historicaldata", use: getHistoricalData)
         insights.post(use: create)
+        insights.patch(":insightID", use: update)
         insights.delete(":insightID", use: delete)
     }
     
@@ -186,6 +187,40 @@ class InsightsController: RouteCollection {
         insight.order = insightCreateRequestBody.order
         
         return insight.save(on: req.db).map { insight }
+    }
+    
+    func update(req: Request) throws -> EventLoopFuture<InsightDataTransferObject> {
+        struct InsightUpdateRequestBody: Codable {
+            var title: String
+            var insightGroupID: UUID
+            var order: Double?
+        }
+        
+        // TODO: Export this into a function
+        guard let appIDString = req.parameters.get("appID"),
+              let appID = UUID(appIDString),
+              let insightIDString = req.parameters.get("insightID"),
+              let insightID = UUID(insightIDString) else {
+            throw Abort(.badRequest, reason: "Invalid parameter `appID`")
+        }
+        
+        let insightUpdateRequestBody = try req.content.decode(InsightUpdateRequestBody.self)
+        
+        let user = try req.auth.require(User.self)
+
+        
+        return Insight.query(on: req.db)
+            .filter(\.$id == insightID)
+            .first()
+            .unwrap(or: Abort(.notFound))
+            .flatMap { insight in
+                insight.title = insightUpdateRequestBody.title
+                insight.order = insightUpdateRequestBody.order
+                insight.$group.id = insightUpdateRequestBody.insightGroupID
+                
+                return insight.update(on: req.db)
+            }
+            .flatMap { try! self.get(req: req) }
     }
     
     func delete(req: Request) throws -> EventLoopFuture<HTTPStatus> {
