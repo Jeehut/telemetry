@@ -20,4 +20,20 @@ extension Insight {
             database.schema(Insight.schema).delete()
         }
     }
+    
+    struct Migration2: Fluent.Migration {
+        var name: String { "CreateInsight_002" }
+
+        func prepare(on database: Database) -> EventLoopFuture<Void> {
+            database.schema(Insight.schema)
+                .field("order", .double)
+                .update()
+        }
+
+        func revert(on database: Database) -> EventLoopFuture<Void> {
+            database.schema(Insight.schema)
+                .deleteField("order")
+                .update()
+        }
+    }
 }

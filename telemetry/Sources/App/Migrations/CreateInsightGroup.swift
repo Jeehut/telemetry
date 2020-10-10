@@ -17,4 +17,18 @@ extension InsightGroup {
             database.schema(InsightGroup.schema).delete()
         }
     }
+    
+    struct AddOrderField: Fluent.Migration {
+        func prepare(on database: Database) -> EventLoopFuture<Void> {
+            database.schema(InsightGroup.schema)
+                .field("order", .double)
+                .update()
+        }
+        
+        func revert(on database: Database) -> EventLoopFuture<Void> {
+            database.schema(InsightGroup.schema)
+                .deleteField("order")
+                .update()
+        }
+    }
 }

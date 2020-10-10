@@ -13,6 +13,9 @@ final class InsightGroup: Model, Content {
     @Field(key: "title")
     var title: String
     
+    @Field(key: "order")
+    var order: Double?
+    
     @Children(for: \.$group)
     var insights: [Insight]
 }

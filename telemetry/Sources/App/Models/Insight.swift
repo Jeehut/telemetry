@@ -28,6 +28,9 @@ final class Insight: Model, Content {
     @Field(key: "configuration")
     var configuration: [String: String]
     
+    @Field(key: "order")
+    var order: Double?
+    
     @Children(for: \.$insight)
     var historicalData: [InsightHistoricalData]
 }

@@ -12,8 +12,8 @@ public func configure(_ app: Application) throws {
     app.views.use(.leaf)
     app.leaf.cache.isEnabled = app.environment.isRelease
 
-    app.databases.use(.sqlite(.file("db.sqlite")), as: .sqlite)
-    // try app.databases.use(.postgres(url: "postgresql://breakthesystem@localhost:5432/breakthesystem"), as: .psql)
+    // app.databases.use(.sqlite(.file("db.sqlite")), as: .sqlite)
+    try app.databases.use(.postgres(url: "postgresql://breakthesystem@localhost:5432/breakthesystem"), as: .psql)
     
     app.migrations.add(Organization.Migration())
     app.migrations.add(App.Migration())
@@ -27,6 +27,8 @@ public func configure(_ app: Application) throws {
     app.migrations.add(Insight.Migration())
     app.migrations.add(InsightHistoricalData.Migration())
     app.migrations.add(InsightHistoricalData.Migration2())
+    app.migrations.add(Insight.Migration2())
+    app.migrations.add(InsightGroup.AddOrderField())
 
     try app.autoMigrate().wait()
 

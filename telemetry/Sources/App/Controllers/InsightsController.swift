@@ -161,6 +161,7 @@ class InsightsController: RouteCollection {
             let insightType: Insight.InsightType
             let timeInterval: TimeInterval
             let configuration: [String: String]
+            let order: Double?
             
             static func validations(_ validations: inout Validations) {
                 // TOOD: More validations
@@ -182,6 +183,7 @@ class InsightsController: RouteCollection {
         insight.insightType = insightCreateRequestBody.insightType
         insight.timeInterval = insightCreateRequestBody.timeInterval
         insight.configuration = insightCreateRequestBody.configuration
+        insight.order = insightCreateRequestBody.order
         
         return insight.save(on: req.db).map { insight }
     }

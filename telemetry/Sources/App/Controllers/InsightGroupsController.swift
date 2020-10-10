@@ -28,12 +28,14 @@ class InsightGroupsController: RouteCollection {
         return InsightGroup.query(on: req.db)
             .with(\.$insights)
             .filter(\.$app.$id == appID)
+            .sort(\.$order, .ascending)
             .all()
     }
     
     func create(req: Request) throws -> EventLoopFuture<InsightGroup> {
         struct InsightGroupCreateRequestBody: Content, Validatable {
             let title: String
+            let order: Double?
             
             static func validations(_ validations: inout Validations) {
                 validations.add("title", as: String.self, is: !.empty)
@@ -51,6 +53,7 @@ class InsightGroupsController: RouteCollection {
         let insightGroup = InsightGroup()
         insightGroup.title = insightGroupCreateRequestBody.title
         insightGroup.$app.id = appID
+        insightGroup.order = insightGroupCreateRequestBody.order
         
         return insightGroup.save(on: req.db).map { insightGroup }
     }
