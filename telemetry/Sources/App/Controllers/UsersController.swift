@@ -1,9 +1,17 @@
 import Fluent
 import Vapor
 
-struct RegistrationContoller: RouteCollection {
+struct UsersController: RouteCollection {
+    enum RegistrationStatus: String {
+        case registrationClosed
+        case registrationViaToken
+        case registrationOpen
+    }
+    
+    let currentRegistrationStatus: RegistrationStatus = .registrationOpen
+    
+    
     func boot(routes: RoutesBuilder) throws {
-        
         routes.post("register", use: create)
         
         let passwordProtected = routes.grouped(User.authenticator())
