@@ -12,6 +12,7 @@ struct UsersController: RouteCollection {
     
     
     func boot(routes: RoutesBuilder) throws {
+        routes.get("registrationStatus", use: getRegistrationStatus)
         routes.post("register", use: create)
         
         let passwordProtected = routes.grouped(User.authenticator())
@@ -53,6 +54,10 @@ struct UsersController: RouteCollection {
             validations.add("userEmail", as: String.self, is: .email)
             validations.add("userPassword", as: String.self, is: .count(8...))
         }
+    }
+    
+    func getRegistrationStatus(req: Request) throws -> [String: String] {
+        return ["registrationStatus": self.currentRegistrationStatus.rawValue]
     }
     
     
