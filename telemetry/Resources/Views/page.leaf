@@ -184,7 +184,7 @@
                         <div class="item-inner p-3 text-white">
                             <div class="icon dripicons-lightbulb"></div>
                             <div class="number">#(additionalData.numberOfInsights)</div>
-                            <div class="desc">Apps</div>
+                            <div class="desc">Insights</div>
                         </div>
                     </div><!--//item-->
                     <div class="item col-12 col-lg-3">

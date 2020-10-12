@@ -55,7 +55,7 @@ func routes(_ app: Application) throws {
             .flatMap { orgAppInsightSignalCount in
                 let context = Context(index: .init(title: "Watch your App Grow and Evolve", description: "A Private and Secure Telemetry Service for Your App"),
                                       page: .init(content: "Telemetry is a new service that helps app and web developers improve their product by supplying immediate, accurate telemetry data while users use your app. And the best part: <strong>It's all anonymized so your user's data stays private!"),
-                                      additionalData: ["numberOfOrganizations": "\(orgAppInsightSignalCount.0)", "numberOfApps": "\(orgAppInsightSignalCount.1)", "numberOfSignals": "\(orgAppInsightSignalCount.2)"]
+                                      additionalData: ["numberOfOrganizations": "\(orgAppInsightSignalCount.0)", "numberOfApps": "\(orgAppInsightSignalCount.1)", "numberOfInsights": "\(orgAppInsightSignalCount.2)",  "numberOfSignals": "\(orgAppInsightSignalCount.3)"]
                 )
                 
                 
@@ -79,7 +79,7 @@ func routes(_ app: Application) throws {
                         "numberOfInsights": "\(orgAppInsightSignalCount.2)",
                         "numberOfSignals": "\(orgAppInsightSignalCount.3)"
                     ]
-                    
+
                     let signalPostBody: SignalPostBody = SignalPostBody(type: "frontPageVisited", clientUser: "\(req.remoteAddress?.description ?? "")", payload: payLoad)
                     
                     urlRequest.httpBody = try! JSONEncoder().encode(signalPostBody)
