@@ -56,9 +56,8 @@
                 </div><!--//container-->
             </div><!--//branding-->
         </header><!--//header-->
-    <main>
         #import("body")
-    </main>
+
 
     <footer class="footer">
         <div class="container py-5 mb-3">

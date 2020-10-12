@@ -17,6 +17,142 @@
                 <img src="assets/images/product/product-hero-1.png" alt="product">
             </div><!--//hero-figure-holder-->
         </section><!--//hero-section-->
+		<section class="logos-section theme-bg-primary over-curve pb-4 py-lg-5 text-center">
+<!--			<div class="container">-->
+<!--				<div class="logos-row row mx-auto">-->
+<!--					<div class="item col-6 col-md-4 col-lg-2 mb-3 mb-lg-0">-->
+<!--						<div class="item-inner">-->
+<!--							<img class="img-fluid" src="assets/images/logos/logo-1.svg" alt="logo">-->
+<!--						</div>&lt;!&ndash;//item-inner&ndash;&gt;-->
+<!--					</div>&lt;!&ndash;//item&ndash;&gt;-->
+<!--					<div class="item col-6 col-md-4 col-lg-2 mb-3 mb-lg-0">-->
+<!--						<div class="item-inner">-->
+<!--							<img class="img-fluid" src="assets/images/logos/logo-2.svg" alt="logo">-->
+<!--						</div>&lt;!&ndash;//item-inner&ndash;&gt;-->
+<!--					</div>&lt;!&ndash;//item&ndash;&gt;-->
+<!--					<div class="item col-6 col-md-4 col-lg-2 mb-3 mb-lg-0">-->
+<!--						<div class="item-inner">-->
+<!--							<img class="img-fluid" src="assets/images/logos/logo-3.svg" alt="logo">-->
+<!--						</div>&lt;!&ndash;//item-inner&ndash;&gt;-->
+<!--					</div>&lt;!&ndash;//item&ndash;&gt;-->
+<!--					<div class="item col-6 col-md-4 col-lg-2 mb-3 mb-lg-0">-->
+<!--						<div class="item-inner">-->
+<!--							<img class="img-fluid" src="assets/images/logos/logo-4.svg" alt="logo">-->
+<!--						</div>&lt;!&ndash;//item-inner&ndash;&gt;-->
+<!--					</div>&lt;!&ndash;//item&ndash;&gt;-->
+<!--					<div class="item col-6 col-md-4 col-lg-2 mb-3 mb-lg-0">-->
+<!--						<div class="item-inner">-->
+<!--							<img class="img-fluid" src="assets/images/logos/logo-5.svg" alt="logo">-->
+<!--						</div>&lt;!&ndash;//item-inner&ndash;&gt;-->
+<!--					</div>&lt;!&ndash;//item&ndash;&gt;-->
+<!--					<div class="item col-6 col-md-4 col-lg-2 mb-3 mb-lg-0">-->
+<!--						<div class="item-inner">-->
+<!--							<img class="img-fluid" src="assets/images/logos/logo-6.svg" alt="logo">-->
+<!--						</div>&lt;!&ndash;//item-inner&ndash;&gt;-->
+<!--					</div>&lt;!&ndash;//item&ndash;&gt;-->
+<!--				</div>-->
+<!--			</div>&lt;!&ndash;//container&ndash;&gt;-->
+		</section><!--//logos-section-->
+    </div> <!--//hero-wrapper-->
+
+
+
+	<section class="benefits-section py-5">
+		<div class="container">
+			<h3 class="mb-lg-5 text-center section-title single-col-max mx-auto">Why Telemetry Is Pretty Cool</h3>
+
+			<div class="item py-5">
+				<div class="row">
+					<div class="item-content col-12 col-lg-7 col-xl-6 pr-lg-5">
+						<div class="title-note mb-1">How It Works</div>
+						<h4 class="title mb-3">Telemetry Gives You Exactly the Information You Need</h4>
+						<div class="desc">
+							<p>By default, Telemetry gives you detailed information about App Version, Device Type, Platform, and Distribution Mechanism. But that's just the start: <strong>You decide the signal types and the metadata payload for each signal</strong>, so you can include exactly the information you need to improve your app!</p>
+							<p>Each time you want to send a signal to Telemetry, call one (non-blocking) function: App Start. User has switched the Settings to <em>Pizza Mode</em>. New Data Entered. And so on.</p>
+							<p>That's it! Lean back and see information fill your dashboard in Telemetry's very nice (if I may say so) iOS and macOS app.</p>
+						</div><!--//desc-->
+						<ul class="list-unstyled pt-4">
+							<li class="mb-3"><span class="theme-check-icon icon dripicons-checkmark mr-2"></span> Custom Metadata Payload</li>
+							<li class="mb-3"><span class="theme-check-icon icon dripicons-checkmark mr-2"></span> Custom Signal Types</li>
+							<li class="mb-3"><span class="theme-check-icon icon dripicons-checkmark mr-2"></span> SPM Package for Swift Projects</li>
+							<li class="mb-3"><span class="theme-check-icon icon dripicons-checkmark mr-2"></span> Easy POST Request for Other Projects</li>
+
+
+						</ul><!--//item-list-->
+<!--						<div class="pt-3"><a class="more-link" href="product.html">Find out more <span class="link-arrow">&rarr;</span></a></div>-->
+					</div><!--//item-content-->
+					<div class="item-figure col-12 col-lg-5 col-xl-6 pt-5">
+						<img class="img-fluid shadow rounded" src="how-it-works.png" alt="">
+					</div><!--//item-figure-->
+				</div><!--//row-->
+			</div><!--//item-->
+			<div class="item py-5">
+				<div class="row">
+					<div class="item-content col-12 col-lg-7 col-xl-6 order-lg-1 pl-lg-5">
+						<div class="title-note mb-1">Fast as H*ck, 12/10 Stars</div>
+						<h4 class="title mb-3">Telemetry is Faster than the App Store</h4>
+
+						<div class="desc mb-3">
+							<p>With App Store analytics, the available information is kinda slim. Like, amount of downloads of your app, and how many people open them. Nothing after! And you'll only get this data about a day later.</p>
+
+							<p>With Telemetry, you get signals about half a second after the app has sent them. And you can get way more information too, like: Which features are your users actually using?</p>
+						</div><!--//desc-->
+
+						<div class="data-list">
+							<div class="data-list-item media mb-4">
+								<div class="data-overview mr-md-4 text-center">
+									<div class="number">172.800X</div>
+									<div class="note">Faster</div>
+								</div><!--//data-overview-->
+								<div class="data-desc media-body">
+									Half a second is 172.800X shorter than 24 hours. Imagine launching a new version and seeing new users pouring in live on your dashboard.
+								</div>
+							</div><!--//data-list-item-->
+
+							<div class="data-list-item media mb-4">
+								<div class="data-overview mr-md-4 text-center">
+									<div class="number">Way</div>
+									<div class="note">More Information</div>
+								</div><!--//data-overview-->
+								<div class="data-desc media-body">
+									You decide what meta information you send with each signal. This helps you get the exact information you need without compromising the pricacy of your users.
+								</div>
+							</div><!--//data-list-item-->
+
+						</div><!--//data-list-->
+<!--						<div><a class="more-link" href="product.html">Find out more <span class="link-arrow">&rarr;</span></a></div>-->
+					</div><!--//item-content-->
+					<div class="item-figure col-12 col-lg-5 col-xl-6 pt-5 order-lg-0">
+						<img class="img-fluid" src="screenshot1.jpeg" alt="">
+					</div><!--//item-figure-->
+				</div><!--//row-->
+			</div><!--//item-->
+						<div class="item py-5">
+				<div class="row">
+					<div class="item-content col-12 col-lg-7 col-xl-6 pr-lg-5">
+						<div class="title-note mb-1">Privacy First</div>
+						<h4 class="title mb-3">Telemetry is Private by Design</h4>
+						<div class="desc">
+							<p>While other analytic packages are eager to scrape as much data off your users as possible, Telemetry only communicates the data you need to find out how your users use your product.</p>
+							<p>User Identifiers are always hashed. This way you can recognize the same user when they reappear but never associate data with a specific person. </p>
+						</div><!--//desc-->
+						<ul class="column-list list-unstyled pt-4">
+							<li><span class="theme-check-icon icon dripicons-checkmark mr-2"></span> GDPR Compliant</li>
+							<li><span class="theme-check-icon icon dripicons-checkmark mr-2"></span> CCPA Compliant</li>
+							<li><span class="theme-check-icon icon dripicons-checkmark mr-2"></span> Easy, honest Privacy Policy</li>
+							<li><span class="theme-check-icon icon dripicons-checkmark mr-2"></span> No sleazy data collection</li>
+
+						</ul><!--//item-list-->
+<!--						<div><a class="more-link" href="product.html">Find out more <span class="link-arrow">&rarr;</span></a></div>-->
+					</div><!--//item-content-->
+<!--					<div class="item-figure col-12 col-lg-5 pt-5 col-xl-6">-->
+<!--						<img class="img-fluid shadow rounded" src="assets/images/product/product-1.png" alt="">-->
+<!--					</div>&lt;!&ndash;//item-figure&ndash;&gt;-->
+				</div><!--//row-->
+			</div><!--//item-->
+		</div><!--//container-->
+	</section><!--//benefits-section-->
+
 
     <section class="cta-section text-center py-5 theme-bg-gradient position-relative">
         <div class="curve-containers">
