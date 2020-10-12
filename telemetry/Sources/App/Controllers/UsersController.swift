@@ -3,12 +3,12 @@ import Vapor
 
 struct UsersController: RouteCollection {
     enum RegistrationStatus: String {
-        case registrationClosed
-        case registrationViaToken
-        case registrationOpen
+        case closed
+        case tokenOnly
+        case open
     }
     
-    let currentRegistrationStatus: RegistrationStatus = .registrationOpen
+    let currentRegistrationStatus: RegistrationStatus = .tokenOnly
     
     
     func boot(routes: RoutesBuilder) throws {
@@ -24,6 +24,7 @@ struct UsersController: RouteCollection {
     }
     
     struct RegistrationRequestBody: Content, Validatable {
+        let registrationToken: String?
         let organisationName: String
         let userFirstName: String
         let userLastName: String
@@ -77,7 +78,7 @@ struct UsersController: RouteCollection {
     
     /// Register and Create a new Organization
     func create(req: Request) throws -> EventLoopFuture<User> {
-        try RegistrationRequestBody.validate(req)
+        try RegistrationRequestBody.validate(content: req)
         let registrationRequestBody = try req.content.decode(RegistrationRequestBody.self)
         
         guard registrationRequestBody.userPassword == registrationRequestBody.userPasswordConfirm else {
@@ -86,17 +87,42 @@ struct UsersController: RouteCollection {
         
         let org = registrationRequestBody.makeOrganisation()
         
-        return org.create(on: req.db).flatMap {
-            let user = registrationRequestBody.makeUser(organizationID: org.id!)
-            return user.create(on: req.db).map { user }
+        switch currentRegistrationStatus {
+        
+        case .closed:
+            throw Abort(.badRequest, reason: "Registration is currently closed")
+        case .tokenOnly:
+            guard registrationRequestBody.registrationToken?.isEmpty == false else {
+                throw Abort(.badRequest, reason: "Registration needs a registrationToken")
+            }
+            
+            return RegistrationToken.query(on: req.db)
+                .filter(\.$value == registrationRequestBody.registrationToken!)
+                .filter(\.$isUsed == false)
+                .first()
+                .unwrap(or: Abort(.notFound))
+                .flatMap { registrationToken in
+                    registrationToken.isUsed = true
+                    _ = registrationToken.save(on: req.db)
+                    
+                    return org.create(on: req.db).flatMap {
+                        let user = registrationRequestBody.makeUser(organizationID: org.id!)
+                        return user.create(on: req.db).map { user }
+                    }
+                }
+        case .open:
+            return org.create(on: req.db).flatMap {
+                let user = registrationRequestBody.makeUser(organizationID: org.id!)
+                return user.create(on: req.db).map { user }
+            }
         }
     }
     
     func getBearerTokenForUser(req: Request) throws -> EventLoopFuture<UserToken> {
-            let user = try req.auth.require(User.self)
-            let token = try user.generateToken()
-            return token.save(on: req.db)
-                .map { token }
+        let user = try req.auth.require(User.self)
+        let token = try user.generateToken()
+        return token.save(on: req.db)
+            .map { token }
     }
     
     func getUserInformation(req: Request) throws -> EventLoopFuture<User> {
