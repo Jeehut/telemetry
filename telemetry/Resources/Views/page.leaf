@@ -166,21 +166,28 @@
 
             <div class="data-box mb-3">
                 <div class="row">
-                    <div class="item col-12 col-lg-4">
+                    <div class="item col-12 col-lg-3">
                         <div class="item-inner p-3 text-white">
                             <div class="icon dripicons-cloud"></div>
                             <div class="number">#(additionalData.numberOfOrganizations)</div>
                             <div class="desc">Developers</div>
                         </div>
                     </div><!--//item-->
-                    <div class="item col-12 col-lg-4">
+                    <div class="item col-12 col-lg-3">
                         <div class="item-inner p-3 text-white">
                             <div class="icon dripicons-view-apps"></div>
                             <div class="number">#(additionalData.numberOfApps)</div>
                             <div class="desc">Apps</div>
                         </div>
                     </div><!--//item-->
-                    <div class="item col-12 col-lg-4">
+                    <div class="item col-12 col-lg-3">
+                        <div class="item-inner p-3 text-white">
+                            <div class="icon dripicons-lightbulb"></div>
+                            <div class="number">#(additionalData.numberOfInsights)</div>
+                            <div class="desc">Apps</div>
+                        </div>
+                    </div><!--//item-->
+                    <div class="item col-12 col-lg-3">
                         <div class="p-3 text-white">
                             <div class="icon dripicons-meter"></div>
                             <div class="number">#(additionalData.numberOfSignals)</div>
