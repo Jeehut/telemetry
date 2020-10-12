@@ -17,7 +17,7 @@ struct UsersController: RouteCollection {
         
         let passwordProtected = routes.grouped(User.authenticator())
         passwordProtected.post("login", use: getBearerTokenForUser)
-        
+        passwordProtected.post("createRegistrationToken", use: createRegistrationToken)
         
         let tokenProtected = routes.grouped(UserToken.authenticator())
         tokenProtected.get("me", use: getUserInformation)
@@ -58,6 +58,20 @@ struct UsersController: RouteCollection {
     
     func getRegistrationStatus(req: Request) throws -> [String: String] {
         return ["registrationStatus": self.currentRegistrationStatus.rawValue]
+    }
+    
+    func createRegistrationToken(req: Request) throws -> EventLoopFuture<RegistrationToken> {
+        try req.auth.require(User.self)
+        
+        let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        let newTokenValue = String((0..<8).map{ _ in letters.randomElement()! })
+        
+        let token = RegistrationToken()
+        token.value = newTokenValue
+        token.isUsed = false
+        
+        return token.save(on: req.db)
+            .map { token }
     }
     
     

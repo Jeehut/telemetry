@@ -29,6 +29,8 @@ public func configure(_ app: Application) throws {
     app.migrations.add(InsightHistoricalData.Migration2())
     app.migrations.add(Insight.Migration2())
     app.migrations.add(InsightGroup.AddOrderField())
+    
+    app.migrations.add(RegistrationToken.CreationMigration())
 
     try app.autoMigrate().wait()
 
