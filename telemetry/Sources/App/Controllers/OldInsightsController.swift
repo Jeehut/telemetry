@@ -8,12 +8,14 @@
 import Fluent
 import Vapor
 
-enum InsightFilterCondition: Equatable {
+@available(*, deprecated, message: "Use Insights instead of OldInsights")
+enum OldInsightFilterCondition: Equatable {
     case uniqueUser
     case keywordEquals(keyword: String, targetValue: String)
 }
 
-class InsightsController: RouteCollection {
+@available(*, deprecated, message: "Use Insights instead of OldInsights")
+class OldInsightsController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let insights = routes.grouped(UserToken.authenticator())
         insights.get(":insightID", use: get)
@@ -23,7 +25,7 @@ class InsightsController: RouteCollection {
         insights.delete(":insightID", use: delete)
     }
     
-    func get(req: Request) throws -> EventLoopFuture<InsightDataTransferObject> {
+    func get(req: Request) throws -> EventLoopFuture<OldInsightDataTransferObject> {
         // TODO: Export this into a function
         guard let appIDString = req.parameters.get("appID"),
               let appID = UUID(appIDString),
@@ -35,7 +37,7 @@ class InsightsController: RouteCollection {
         let user = try req.auth.require(User.self)
         // TODO: Only return apps for this user's org
         
-        return Insight.query(on: req.db)
+        return OldInsight.query(on: req.db)
             .filter(\.$id == insightID)
             .first()
             .unwrap(or: Abort(.notFound))
@@ -50,7 +52,7 @@ class InsightsController: RouteCollection {
                 case .count:
                     return self.getCount(insight: insight, conditions: conditions, req: req, appID: appID)
                 default:
-                    let dto = InsightDataTransferObject(
+                    let dto = OldInsightDataTransferObject(
                         id: insight.id!,
                         title: insight.title,
                         insightType: insight.insightType,
@@ -64,7 +66,7 @@ class InsightsController: RouteCollection {
             }
     }
     
-    func getHistoricalData(req: Request) throws -> EventLoopFuture<[InsightHistoricalData]> {
+    func getHistoricalData(req: Request) throws -> EventLoopFuture<[OldInsightHistoricalData]> {
         // TODO: Export this into a function
         guard let appIDString = req.parameters.get("appID"),
               let appID = UUID(appIDString),
@@ -76,7 +78,7 @@ class InsightsController: RouteCollection {
         let user = try req.auth.require(User.self)
         // TODO: Only return apps for this user's org
         
-        return Insight.query(on: req.db)
+        return OldInsight.query(on: req.db)
             .filter(\.$id == insightID)
             .with(\.$historicalData)
             .first()
@@ -101,7 +103,7 @@ class InsightsController: RouteCollection {
                     let conditions = self.parseConditions(from: insight.configuration["conditions"])
                     
                     // Route to Calculation Method
-                    var insightDTOFuture: EventLoopFuture<InsightDataTransferObject>? = nil
+                    var insightDTOFuture: EventLoopFuture<OldInsightDataTransferObject>? = nil
                     switch insight.insightType {
                     case .breakdown:
                         insightDTOFuture = self.getBreakdown(insight: insight, conditions: conditions, calculatedAtDate: currentDate, req: req, appID: appID)
@@ -112,7 +114,7 @@ class InsightsController: RouteCollection {
                     }
                     
                     _ = insightDTOFuture?.map { insightDTO in
-                        let insightHistoricalData = InsightHistoricalData()
+                        let insightHistoricalData = OldInsightHistoricalData()
                         insightHistoricalData.calculatedAt = insightDTO.calculatedAt
                         insightHistoricalData.data = insightDTO.data
                         insightHistoricalData.$insight.id = insightDTO.id
@@ -120,7 +122,7 @@ class InsightsController: RouteCollection {
                     }
                 }
                 
-                return InsightHistoricalData.query(on: req.db)
+                return OldInsightHistoricalData.query(on: req.db)
                     .filter(\.$insight.$id == insightID)
                     .filter(\.$calculatedAt > furthestBack)
                     .sort(\.$calculatedAt, .ascending)
@@ -128,8 +130,8 @@ class InsightsController: RouteCollection {
             }
     }
     
-    func parseConditions(from conditions: String?) -> [InsightFilterCondition] {
-        var returnConditions: [InsightFilterCondition] = []
+    func parseConditions(from conditions: String?) -> [OldInsightFilterCondition] {
+        var returnConditions: [OldInsightFilterCondition] = []
         
         guard let conditions = conditions else { return returnConditions }
                 
@@ -156,10 +158,10 @@ class InsightsController: RouteCollection {
         return returnConditions
     }
     
-    func create(req: Request) throws -> EventLoopFuture<Insight> {
+    func create(req: Request) throws -> EventLoopFuture<OldInsight> {
         struct InsightCreateRequestBody: Content, Validatable {
             let title: String
-            let insightType: Insight.InsightType
+            let insightType: OldInsight.InsightType
             let timeInterval: TimeInterval
             let configuration: [String: String]
             let order: Double?
@@ -178,7 +180,7 @@ class InsightsController: RouteCollection {
         let user = try req.auth.require(User.self)
         let insightCreateRequestBody = try req.content.decode(InsightCreateRequestBody.self)
         
-        let insight = Insight()
+        let insight = OldInsight()
         insight.$group.id = insightGroupID
         insight.title = insightCreateRequestBody.title
         insight.insightType = insightCreateRequestBody.insightType
@@ -189,7 +191,7 @@ class InsightsController: RouteCollection {
         return insight.save(on: req.db).map { insight }
     }
     
-    func update(req: Request) throws -> EventLoopFuture<InsightDataTransferObject> {
+    func update(req: Request) throws -> EventLoopFuture<OldInsightDataTransferObject> {
         struct InsightUpdateRequestBody: Codable {
             var title: String
             var insightGroupID: UUID
@@ -209,7 +211,7 @@ class InsightsController: RouteCollection {
         let user = try req.auth.require(User.self)
 
         
-        return Insight.query(on: req.db)
+        return OldInsight.query(on: req.db)
             .filter(\.$id == insightID)
             .first()
             .unwrap(or: Abort(.notFound))
@@ -232,7 +234,7 @@ class InsightsController: RouteCollection {
         let user = try req.auth.require(User.self)
         
         // TODO: Filter by user org
-        return Insight.query(on: req.db)
+        return OldInsight.query(on: req.db)
             .filter(\.$id == insightID)
             .first()
             .unwrap(or: Abort(.notFound))

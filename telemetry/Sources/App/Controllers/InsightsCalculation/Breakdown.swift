@@ -1,8 +1,8 @@
 import Vapor
 import Fluent
 
-extension InsightsController {
-    func getBreakdown(insight: Insight, conditions: [InsightFilterCondition], calculatedAtDate: Date = Date(), req: Request, appID: UUID) -> EventLoopFuture<InsightDataTransferObject> {
+extension OldInsightsController {
+    func getBreakdown(insight: OldInsight, conditions: [OldInsightFilterCondition], calculatedAtDate: Date = Date(), req: Request, appID: UUID) -> EventLoopFuture<OldInsightDataTransferObject> {
 
         let earlierDate = Date(timeInterval: insight.timeInterval, since: calculatedAtDate)
         
@@ -15,7 +15,7 @@ extension InsightsController {
             .map { signals in
                 (insight, signals)
             }
-            .map { insightTuple -> InsightDataTransferObject in
+            .map { insightTuple -> OldInsightDataTransferObject in
                 let insight = insightTuple.0
                 let signals = insightTuple.1
                 let payloadKey = insight.configuration["breakdown.payloadKey"] ?? "no payload key!"
@@ -35,7 +35,7 @@ extension InsightsController {
                     knownUserIdentifiers.append(signal.clientUser)
                 }
                 
-                return InsightDataTransferObject(
+                return OldInsightDataTransferObject(
                     id: insight.id!,
                     title: insight.title,
                     insightType: insight.insightType,
