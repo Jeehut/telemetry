@@ -1,6 +1,12 @@
 import Vapor
 import Fluent
 
+enum InsightDisplayMode: String, Codable {
+    case number
+    case barChart
+    case lineChart
+    case pieChart
+}
 
 final class Insight: Model, Content {
 
@@ -22,7 +28,7 @@ final class Insight: Model, Content {
     var subtitle: String?
     
     @Field(key: "signal_type")
-    var signalType: String
+    var signalType: String?
     
     @Field(key: "unique_user")
     var uniqueUser: Bool
@@ -36,6 +42,9 @@ final class Insight: Model, Content {
     @Field(key: "breakdown_key")
     var breakdownKey: String?
     
+    @Field(key: "display_mode")
+    var displayMode: InsightDisplayMode
+    
     // TODO
 //    
 //    @Children(for: \.$insight)
@@ -46,27 +55,84 @@ struct InsightDataTransferObject: Content {
     let id: UUID
     
     let order: Double?
-    var title: String
-    var subtitle: String?
+    let title: String
+    let subtitle: String?
     
     /// Which signal types are we interested in? If nil, do not filter by signal type
-    var signalType: String?
+    let signalType: String?
     
     /// If true, only include at the newest signal from each user
-    var uniqueUser: Bool
+    let uniqueUser: Bool
     
     /// Only include signals that match all of these key-values in the payload
-    var filters: [String: String]
+    let filters: [String: String]
     
     /// How far to go back to aggregate signals
-    var rollingWindowSize: TimeInterval
+    let rollingWindowSize: TimeInterval
     
     /// If set, return a breakdown of the values of this payload key
-    var breakdownKey: String?
+    let breakdownKey: String?
+    
+    /// How should this insight's data be displayed?
+    var displayMode: InsightDisplayMode
     
     /// Current Live Calculated Data
-    let data: [String: Float]
+    let data: [String: Double]
     
     /// When was this DTO calculated?
     let calculatedAt: Date
+}
+
+struct InsightCreateRequestBody: Content, Validatable {
+    let order: Double?
+    let title: String
+    let subtitle: String?
+    
+    /// Which signal types are we interested in? If nil, do not filter by signal type
+    let signalType: String?
+    
+    /// If true, only include at the newest signal from each user
+    let uniqueUser: Bool
+    
+    /// Only include signals that match all of these key-values in the payload
+    let filters: [String: String]
+    
+    /// How far to go back to aggregate signals
+    let rollingWindowSize: TimeInterval
+    
+    /// If set, return a breakdown of the values of this payload key
+    let breakdownKey: String?
+    
+    /// How should this insight's data be displayed?
+    var displayMode: InsightDisplayMode
+    
+    static func validations(_ validations: inout Validations) {
+        // TOOD: More validations
+        validations.add("title", as: String.self, is: !.empty)
+    }
+}
+
+struct InsightUpdateRequestBody: Content {
+    let groupID: UUID
+    let order: Double?
+    let title: String
+    let subtitle: String?
+    
+    /// Which signal types are we interested in? If nil, do not filter by signal type
+    let signalType: String?
+    
+    /// If true, only include at the newest signal from each user
+    let uniqueUser: Bool
+    
+    /// Only include signals that match all of these key-values in the payload
+    let filters: [String: String]
+    
+    /// How far to go back to aggregate signals
+    let rollingWindowSize: TimeInterval
+    
+    /// If set, return a breakdown of the values of this payload key
+    let breakdownKey: String?
+    
+    /// How should this insight's data be displayed?
+    var displayMode: InsightDisplayMode
 }

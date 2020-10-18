@@ -34,6 +34,22 @@ final class User: Model, Content {
     }
 }
 
+struct UserDataTransferObject: Content {
+    let id: UUID
+    let organization: Organization?
+    let firstName: String
+    let lastName: String
+    let email: String
+    
+    init(user: User) {
+        self.id = user.id!
+        self.organization = user.$organization.value
+        self.firstName = user.firstName
+        self.lastName = user.lastName
+        self.email = user.email
+    }
+}
+
 extension User: ModelAuthenticatable {
     static let usernameKey = \User.$email
     static let passwordHashKey = \User.$passwordHash

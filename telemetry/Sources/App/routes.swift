@@ -13,5 +13,5 @@ func routes(_ app: Application) throws {
     try apiRoutes.grouped("apps").register(collection: AppController())
     try apiRoutes.grouped("apps", ":appID", "signals").register(collection: SignalsController())
     try apiRoutes.grouped("apps", ":appID", "insightgroups").register(collection: InsightGroupsController())
-    try apiRoutes.grouped("apps", ":appID", "insightgroups", ":insightGroupID", "insights").register(collection: OldInsightsController())
+    try apiRoutes.grouped("apps", ":appID", "insightgroups", ":insightGroupID", "insights").register(collection: InsightsController())
 }

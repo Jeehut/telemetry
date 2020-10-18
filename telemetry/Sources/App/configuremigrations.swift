@@ -26,6 +26,8 @@ struct MigrationConfiguration {
         app.migrations.add(InsightGroup.AddOrderField())
         
         app.migrations.add(RegistrationToken.CreationMigration())
+        
+        app.migrations.add(Insight.CreationMigration())
 
         try app.autoMigrate().wait()
     }

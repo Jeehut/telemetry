@@ -77,7 +77,7 @@ struct UsersController: RouteCollection {
     
     
     /// Register and Create a new Organization
-    func create(req: Request) throws -> EventLoopFuture<User> {
+    func create(req: Request) throws -> EventLoopFuture<UserDataTransferObject> {
         try RegistrationRequestBody.validate(content: req)
         let registrationRequestBody = try req.content.decode(RegistrationRequestBody.self)
         
@@ -107,13 +107,14 @@ struct UsersController: RouteCollection {
                     
                     return org.create(on: req.db).flatMap {
                         let user = registrationRequestBody.makeUser(organizationID: org.id!)
-                        return user.create(on: req.db).map { user }
+                        return user.create(on: req.db).map { UserDataTransferObject(user: user) }
                     }
                 }
         case .open:
             return org.create(on: req.db).flatMap {
                 let user = registrationRequestBody.makeUser(organizationID: org.id!)
-                return user.create(on: req.db).map { user }
+                return user.create(on: req.db)
+                    .map { UserDataTransferObject(user: user) }
             }
         }
     }
@@ -125,9 +126,9 @@ struct UsersController: RouteCollection {
             .map { token }
     }
     
-    func getUserInformation(req: Request) throws -> EventLoopFuture<User> {
+    func getUserInformation(req: Request) throws -> EventLoopFuture<UserDataTransferObject> {
         let user = try req.auth.require(User.self)
-        return user.$organization.load(on: req.db).map { user }
-        // TODO: Do not return PasswordHash 
+        return user.$organization.load(on: req.db).map { UserDataTransferObject(user: user) }
+
     }
 }
