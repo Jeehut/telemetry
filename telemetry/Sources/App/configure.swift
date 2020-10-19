@@ -1,7 +1,6 @@
 import Fluent
 import FluentSQLiteDriver
 import Vapor
-import Leaf
 import FluentPostgresDriver
 
 // configures your application
