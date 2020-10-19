@@ -44,7 +44,7 @@ class ContextsController: RouteCollection {
                     }
             }
             .flatMap { (context: FrontpageContext) in
-                OldInsight.query(on: req.db)
+                Insight.query(on: req.db)
                     .count()
                     .map { insightCount in
                         var newContext = context

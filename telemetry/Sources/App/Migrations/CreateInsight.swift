@@ -22,4 +22,18 @@ extension Insight {
             database.schema("insights").delete()
         }
     }
+    
+    struct DeleteOldTablesMigration: Fluent.Migration {
+        func prepare(on database: Database) -> EventLoopFuture<Void> {
+            database.schema("insight_historical_data")
+                .delete()
+                .flatMap {
+                    database.schema("insight").delete()
+                }
+        }
+        
+        func revert(on database: Database) -> EventLoopFuture<Void> {
+            fatalError("This migration is not revertable")
+        }
+    }
 }

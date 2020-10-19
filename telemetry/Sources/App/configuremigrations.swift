@@ -19,15 +19,12 @@ struct MigrationConfiguration {
         app.migrations.add(UserToken.Migration())
         
         app.migrations.add(InsightGroup.Migration())
-        app.migrations.add(OldInsight.Migration())
-        app.migrations.add(OldInsightHistoricalData.Migration())
-        app.migrations.add(OldInsightHistoricalData.Migration2())
-        app.migrations.add(OldInsight.Migration2())
         app.migrations.add(InsightGroup.AddOrderField())
         
         app.migrations.add(RegistrationToken.CreationMigration())
         
         app.migrations.add(Insight.CreationMigration())
+        app.migrations.add(Insight.DeleteOldTablesMigration())
 
         try app.autoMigrate().wait()
     }
