@@ -109,8 +109,13 @@ class InsightsController: RouteCollection {
         }
         
         // Dates
-        whereClauses.append("received_at > '\(Formatter.iso8601noFS.string(from: earlierDate))'")
-        whereClauses.append("received_at < '\(Formatter.iso8601noFS.string(from: calculatedAtDate))'")
+        if insight.displayMode == .lineChart {
+            whereClauses.append("received_at > '\(Formatter.iso8601noFS.string(from: Date(timeInterval: -3600*24*30, since: calculatedAtDate)))'")
+            whereClauses.append("received_at < '\(Formatter.iso8601noFS.string(from: calculatedAtDate))'")
+        } else {
+            whereClauses.append("received_at > '\(Formatter.iso8601noFS.string(from: earlierDate))'")
+            whereClauses.append("received_at < '\(Formatter.iso8601noFS.string(from: calculatedAtDate))'")
+        }
         
         // Counting
         if insight.uniqueUser && insight.breakdownKey == nil {
@@ -138,7 +143,24 @@ class InsightsController: RouteCollection {
         // Historical Data
         let shouldCalculateHistoricalData = insight.displayMode == .lineChart && insight.breakdownKey == nil
         if shouldCalculateHistoricalData {
-            selectClauses = "DATE_TRUNC('day',received_at) AS day, \(selectClauses)"
+            let truncValue: String
+            
+            switch abs(insight.rollingWindowSize) {
+            case 0...1:
+                truncValue = "second"
+            case 2...60:
+                truncValue = "minute"
+            case 61...3600:
+                truncValue = "hour"
+            case 3601...3600*24:
+                truncValue = "day"
+            case (3600*24)+1...3600*24*7:
+                truncValue = "week"
+            default:
+                truncValue = "month"
+            }
+            
+            selectClauses = "DATE_TRUNC('\(truncValue)',received_at) AS day, \(selectClauses)"
             groupByClause = "day"
             orderByClause = "day"
         }
