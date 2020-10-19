@@ -9,16 +9,6 @@ import Fluent
 import Vapor
 import FluentPostgresDriver
 
-
-extension Formatter {
-    static let iso8601: ISO8601DateFormatter = {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return formatter
-    }()
-    static let iso8601noFS = ISO8601DateFormatter()
-}
-
 class InsightsController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let insights = routes.grouped(UserToken.authenticator())
@@ -57,15 +47,29 @@ class InsightsController: RouteCollection {
                     return postgres.simpleQuery(insightQuery)
                         .map { postgresRows in
                             
+                            #if DEBUG
+                            print(insight.title)
                             print(postgresRows)
+                            #endif
                             
-                            var aihsf: [[String: Double]] = []
+                            var aihsf: [[String: String]] = []
                             
-                            
-                            if let stringData = String(describing: postgresRows).data(using: .utf8),
-                               let rowsData = try? JSONDecoder().decode([[String: Double]].self, from: stringData) {
+                            for row in postgresRows {
+                                var rowDictionary: [String: String] = [:]
                                 
-                                aihsf = rowsData
+                                if let count = row.column("count")?.int {
+                                    rowDictionary["count"] = "\(count)"
+                                }
+                                
+                                if let breakdownKey = insight.breakdownKey, let breakdownKeyValue = row.column(breakdownKey.lowercased())?.string {
+                                    rowDictionary[breakdownKey] = breakdownKeyValue
+                                }
+                                
+                                if let day = row.column("day")?.string {
+                                    rowDictionary["day"] = day
+                                }
+                                
+                                aihsf.append(rowDictionary)
                             }
                             
                             let dto = InsightDataTransferObject(
@@ -93,9 +97,11 @@ class InsightsController: RouteCollection {
     // SELECT json_agg(payload) as payload FROM signals WHERE app_id = '79167a27-ebbf-4012-9974-160624e5d07b' GROUP BY payload #>> '{platform}'
     // SELECT payload ->> 'platform' as platform FROM signals WHERE app_id = '79167a27-ebbf-4012-9974-160624e5d07b'
     // SELECT payload ->> 'systemVersion' as systemVersion, COUNT(*) FROM signals WHERE app_id = '79167a27-ebbf-4012-9974-160624e5d07b' GROUP BY systemVersion
+    // SELECT DATE_TRUNC('day',received_at) AS day, COUNT(client_user) FROM signals WHERE app_id = '79167A27-EBBF-4012-9974-160624E5D07B' AND received_at > '2020-09-19T09:35:19Z' AND received_at < '2020-10-19T09:35:19Z' GROUP BY day ORDER BY day
     func sqlQuery(for insight: Insight, appID: UUID, earlierDate: Date, calculatedAtDate: Date) -> String {
         var selectClauses: String = ""
         var groupByClause: String? = nil
+        var orderByClause: String? = nil
         var whereClauses: [String] = ["app_id = '\(appID.uuidString)'"]
         
         if let signalType = insight.signalType {
@@ -125,6 +131,18 @@ class InsightsController: RouteCollection {
             groupByClause = "\(breakdownkey.escaped)"
         }
         
+        if let breakdownKey = insight.breakdownKey {
+            orderByClause = "count DESC"
+        }
+        
+        // Historical Data
+        let shouldCalculateHistoricalData = insight.displayMode == .lineChart && insight.breakdownKey == nil
+        if shouldCalculateHistoricalData {
+            selectClauses = "DATE_TRUNC('day',received_at) AS day, \(selectClauses)"
+            groupByClause = "day"
+            orderByClause = "day"
+        }
+        
         
         // Filters
         for filter in insight.filters {
@@ -137,6 +155,7 @@ class InsightsController: RouteCollection {
                     FROM signals
                     WHERE \(whereClauses.joined(separator: " AND "))
                     \(groupByClause == nil ? "" : "GROUP BY " + groupByClause!)
+                    \(orderByClause == nil ? "" : "ORDER BY " + orderByClause!)
                     ;
                     """
         print(clause)
