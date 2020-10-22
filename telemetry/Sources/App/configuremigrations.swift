@@ -25,6 +25,8 @@ struct MigrationConfiguration {
         
         app.migrations.add(Insight.CreationMigration())
         app.migrations.add(Insight.DeleteOldTablesMigration())
+        
+        app.migrations.add(Insight.AddIsExpandedField())
 
         try app.autoMigrate().wait()
     }

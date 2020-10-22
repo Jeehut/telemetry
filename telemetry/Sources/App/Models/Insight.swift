@@ -45,10 +45,8 @@ final class Insight: Model, Content {
     @Field(key: "display_mode")
     var displayMode: InsightDisplayMode
     
-    // TODO
-//    
-//    @Children(for: \.$insight)
-//    var historicalData: [OldInsightHistoricalData]
+    @Field(key: "is_expanded")
+    var isExpanded: Bool
 }
 
 struct InsightDataTransferObject: Content {
@@ -75,6 +73,9 @@ struct InsightDataTransferObject: Content {
     
     /// How should this insight's data be displayed?
     var displayMode: InsightDisplayMode
+    
+    /// If true, the insight will be displayed bigger
+    var isExpanded: Bool
     
     /// Current Live Calculated Data
     let data: [[String: String]]
@@ -106,6 +107,9 @@ struct InsightCreateRequestBody: Content, Validatable {
     /// How should this insight's data be displayed?
     var displayMode: InsightDisplayMode
     
+    /// If true, the insight will be displayed bigger
+    let isExpanded: Bool
+    
     static func validations(_ validations: inout Validations) {
         // TOOD: More validations
         validations.add("title", as: String.self, is: !.empty)
@@ -134,5 +138,8 @@ struct InsightUpdateRequestBody: Content {
     let breakdownKey: String?
     
     /// How should this insight's data be displayed?
-    var displayMode: InsightDisplayMode
+    let displayMode: InsightDisplayMode
+    
+    /// If true, the insight will be displayed bigger
+    let isExpanded: Bool
 }

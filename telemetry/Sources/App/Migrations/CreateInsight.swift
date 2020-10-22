@@ -36,4 +36,18 @@ extension Insight {
             fatalError("This migration is not revertable")
         }
     }
+    
+    struct AddIsExpandedField: Fluent.Migration {
+        func prepare(on database: Database) -> EventLoopFuture<Void> {
+            database.schema("insights")
+                .field("is_expanded", .bool, .required, .sql(raw: "DEFAULT false"))
+                .update()
+        }
+        
+        func revert(on database: Database) -> EventLoopFuture<Void> {
+            database.schema("insights")
+                .deleteField("is_expanded")
+                .update()
+        }
+    }
 }

@@ -13,7 +13,6 @@ class InsightsController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let insights = routes.grouped(UserToken.authenticator())
         insights.get(":insightID", use: get)
-//        insights.get(":insightID", "historicaldata", use: getHistoricalData)
         insights.post(use: create)
         insights.patch(":insightID", use: update)
         insights.delete(":insightID", use: delete)
@@ -33,7 +32,6 @@ class InsightsController: RouteCollection {
         
         return Insight.query(on: req.db)
             .filter(\.$id == insightID)
-//            .with(\.$historicalData)
             .first()
             .unwrap(or: Abort(.notFound))
             .flatMap { insight in
@@ -83,6 +81,7 @@ class InsightsController: RouteCollection {
                                 rollingWindowSize: insight.rollingWindowSize,
                                 breakdownKey: insight.breakdownKey,
                                 displayMode: insight.displayMode,
+                                isExpanded: insight.isExpanded,
                                 data: aihsf,
                                 calculatedAt: Date()
                             )
@@ -204,6 +203,7 @@ class InsightsController: RouteCollection {
         insight.rollingWindowSize = insightCreateRequestBody.rollingWindowSize
         insight.breakdownKey = insightCreateRequestBody.breakdownKey
         insight.displayMode = insightCreateRequestBody.displayMode
+        insight.isExpanded = insightCreateRequestBody.isExpanded
         
         return insight.save(on: req.db).map { insight }
     }
@@ -237,6 +237,7 @@ class InsightsController: RouteCollection {
                 insight.rollingWindowSize = insightUpdateRequestBody.rollingWindowSize
                 insight.breakdownKey = insightUpdateRequestBody.breakdownKey
                 insight.displayMode = insightUpdateRequestBody.displayMode
+                insight.isExpanded = insightUpdateRequestBody.isExpanded
                 
                 return insight.update(on: req.db)
             }
