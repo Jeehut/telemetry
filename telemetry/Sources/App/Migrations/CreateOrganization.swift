@@ -16,4 +16,18 @@ extension Organization  {
             database.schema(schema).delete()
         }
     }
+
+    struct AddIsSuperOrgField: Fluent.Migration {
+        func prepare(on database: Database) -> EventLoopFuture<Void> {
+            database.schema("organizations")
+                .field("is_super_org", .bool, .required, .sql(raw: "DEFAULT false"))
+                .update()
+        }
+
+        func revert(on database: Database) -> EventLoopFuture<Void> {
+            database.schema("organizations")
+                .deleteField("is_super_org")
+                .update()
+        }
+    }
 }
