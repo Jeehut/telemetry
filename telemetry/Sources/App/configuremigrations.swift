@@ -28,6 +28,7 @@ struct MigrationConfiguration {
         
         app.migrations.add(Insight.AddIsExpandedField())
         app.migrations.add(Organization.AddIsSuperOrgField())
+        app.migrations.add(BetaRequestEmail.Migration())
 
         try app.autoMigrate().wait()
     }
