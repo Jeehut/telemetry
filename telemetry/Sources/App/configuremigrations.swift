@@ -30,6 +30,9 @@ struct MigrationConfiguration {
         app.migrations.add(Organization.AddIsSuperOrgField())
         app.migrations.add(BetaRequestEmail.Migration())
 
+        app.migrations.add(LexiconSignalType.Migration())
+        app.migrations.add(LexiconPayloadKey.Migration())
+
         try app.autoMigrate().wait()
     }
 }
