@@ -42,7 +42,7 @@ struct SignalsController: RouteCollection {
             
             func makeSignal() throws -> Signal {
                 let signal = Signal()
-                signal.clientUser = self.clientUser // TODO: This hash returns a new value each time WTF try Bcrypt.hash(self.clientUser)
+                signal.clientUser = try Bcrypt.hash(self.clientUser)
                 signal.type = self.type
                 
                 let resolvedPayload = self.payload ?? [:]
