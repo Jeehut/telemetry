@@ -27,3 +27,7 @@ final class LexiconSignalType: Model, Content {
         return lexiconSignalType
     }
 }
+
+struct LexiconItemUpdateBody: Content {
+    let isHidden: Bool
+}
