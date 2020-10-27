@@ -21,6 +21,15 @@ struct UsersController: RouteCollection {
         
         let tokenProtected = routes.grouped(UserToken.authenticator())
         tokenProtected.get("me", use: getUserInformation)
+        tokenProtected.post("updatePassword", use: updatePassword)
+    }
+
+    /// Return the canonical hashed version of the given password string
+    static func hash(from password: String) -> String {
+        // TODO: Salt that hash, mofo!
+        let hashedPassword = try! Bcrypt.hash(password)
+
+        return hashedPassword
     }
     
     struct RegistrationRequestBody: Content, Validatable {
@@ -37,9 +46,8 @@ struct UsersController: RouteCollection {
         }
         
         func makeUser(organizationID: UUID) -> User {
-            // TODO: Salt that hash, mofo!
-            let hashedPassword = try! Bcrypt.hash(self.userPassword)
-            
+            let hashedPassword = UsersController.hash(from: self.userPassword)
+
             return User(
                 firstName: userFirstName,
                 lastName: userLastName,
@@ -54,6 +62,19 @@ struct UsersController: RouteCollection {
             validations.add("userLastName", as: String.self, is: !.empty)
             validations.add("userEmail", as: String.self, is: .email)
             validations.add("userPassword", as: String.self, is: .count(8...))
+        }
+    }
+
+    struct PasswordChangeRequestBody: Content, Validatable {
+        let oldPassword: String
+        let newPassword: String
+        let newPasswordConfirm: String
+
+        static func validations(_ validations: inout Validations) {
+            validations.add("oldPassword", as: String.self, is: !.empty)
+            validations.add("newPassword", as: String.self, is: !.empty)
+            validations.add("newPasswordConfirm", as: String.self, is: !.empty)
+            validations.add("newPassword", as: String.self, is: .count(8...))
         }
     }
     
@@ -129,6 +150,31 @@ struct UsersController: RouteCollection {
     func getUserInformation(req: Request) throws -> EventLoopFuture<UserDataTransferObject> {
         let user = try req.auth.require(User.self)
         return user.$organization.load(on: req.db).map { UserDataTransferObject(user: user) }
+    }
 
+
+    /// Updates the user's password and deletes all user tokens. The user will have to log in again.
+    func updatePassword(req: Request) throws -> EventLoopFuture<UserDataTransferObject> {
+        try PasswordChangeRequestBody.validate(content: req)
+        let passwordChangeRequestBody = try req.content.decode(PasswordChangeRequestBody.self)
+
+        guard passwordChangeRequestBody.newPassword == passwordChangeRequestBody.newPasswordConfirm else {
+            throw Abort(.badRequest, reason: "Passwords did not match")
+        }
+
+        let user = try req.auth.require(User.self)
+
+        guard Self.hash(from: passwordChangeRequestBody.oldPassword) == user.passwordHash else {
+            throw Abort(.badRequest, reason: "Incorrect Old Password")
+        }
+
+        user.passwordHash = Self.hash(from: passwordChangeRequestBody.newPassword)
+        return user.save(on: req.db)
+            .flatMap {
+                UserToken.query(on: req.db)
+                    .filter(\.$user.$id == user.id!)
+                    .delete()
+            }
+            .map { UserDataTransferObject(user: user) }
     }
 }
