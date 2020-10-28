@@ -3,9 +3,10 @@ import Vapor
 
 class BetaRequestEmailsController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
-        routes.get(use: list)
-        routes.post(use: create)
-        routes.patch(":betaRequestEmailID", use: update)
+        let betarequests = routes.grouped(UserToken.authenticator())
+        betarequests.get(use: list)
+        betarequests.post(use: create)
+        betarequests.patch(":betaRequestEmailID", use: update)
     }
 
     func list(req: Request) throws -> EventLoopFuture<[BetaRequestEmail]> {
