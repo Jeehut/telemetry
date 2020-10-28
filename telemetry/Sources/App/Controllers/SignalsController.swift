@@ -26,7 +26,7 @@ struct SignalsController: RouteCollection {
             .all()
     }
     
-    func postSignal(req: Request) throws -> EventLoopFuture<Signal> {
+    func postSignal(req: Request) throws -> EventLoopFuture<HTTPStatus> {
         // This function does not check for logged in user,
         // because signals posted don't have user ID.
         // Instead, we rely on the App ID as a shared secret
@@ -42,7 +42,7 @@ struct SignalsController: RouteCollection {
             
             func makeSignal() throws -> Signal {
                 let signal = Signal()
-                signal.clientUser = try Bcrypt.hash(self.clientUser)
+                signal.clientUser = self.clientUser // TODO: Bcrypt.hash spits out a different string each time here??? try Bcrypt.hah(self.clientUser)
                 signal.type = self.type
                 
                 let resolvedPayload = self.payload ?? [:]
@@ -61,11 +61,11 @@ struct SignalsController: RouteCollection {
         signal.$app.id = appID
 
         // Save signal type into lexicon. This will fail silently if the signal type already exists, which is what we want
-        _ = LexiconSignalType.from(signal).save(on: req.db)
+        _ = LexiconSignalType.from(signal).save(on: req.db).recover { error in }
 
         // Save Payload Keys into lexicon. This will also fail silently if the keys are already in the lexicon
-        _ = LexiconPayloadKey.from(signal).create(on: req.db)
+        _ = LexiconPayloadKey.from(signal).create(on: req.db).recover { error in }
 
-        return signal.save(on: req.db).map { signal }
+        return signal.save(on: req.db).map { HTTPStatus.ok }
     }
 }
