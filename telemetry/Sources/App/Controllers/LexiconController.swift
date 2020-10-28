@@ -3,10 +3,11 @@ import Vapor
 
 class LexiconController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
-        routes.get("signaltypes", use: listSignalTypes)
-        routes.get("payloadkeys", use: listPayloadKeys)
-        routes.patch("signaltypes", ":lexiconItemID", use: updateSignalType)
-        routes.patch("payloadkeys", ":lexiconItemID", use: updatePayloadKey)
+        let lexicon = routes.grouped(UserToken.authenticator())
+        lexicon.get("signaltypes", use: listSignalTypes)
+        lexicon.get("payloadkeys", use: listPayloadKeys)
+        lexicon.patch("signaltypes", ":lexiconItemID", use: updateSignalType)
+        lexicon.patch("payloadkeys", ":lexiconItemID", use: updatePayloadKey)
     }
 
     func listSignalTypes(req: Request) throws -> EventLoopFuture<[LexiconSignalType]> {
