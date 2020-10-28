@@ -164,7 +164,7 @@ struct UsersController: RouteCollection {
 
         let user = try req.auth.require(User.self)
 
-        guard Self.hash(from: passwordChangeRequestBody.oldPassword) == user.passwordHash else {
+        guard try user.verify(password: passwordChangeRequestBody.oldPassword) else {
             throw Abort(.badRequest, reason: "Incorrect Old Password")
         }
 
