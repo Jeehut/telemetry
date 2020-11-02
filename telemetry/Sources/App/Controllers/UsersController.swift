@@ -17,7 +17,6 @@ struct UsersController: RouteCollection {
         
         let passwordProtected = routes.grouped(User.authenticator())
         passwordProtected.post("login", use: getBearerTokenForUser)
-        passwordProtected.post("createRegistrationToken", use: createRegistrationToken)
         
         let tokenProtected = routes.grouped(UserToken.authenticator())
         tokenProtected.get("me", use: getUserInformation)
@@ -82,21 +81,6 @@ struct UsersController: RouteCollection {
         return ["registrationStatus": self.currentRegistrationStatus.rawValue]
     }
     
-    func createRegistrationToken(req: Request) throws -> EventLoopFuture<RegistrationToken> {
-        try req.auth.require(User.self)
-        
-        let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-        let newTokenValue = String((0..<8).map{ _ in letters.randomElement()! })
-        
-        let token = RegistrationToken()
-        token.value = newTokenValue
-        token.isUsed = false
-        
-        return token.save(on: req.db)
-            .map { token }
-    }
-    
-    
     /// Register and Create a new Organization
     func create(req: Request) throws -> EventLoopFuture<UserDataTransferObject> {
         try RegistrationRequestBody.validate(content: req)
@@ -117,14 +101,14 @@ struct UsersController: RouteCollection {
                 throw Abort(.badRequest, reason: "Registration needs a registrationToken")
             }
             
-            return RegistrationToken.query(on: req.db)
-                .filter(\.$value == registrationRequestBody.registrationToken!)
-                .filter(\.$isUsed == false)
+            return BetaRequestEmail.query(on: req.db)
+                .filter(\.$registrationToken == registrationRequestBody.registrationToken!)
+                .filter(\.$isFulfilled == false)
                 .first()
                 .unwrap(or: Abort(.notFound))
-                .flatMap { registrationToken in
-                    registrationToken.isUsed = true
-                    _ = registrationToken.save(on: req.db)
+                .flatMap { betaRequestEmail in
+                    betaRequestEmail.isFulfilled = true
+                    _ = betaRequestEmail.save(on: req.db)
                     
                     return org.create(on: req.db).flatMap {
                         let user = registrationRequestBody.makeUser(organizationID: org.id!)

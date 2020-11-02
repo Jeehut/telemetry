@@ -21,8 +21,6 @@ struct MigrationConfiguration {
         app.migrations.add(InsightGroup.Migration())
         app.migrations.add(InsightGroup.AddOrderField())
         
-        app.migrations.add(RegistrationToken.CreationMigration())
-        
         app.migrations.add(Insight.CreationMigration())
         app.migrations.add(Insight.DeleteOldTablesMigration())
         
@@ -33,6 +31,8 @@ struct MigrationConfiguration {
         app.migrations.add(LexiconSignalType.Migration())
         app.migrations.add(LexiconPayloadKey.Migration())
 
+        app.migrations.add(BetaRequestEmail.Migration2())
+        
         try app.autoMigrate().wait()
     }
 }

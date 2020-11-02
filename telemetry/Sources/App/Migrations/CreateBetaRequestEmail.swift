@@ -16,4 +16,22 @@ extension BetaRequestEmail {
             database.schema("beta_request_emails").delete()
         }
     }
+    
+    struct Migration2: Fluent.Migration {
+        func prepare(on database: Database) -> EventLoopFuture<Void> {
+            _ = database.schema("registration_tokens").delete()
+            
+            return database.schema("beta_request_emails")
+                .field("registration_token", .string, .required, .sql(raw: "DEFAULT 'LOLNOPE123'"))
+                .update()
+        }
+        
+        func revert(on database: Database) -> EventLoopFuture<Void> {
+            database.schema("registration_tokens")
+                .id()
+                .field("value", .string, .required)
+                .field("is_used", .bool, .required)
+                .create()
+        }
+    }
 }

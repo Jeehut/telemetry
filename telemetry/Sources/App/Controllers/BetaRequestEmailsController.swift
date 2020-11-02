@@ -33,11 +33,15 @@ class BetaRequestEmailsController: RouteCollection {
         }
 
         let emailRequestBody = try req.content.decode(EmailRequestBody.self)
+        
+        let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        let newTokenValue = String((0..<8).map{ _ in letters.randomElement()! })
 
         let betaRequestEmail = BetaRequestEmail()
         betaRequestEmail.email = emailRequestBody.email
         betaRequestEmail.requestedAt = Date()
         betaRequestEmail.isFulfilled = false
+        betaRequestEmail.registrationToken = newTokenValue
 
         return betaRequestEmail.save(on: req.db)
             .map { HTTPStatus.ok }

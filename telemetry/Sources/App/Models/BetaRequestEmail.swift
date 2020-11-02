@@ -9,6 +9,9 @@ final class BetaRequestEmail: Model, Content {
 
     @Field(key: "email")
     var email: String
+    
+    @Field(key: "registration_token")
+    var registrationToken: String
 
     @Field(key: "requested_at")
     var requestedAt: Date
