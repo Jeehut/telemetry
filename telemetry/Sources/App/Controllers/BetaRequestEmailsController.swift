@@ -6,7 +6,6 @@ class BetaRequestEmailsController: RouteCollection {
         let betarequests = routes.grouped(UserToken.authenticator())
         betarequests.get(use: list)
         betarequests.post(use: create)
-        betarequests.patch(":betaRequestEmailID", use: update)
     }
 
     func list(req: Request) throws -> EventLoopFuture<[BetaRequestEmail]> {
@@ -17,7 +16,6 @@ class BetaRequestEmailsController: RouteCollection {
             }
         }.flatMap {
             BetaRequestEmail.query(on: req.db)
-                .filter(\.$isFulfilled == false)
                 .sort(\.$requestedAt, .ascending)
                 .all()
         }
@@ -45,35 +43,5 @@ class BetaRequestEmailsController: RouteCollection {
 
         return betaRequestEmail.save(on: req.db)
             .map { HTTPStatus.ok }
-    }
-
-    func update(req: Request) throws -> EventLoopFuture<HTTPStatus> {
-        struct EmailRequestUpdateBody: Content {
-            let isFulfulled: Bool
-        }
-
-        guard let betaRequestEmailIDString = req.parameters.get("betaRequestEmailID"),
-              let betaRequestEmailID = UUID(betaRequestEmailIDString) else {
-            throw Abort(.badRequest, reason: "Invalid parameter `betaRequestEmailID`")
-        }
-
-        let user = try req.auth.require(User.self)
-        return user.$organization.load(on: req.db).flatMapThrowing {
-            if !user.organization.isSuperOrg {
-                throw Abort(.unauthorized, reason: "Not a super org!")
-            }
-        }.flatMap {
-            BetaRequestEmail
-                .query(on: req.db)
-                .filter(\.$id == betaRequestEmailID)
-                .first()
-                .unwrap(or: Abort(.notFound))
-        }.flatMapThrowing { emailRequest in
-            let emailUpdateBody = try req.content.decode(EmailRequestUpdateBody.self)
-            emailRequest.isFulfilled = emailUpdateBody.isFulfulled
-            _ = emailRequest.save(on: req.db)
-        }.map {
-            HTTPStatus.ok
-        }
     }
 }
