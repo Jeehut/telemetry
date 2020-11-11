@@ -32,6 +32,7 @@ struct MigrationConfiguration {
         app.migrations.add(LexiconPayloadKey.Migration())
 
         app.migrations.add(BetaRequestEmail.Migration2())
+        app.migrations.add(User.Migration2())
         
         try app.autoMigrate().wait()
     }

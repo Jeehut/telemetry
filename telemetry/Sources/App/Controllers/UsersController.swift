@@ -50,6 +50,7 @@ struct UsersController: RouteCollection {
             return User(
                 firstName: userFirstName,
                 lastName: userLastName,
+                isFoundingUser: true,
                 email: userEmail,
                 passwordHash: hashedPassword,
                 organizationID: organizationID

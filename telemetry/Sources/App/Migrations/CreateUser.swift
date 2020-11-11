@@ -21,4 +21,18 @@ extension User {
             database.schema("users").delete()
         }
     }
+    
+    struct Migration2: Fluent.Migration {
+        func prepare(on database: Database) -> EventLoopFuture<Void> {
+            database.schema("users")
+                .field("is_founding_user", .bool, .required, .sql(raw: "DEFAULT true"))
+                .update()
+        }
+
+        func revert(on database: Database) -> EventLoopFuture<Void> {
+            database.schema("users")
+                .deleteField("is_founding_user")
+                .update()
+        }
+    }
 }

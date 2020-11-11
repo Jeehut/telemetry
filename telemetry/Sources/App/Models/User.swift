@@ -12,6 +12,10 @@ final class User: Model, Content {
 
     @Field(key: "last_name")
     var lastName: String
+    
+    /// if true, this user may not be deleted
+    @Field(key: "is_founding_user")
+    var isFoundingUser: Bool
 
     @Field(key: "email")
     var email: String
@@ -24,10 +28,11 @@ final class User: Model, Content {
 
     init() { }
 
-    init(id: UUID? = nil, firstName: String, lastName: String, email: String, passwordHash: String, organizationID: UUID) {
+    init(id: UUID? = nil, firstName: String, lastName: String, isFoundingUser: Bool, email: String, passwordHash: String, organizationID: UUID) {
         self.id = id
         self.firstName = firstName
         self.lastName = lastName
+        self.isFoundingUser = isFoundingUser
         self.email = email
         self.passwordHash = passwordHash
         self.$organization.id = organizationID
