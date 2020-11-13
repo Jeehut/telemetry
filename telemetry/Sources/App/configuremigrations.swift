@@ -33,6 +33,7 @@ struct MigrationConfiguration {
 
         app.migrations.add(BetaRequestEmail.Migration2())
         app.migrations.add(User.Migration2())
+        app.migrations.add(OrganizationJoinRequest.Migration())
         
         try app.autoMigrate().wait()
     }

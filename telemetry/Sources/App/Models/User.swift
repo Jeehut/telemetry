@@ -42,6 +42,7 @@ final class User: Model, Content {
 struct UserDataTransferObject: Content {
     let id: UUID
     let organization: Organization?
+    let isFoundingUser: Bool
     let firstName: String
     let lastName: String
     let email: String
@@ -52,6 +53,7 @@ struct UserDataTransferObject: Content {
         self.firstName = user.firstName
         self.lastName = user.lastName
         self.email = user.email
+        self.isFoundingUser = user.isFoundingUser
     }
 }
 
