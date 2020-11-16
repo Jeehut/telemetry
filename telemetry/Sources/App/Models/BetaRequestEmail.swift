@@ -15,6 +15,9 @@ final class BetaRequestEmail: Model, Content {
 
     @Field(key: "requested_at")
     var requestedAt: Date
+    
+    @Field(key: "sent_at")
+    var sentAt: Date?
 
     @Field(key: "is_fulfilled")
     var isFulfilled: Bool

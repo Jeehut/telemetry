@@ -34,4 +34,18 @@ extension BetaRequestEmail {
                 .create()
         }
     }
+    
+    struct Migration3: Fluent.Migration {
+        func prepare(on database: Database) -> EventLoopFuture<Void> {
+            return database.schema("beta_request_emails")
+                .field("sent_at", .datetime)
+                .update()
+        }
+        
+        func revert(on database: Database) -> EventLoopFuture<Void> {
+            database.schema("registration_tokens")
+                .deleteField("sent_at")
+                .update()
+        }
+    }
 }
