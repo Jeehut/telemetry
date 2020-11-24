@@ -38,7 +38,9 @@ class InsightsController: RouteCollection {
                 
                 let calculatedAtDate = Date()
                 let earlierDate = Date(timeInterval: insight.rollingWindowSize, since: calculatedAtDate)
-                let insightQuery = self.sqlQuery(for: insight, appID: appID, earlierDate: earlierDate, calculatedAtDate: calculatedAtDate)
+                let insightQuery = insight.breakdownKey == nil
+                    ? self.timeSeriesSQLQuery(for: insight, appID: appID, earlierDate: earlierDate, calculatedAtDate: calculatedAtDate)
+                    : self.breakDownSQLQuery(for: insight, appID: appID, earlierDate: earlierDate, calculatedAtDate: calculatedAtDate)
                 
                 if let postgres = req.db as? PostgresDatabase {
                     
@@ -55,16 +57,18 @@ class InsightsController: RouteCollection {
                             for row in postgresRows {
                                 var rowDictionary: [String: String] = [:]
                                 
-                                if let count = row.column("count")?.int {
-                                    rowDictionary["count"] = "\(count)"
+                                if let yAxisValue = row.column("yaxisvalue")?.int {
+                                    rowDictionary["yAxisValue"] = "\(yAxisValue)"
                                 }
                                 
                                 if let breakdownKey = insight.breakdownKey, let breakdownKeyValue = row.column(breakdownKey.lowercased())?.string {
                                     rowDictionary[breakdownKey] = breakdownKeyValue
                                 }
                                 
-                                if let day = row.column("day")?.string {
-                                    rowDictionary["day"] = day
+                                if let xAxisValue = row.column("xaxisvalue")?.string {
+                                    rowDictionary["xAxisValue"] = xAxisValue
+                                } else {
+                                    rowDictionary["xAxisValue"] = "<None>"
                                 }
                                 
                                 aihsf.append(rowDictionary)
@@ -80,6 +84,7 @@ class InsightsController: RouteCollection {
                                 filters: insight.filters,
                                 rollingWindowSize: insight.rollingWindowSize,
                                 breakdownKey: insight.breakdownKey,
+                                groupBy: insight.groupBy,
                                 displayMode: insight.displayMode,
                                 isExpanded: insight.isExpanded,
                                 data: aihsf,
@@ -93,28 +98,64 @@ class InsightsController: RouteCollection {
     }
 
     
-    // SELECT json_agg(payload) as payload FROM signals WHERE app_id = '79167a27-ebbf-4012-9974-160624e5d07b' GROUP BY payload #>> '{platform}'
-    // SELECT payload ->> 'platform' as platform FROM signals WHERE app_id = '79167a27-ebbf-4012-9974-160624e5d07b'
-    // SELECT payload ->> 'systemVersion' as systemVersion, COUNT(*) FROM signals WHERE app_id = '79167a27-ebbf-4012-9974-160624e5d07b' GROUP BY systemVersion
-    // SELECT DATE_TRUNC('day',received_at) AS day, COUNT(client_user) FROM signals WHERE app_id = '79167A27-EBBF-4012-9974-160624E5D07B' AND received_at > '2020-09-19T09:35:19Z' AND received_at < '2020-10-19T09:35:19Z' GROUP BY day ORDER BY day
-    func sqlQuery(for insight: Insight, appID: UUID, earlierDate: Date, calculatedAtDate: Date) -> String {
+
+    func breakDownSQLQuery(for insight: Insight, appID: UUID, earlierDate: Date, calculatedAtDate: Date) -> String {
         var selectClauses: String = ""
-        var groupByClause: String? = nil
-        var orderByClause: String? = nil
+        var groupByClause: String
+        let orderByClause: String = "yAxisValue DESC"
         var whereClauses: [String] = ["app_id = '\(appID.uuidString)'"]
+        let breakdownkey = insight.breakdownKey!
         
         if let signalType = insight.signalType {
             whereClauses.append("signal_type = '\(signalType.escaped)'")
         }
         
         // Dates
-        if insight.displayMode == .lineChart {
-            whereClauses.append("received_at > '\(Formatter.iso8601noFS.string(from: Date(timeInterval: -3600*24*30, since: calculatedAtDate)))'")
-            whereClauses.append("received_at < '\(Formatter.iso8601noFS.string(from: calculatedAtDate))'")
-        } else {
-            whereClauses.append("received_at > '\(Formatter.iso8601noFS.string(from: earlierDate))'")
-            whereClauses.append("received_at < '\(Formatter.iso8601noFS.string(from: calculatedAtDate))'")
+        whereClauses.append("received_at > '\(Formatter.iso8601noFS.string(from: earlierDate))'")
+        whereClauses.append("received_at < '\(Formatter.iso8601noFS.string(from: calculatedAtDate))'")
+        
+        // Counting
+        if insight.uniqueUser {
+            selectClauses = "payload ->> '\(breakdownkey.escaped)' as xAxisValue, COUNT(DISTINCT client_user) as yAxisValue"
+            groupByClause = "xAxisValue"
         }
+        
+        else {
+            selectClauses = "payload ->> '\(breakdownkey.escaped)' as xAxisValue, COUNT(client_user) as yAxisValue"
+            groupByClause = "xAxisValue"
+        }
+        
+        // Filters
+        for filter in insight.filters {
+            whereClauses.append("payload ->> '\(filter.key.escaped)' = '\(filter.value.escaped)'")
+        }
+        
+        // Putting the band back together
+        let clause = """
+                    SELECT \(selectClauses)
+                    FROM signals
+                    WHERE \(whereClauses.joined(separator: " AND "))
+                    GROUP BY \(groupByClause)
+                    ORDER BY \(orderByClause)
+                    ;
+                    """
+        #if DEBUG
+        print(clause)
+        #endif
+        
+        return clause
+    }
+    
+    func timeSeriesSQLQuery(for insight: Insight, appID: UUID, earlierDate: Date, calculatedAtDate: Date) -> String {
+        var selectClauses: String = ""
+        var groupByClause: String = ""
+        var orderByClause: String = ""
+        var whereClauses: [String] = ["app_id = '\(appID.uuidString)'"]
+        
+        if let signalType = insight.signalType {
+            whereClauses.append("signal_type = '\(signalType.escaped)'")
+        }
+        
         
         // Counting
         if insight.uniqueUser && insight.breakdownKey == nil {
@@ -135,51 +176,46 @@ class InsightsController: RouteCollection {
             groupByClause = "\(breakdownkey.escaped)"
         }
         
-        if let breakdownKey = insight.breakdownKey {
-            orderByClause = "count DESC"
-        }
-        
         // Historical Data
-        let shouldCalculateHistoricalData = insight.displayMode == .lineChart && insight.breakdownKey == nil
-        if shouldCalculateHistoricalData {
-            let truncValue: String
-            
-            switch abs(insight.rollingWindowSize) {
-            case 0...1:
-                truncValue = "second"
-            case 2...60:
-                truncValue = "minute"
-            case 61...3600:
-                truncValue = "hour"
-            case 3601...3600*24:
-                truncValue = "day"
-            case (3600*24)+1...3600*24*7:
-                truncValue = "week"
-            default:
-                truncValue = "month"
-            }
-            
+        if let truncValue = insight.groupBy?.rawValue {
             selectClauses = "DATE_TRUNC('\(truncValue)',received_at) AS day, \(selectClauses)"
             groupByClause = "day"
             orderByClause = "day"
         }
-        
         
         // Filters
         for filter in insight.filters {
             whereClauses.append("payload ->> '\(filter.key.escaped)' = '\(filter.value.escaped)'")
         }
         
-        // Putting the band back together
+        let groupByValue = insight.groupBy?.rawValue ?? "day"
+        
+        let countValue = insight.uniqueUser ? "DISTINCT user" : "*"
+        
         let clause = """
-                    SELECT \(selectClauses)
-                    FROM signals
-                    WHERE \(whereClauses.joined(separator: " AND "))
-                    \(groupByClause == nil ? "" : "GROUP BY " + groupByClause!)
-                    \(orderByClause == nil ? "" : "ORDER BY " + orderByClause!)
-                    ;
-                    """
+        WITH
+        time_range AS (
+          SELECT generate_series(date_trunc('\(groupByValue)', '\(Formatter.iso8601noFS.string(from: earlierDate))'::date), date_trunc('\(groupByValue)', '\(Formatter.iso8601noFS.string(from: calculatedAtDate))'::date), '1 \(groupByValue)'::interval) as xAxisValue
+        ),
+
+        counts AS (
+          SELECT date_trunc('\(groupByValue)', received_at) as xAxisValue,
+                 count(\(countValue)) as count
+          FROM signals
+          WHERE \(whereClauses.joined(separator: " AND "))
+          GROUP BY 1
+        )
+
+        SELECT trim(both '"' from to_json(time_range.xAxisValue)::text) as xAxisValue,
+               counts.count as yAxisValue
+        FROM time_range
+        LEFT OUTER JOIN counts on time_range.xAxisValue = counts.xAxisValue
+        ORDER BY time_range.xAxisValue;
+        """
+        #if DEBUG
         print(clause)
+        #endif
+        
         return clause
     }
     
@@ -202,6 +238,7 @@ class InsightsController: RouteCollection {
         insight.filters = insightCreateRequestBody.filters
         insight.rollingWindowSize = insightCreateRequestBody.rollingWindowSize
         insight.breakdownKey = insightCreateRequestBody.breakdownKey
+        insight.groupBy = insightCreateRequestBody.groupBy
         insight.displayMode = insightCreateRequestBody.displayMode
         insight.isExpanded = insightCreateRequestBody.isExpanded
         
@@ -236,6 +273,7 @@ class InsightsController: RouteCollection {
                 insight.filters = insightUpdateRequestBody.filters
                 insight.rollingWindowSize = insightUpdateRequestBody.rollingWindowSize
                 insight.breakdownKey = insightUpdateRequestBody.breakdownKey
+                insight.groupBy = insightUpdateRequestBody.groupBy
                 insight.displayMode = insightUpdateRequestBody.displayMode
                 insight.isExpanded = insightUpdateRequestBody.isExpanded
                 

@@ -95,7 +95,7 @@ struct OrganizationController: RouteCollection {
             .unwrap(or: Abort(.notFound))
             .flatMap { $0.delete(on: req.db) }
             .flatMap {
-                let hashedPassword = UsersController.hash(from: orgJoinRequest.password)
+                let hashedPassword = User.hash(from: orgJoinRequest.password)
                 
                 let user = User(
                     firstName: orgJoinRequest.firstName,

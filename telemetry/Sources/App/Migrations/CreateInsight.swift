@@ -50,4 +50,18 @@ extension Insight {
                 .update()
         }
     }
+    
+    struct Migration4: Fluent.Migration {
+        func prepare(on database: Database) -> EventLoopFuture<Void> {
+            database.schema("insights")
+                .field("group_by", .string)
+                .update()
+        }
+        
+        func revert(on database: Database) -> EventLoopFuture<Void> {
+            database.schema("insights")
+                .deleteField("group_by")
+                .update()
+        }
+    }
 }

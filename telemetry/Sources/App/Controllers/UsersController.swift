@@ -22,14 +22,6 @@ struct UsersController: RouteCollection {
         tokenProtected.get("me", use: getUserInformation)
         tokenProtected.post("updatePassword", use: updatePassword)
     }
-
-    /// Return the canonical hashed version of the given password string
-    static func hash(from password: String) -> String {
-        // TODO: Salt that hash, mofo!
-        let hashedPassword = try! Bcrypt.hash(password)
-
-        return hashedPassword
-    }
     
     struct RegistrationRequestBody: Content, Validatable {
         let registrationToken: String?
@@ -45,7 +37,7 @@ struct UsersController: RouteCollection {
         }
         
         func makeUser(organizationID: UUID) -> User {
-            let hashedPassword = UsersController.hash(from: self.userPassword)
+            let hashedPassword = User.hash(from: self.userPassword)
 
             return User(
                 firstName: userFirstName,
@@ -153,7 +145,7 @@ struct UsersController: RouteCollection {
             throw Abort(.badRequest, reason: "Incorrect Old Password")
         }
 
-        user.passwordHash = Self.hash(from: passwordChangeRequestBody.newPassword)
+        user.passwordHash = User.hash(from: passwordChangeRequestBody.newPassword)
         return user.save(on: req.db)
             .flatMap {
                 UserToken.query(on: req.db)

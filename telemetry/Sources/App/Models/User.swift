@@ -65,6 +65,14 @@ extension User: ModelAuthenticatable {
     func verify(password: String) throws -> Bool {
         try Bcrypt.verify(password, created: self.passwordHash)
     }
+    
+    /// Return the canonical hashed version of the given password string
+    static func hash(from password: String) -> String {
+        // TODO: Salt that hash, mofo!
+        let hashedPassword = try! Bcrypt.hash(password)
+
+        return hashedPassword
+    }
 
     /// Used to generate login tokens for use in the rest of the API
     func generateToken() throws -> UserToken {
