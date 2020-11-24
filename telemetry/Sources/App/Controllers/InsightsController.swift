@@ -13,6 +13,7 @@ class InsightsController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let insights = routes.grouped(UserToken.authenticator())
         insights.get(":insightID", use: get)
+        insights.get(":insightID", ":fromDate", ":untilDate", use: get)
         insights.post(use: create)
         insights.patch(":insightID", use: update)
         insights.delete(":insightID", use: delete)
@@ -26,18 +27,25 @@ class InsightsController: RouteCollection {
               let insightID = UUID(insightIDString) else {
             throw Abort(.badRequest, reason: "Invalid parameter `appID`")
         }
-
+        
+        // Verify User
         let user = try req.auth.require(User.self)
         // TODO: Only return apps for this user's org
         
+        // Date Calculation
+        let fromDateString = req.parameters.get("fromDate")
+        let untilDateString = req.parameters.get("untilDate")
+        
+        // Query
         return Insight.query(on: req.db)
             .filter(\.$id == insightID)
             .first()
             .unwrap(or: Abort(.notFound))
             .flatMap { insight in
                 
-                let calculatedAtDate = Date()
-                let earlierDate = Date(timeInterval: insight.rollingWindowSize, since: calculatedAtDate)
+                let calculatedAtDate = untilDateString != nil ? Formatter.iso8601noFS.date(from: untilDateString!) ?? Date() : Date()
+                let defaultEarlierDate = Date(timeInterval: insight.rollingWindowSize, since: calculatedAtDate)
+                let earlierDate = fromDateString != nil ? Formatter.iso8601noFS.date(from: fromDateString!) ?? defaultEarlierDate : defaultEarlierDate
                 let insightQuery = insight.breakdownKey == nil
                     ? self.timeSeriesSQLQuery(for: insight, appID: appID, earlierDate: earlierDate, calculatedAtDate: calculatedAtDate)
                     : self.breakDownSQLQuery(for: insight, appID: appID, earlierDate: earlierDate, calculatedAtDate: calculatedAtDate)
