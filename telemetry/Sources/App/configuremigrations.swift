@@ -37,6 +37,8 @@ struct MigrationConfiguration {
         
         app.migrations.add(BetaRequestEmail.Migration3())
         app.migrations.add(Insight.Migration4())
+        app.migrations.add(LexiconSignalType.Migration2())
+        app.migrations.add(LexiconPayloadKey.Migration2())
         
         try app.autoMigrate().wait()
     }
