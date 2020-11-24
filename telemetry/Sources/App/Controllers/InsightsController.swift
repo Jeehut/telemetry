@@ -198,7 +198,7 @@ class InsightsController: RouteCollection {
         
         let groupByValue = insight.groupBy?.rawValue ?? "day"
         
-        let countValue = insight.uniqueUser ? "DISTINCT user" : "*"
+        let countValue = insight.uniqueUser ? "DISTINCT client_user" : "*"
         
         let clause = """
         WITH
