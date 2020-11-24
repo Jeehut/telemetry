@@ -51,7 +51,6 @@ struct UsersController: RouteCollection {
         
         static func validations(_ validations: inout Validations) {
             validations.add("userFirstName", as: String.self, is: !.empty)
-            validations.add("userLastName", as: String.self, is: !.empty)
             validations.add("userEmail", as: String.self, is: .email)
             validations.add("userPassword", as: String.self, is: .count(8...))
         }
