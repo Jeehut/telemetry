@@ -27,7 +27,11 @@ class InsightsController: RouteCollection {
               let insightID = UUID(insightIDString) else {
             throw Abort(.badRequest, reason: "Invalid parameter `appID`")
         }
-        
+
+        return try getInsight(req: req, appID: appID, insightID: insightID)
+    }
+
+    func getInsight(req: Request, appID: UUID, insightID: UUID) throws -> EventLoopFuture<InsightDataTransferObject> {
         // Verify User
         let user = try req.auth.require(User.self)
         // TODO: Only return apps for this user's org
@@ -227,8 +231,10 @@ class InsightsController: RouteCollection {
         return clause
     }
     
-    func create(req: Request) throws -> EventLoopFuture<Insight> {
-        guard let insightGroupIDString = req.parameters.get("insightGroupID"),
+    func create(req: Request) throws -> EventLoopFuture<InsightDataTransferObject> {
+        guard let appIDString = req.parameters.get("appID"),
+              let appID = UUID(appIDString),
+              let insightGroupIDString = req.parameters.get("insightGroupID"),
               let insightGroupID = UUID(insightGroupIDString) else {
             throw Abort(.badRequest, reason: "Invalid parameter `insightGroupID`")
         }
@@ -250,7 +256,8 @@ class InsightsController: RouteCollection {
         insight.displayMode = insightCreateRequestBody.displayMode
         insight.isExpanded = insightCreateRequestBody.isExpanded
         
-        return insight.save(on: req.db).map { insight }
+        return insight.save(on: req.db)
+            .flatMap { try! self.getInsight(req: req, appID: appID, insightID: insight.id!) }
     }
     
     func update(req: Request) throws -> EventLoopFuture<InsightDataTransferObject> {
@@ -287,7 +294,7 @@ class InsightsController: RouteCollection {
                 
                 return insight.update(on: req.db)
             }
-            .flatMap { try! self.get(req: req) }
+            .flatMap { try! self.getInsight(req: req, appID: appID, insightID: insightID) }
     }
     
     func delete(req: Request) throws -> EventLoopFuture<HTTPStatus> {

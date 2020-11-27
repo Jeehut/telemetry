@@ -13,6 +13,7 @@ class InsightGroupsController: RouteCollection {
         let insightGroups = routes.grouped(UserToken.authenticator())
         insightGroups.get(use: list)
         insightGroups.post(use: create)
+        insightGroups.patch(":insightGroupID", use: update)
         insightGroups.delete(":insightGroupID", use: delete)
     }
     
@@ -56,6 +57,39 @@ class InsightGroupsController: RouteCollection {
         insightGroup.order = insightGroupCreateRequestBody.order
         
         return insightGroup.save(on: req.db).map { insightGroup }
+    }
+
+    struct InsightGroupDTO: Content {
+        var id: UUID
+        var title: String
+        var order: Double?
+    }
+
+    func update(req: Request) throws -> EventLoopFuture<InsightGroup> {
+        guard let appIDString = req.parameters.get("appID"),
+              let appID = UUID(appIDString),
+              let insightGroupIDString = req.parameters.get("insightGroupID"),
+              let insightGroupID = UUID(insightGroupIDString)
+        else {
+            throw Abort(.badRequest, reason: "Invalid parameter `appID`")
+        }
+
+        let insightGroupDTO = try req.content.decode(InsightGroupDTO.self)
+
+        let user = try req.auth.require(User.self)
+
+        return InsightGroup.query(on: req.db)
+            .filter(\.$app.$id == appID)
+            .filter(\.$id == insightGroupID)
+            .first()
+            .unwrap(or: Abort(.notFound))
+            .flatMap { insightGroup in
+                insightGroup.title = insightGroupDTO.title
+                insightGroup.order = insightGroupDTO.order
+
+                return insightGroup.update(on: req.db)
+                    .map { insightGroup }
+            }
     }
     
     func delete(req: Request) throws -> EventLoopFuture<HTTPStatus> {
