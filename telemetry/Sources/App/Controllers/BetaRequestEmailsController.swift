@@ -1,5 +1,6 @@
 import Fluent
 import Vapor
+import Mailgun
 
 class BetaRequestEmailsController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
@@ -69,12 +70,20 @@ class BetaRequestEmailsController: RouteCollection {
                 .flatMap { betaRequest in
                     betaRequest.sentAt = Date()
                     
-                    // Here we could send the email directly
-                    
-                    return betaRequest.save(on: req.db)
-                        .map {
-                            HTTPStatus.ok
-                        }
+                    let message = MailgunTemplateMessage(
+                        from: "daniel@gmail.com",
+                        to: betaRequest.email,
+                        subject: "Beta Access to Telemetry, Analytics that's Not Evil",
+                        template: "beta-request-email",
+                        templateData: ["registration_code": betaRequest.registrationToken]
+                    )
+
+                    return req.mailgun().send(message).flatMap { _ in
+                        betaRequest.save(on: req.db)
+                            .map {
+                                HTTPStatus.ok
+                            }
+                    }
                 }
         }
         

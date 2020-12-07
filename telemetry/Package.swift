@@ -4,14 +4,15 @@ import PackageDescription
 let package = Package(
     name: "telemetry",
     platforms: [
-       .macOS(.v10_15)
+       .macOS(.v10_15),
     ],
     dependencies: [
         // 💧 A server-side Swift web framework.
         .package(url: "https://github.com/vapor/vapor.git", from: "4.29.0"),
         .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0"),
         .package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.0.1"),
-        .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.0.0")
+        .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.0.0"),
+        .package(url: "https://github.com/vapor-community/mailgun.git", from: "5.0.0")
 
 
     ],
@@ -22,7 +23,8 @@ let package = Package(
                 .product(name: "Fluent", package: "fluent"),
                 .product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
                 .product(name: "Vapor", package: "vapor"),
-                .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver")
+                .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver"),
+                .product(name: "Mailgun", package: "mailgun")
 
             ],
             swiftSettings: [

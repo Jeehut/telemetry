@@ -65,6 +65,15 @@
         }
       },
       {
+        "package": "mailgun",
+        "repositoryURL": "https://github.com/vapor-community/mailgun.git",
+        "state": {
+          "branch": null,
+          "revision": "cb9e4d6d1b760739bf288b07c41bb01bbfe578c5",
+          "version": "5.0.0"
+        }
+      },
+      {
         "package": "postgres-kit",
         "repositoryURL": "https://github.com/vapor/postgres-kit.git",
         "state": {
