@@ -71,7 +71,7 @@ class BetaRequestEmailsController: RouteCollection {
                     betaRequest.sentAt = Date()
                     
                     let message = MailgunTemplateMessage(
-                        from: "daniel@gmail.com",
+                        from: "noreply@apptelemetry.io",
                         to: betaRequest.email,
                         subject: "Beta Access to Telemetry, Analytics that's Not Evil",
                         template: "beta-request-email",
