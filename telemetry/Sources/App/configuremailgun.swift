@@ -13,7 +13,7 @@ extension MailgunDomain {
 }
 
 struct CustomEmailConfiguration {
-    static func configureEmaik(_ app: Application) throws {
+    static func configureEmail(_ app: Application) throws {
         app.mailgun.configuration = .init(apiKey: "<api key>")
         app.mailgun.defaultDomain = .mailDotApptelemetryDotIo
     }

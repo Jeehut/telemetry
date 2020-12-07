@@ -12,6 +12,8 @@ public func configure(_ app: Application) throws {
     
     try MigrationConfiguration.configureMigrations(app)
 
+    try CustomEmailConfiguration.configureEmail(app)
+
     // register routes
     try routes(app)
 }
