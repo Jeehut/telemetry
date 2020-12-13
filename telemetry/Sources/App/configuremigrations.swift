@@ -39,6 +39,9 @@ struct MigrationConfiguration {
         app.migrations.add(Insight.Migration4())
         app.migrations.add(LexiconSignalType.Migration2())
         app.migrations.add(LexiconPayloadKey.Migration2())
+
+        app.migrations.add(Plan.CreateMigration())
+        app.migrations.add(Subscription.CreateMigration())
         
         try app.autoMigrate().wait()
     }
