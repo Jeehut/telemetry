@@ -78,7 +78,7 @@ class InsightsController: RouteCollection {
                                 }
                                 
                                 if let xAxisValue = row.column("xaxisvalue")?.string {
-                                    rowDictionary["xAxisValue"] = xAxisValue
+                                    rowDictionary["xAxisValue"] = xAxisValue.modelName
                                 } else {
                                     rowDictionary["xAxisValue"] = "<None>"
                                 }
@@ -108,7 +108,6 @@ class InsightsController: RouteCollection {
                 } else { fatalError() }
             }
     }
-
     
 
     func breakDownSQLQuery(for insight: Insight, appID: UUID, earlierDate: Date, calculatedAtDate: Date) -> String {
