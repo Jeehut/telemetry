@@ -7,6 +7,7 @@ extension Plan {
                 .id()
                 .field("title", .string, .required)
                 .field("description", .string)
+                .field("price", .int)
                 .field("order", .int, .required, .sql(raw: "DEFAULT 0"))
                 .field("is_public", .bool, .required, .sql(raw: "DEFAULT false"))
                 .field("discount_code", .string)

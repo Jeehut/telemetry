@@ -20,6 +20,10 @@ final class Plan: Model, Content {
     @Field(key: "description")
     var description: String?
 
+    /// The price in euro cents
+    @Field(key: "price")
+    var price: Int
+
     /// Order publicly visible plans by this
     @Field(key: "order")
     var order: Int
