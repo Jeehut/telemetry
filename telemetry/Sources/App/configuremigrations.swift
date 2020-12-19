@@ -42,6 +42,8 @@ struct MigrationConfiguration {
 
         app.migrations.add(Plan.CreateMigration())
         app.migrations.add(Subscription.CreateMigration())
+
+        app.migrations.add(Signal.AddAppIdIndex())
         
         try app.autoMigrate().wait()
     }

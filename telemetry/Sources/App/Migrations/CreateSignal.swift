@@ -1,4 +1,5 @@
 import Fluent
+import FluentPostgresDriver
 
 extension Signal  {
     struct Migration: Fluent.Migration {
@@ -21,9 +22,7 @@ extension Signal  {
             database.schema(schema).delete()
         }
     }
-}
 
-extension Signal {
     struct UpdateReceivedAt: Fluent.Migration {
         func prepare(on database: Database) -> EventLoopFuture<Void> {
             database.schema(schema)
@@ -35,6 +34,18 @@ extension Signal {
             database.schema(schema)
                 .updateField("received_at", .date)
                 .update()
+        }
+    }
+
+    struct AddAppIdIndex: Fluent.Migration {
+        func prepare(on database: Database) -> EventLoopFuture<Void> {
+            let postgres = database as! PostgresDatabase
+            return postgres.simpleQuery("CREATE INDEX signals_app_id ON signals(app_id uuid_ops);").map { _ in }
+        }
+
+        func revert(on database: Database) -> EventLoopFuture<Void> {
+            let postgres = database as! PostgresDatabase
+            return postgres.simpleQuery("DROP INDEX signals_app_id;").map { _ in }
         }
     }
 }
