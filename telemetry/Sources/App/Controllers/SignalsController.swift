@@ -61,10 +61,12 @@ struct SignalsController: RouteCollection {
         signal.$app.id = appID
 
         // Save signal type into lexicon. This will fail silently if the signal type already exists, which is what we want
-        _ = LexiconSignalType.from(signal).save(on: req.db).recover { error in }
+        // _ = LexiconSignalType.from(signal).save(on: req.db).recover { error in }
 
         // Save Payload Keys into lexicon. This will also fail silently if the keys are already in the lexicon
-        _ = LexiconPayloadKey.from(signal).create(on: req.db).recover { error in }
+        // _ = LexiconPayloadKey.from(signal).create(on: req.db).recover { error in }
+
+        // The above two statements are disabled to improve performance temporarily
 
         return signal.save(on: req.db).map { HTTPStatus.ok }
     }
