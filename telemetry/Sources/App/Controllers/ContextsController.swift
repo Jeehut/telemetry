@@ -7,6 +7,7 @@
 
 import Fluent
 import Vapor
+import FluentPostgresDriver
 
 class ContextsController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
@@ -21,36 +22,47 @@ class ContextsController: RouteCollection {
     }
     
     func getFrontpageContext(req: Request) throws -> EventLoopFuture<FrontpageContext> {
-        return Signal.query(on: req.db)
-            .count()
-            .flatMap { signalCount in
-                Organization.query(on: req.db)
-                    .count()
-                    .map { orgCount in
-                        return FrontpageContext(
-                            numberOfOrganizations: orgCount,
-                            numberOfApps: nil,
-                            numberOfInsights: nil,
-                            numberOfSignals: signalCount)
-                    }
+        let postgres = req.db as! PostgresDatabase
+
+        let countSignalsQuery = "SELECT reltuples::bigint FROM pg_catalog.pg_class WHERE relname = 'signals';"
+        let countInsightsQuery = "SELECT reltuples::bigint FROM pg_catalog.pg_class WHERE relname = 'insights';"
+        let countAppsQuery = "SELECT reltuples::bigint FROM pg_catalog.pg_class WHERE relname = 'apps';"
+        let countOrgsQuery = "SELECT reltuples::bigint FROM pg_catalog.pg_class WHERE relname = 'organizations';"
+
+        return postgres.simpleQuery(countSignalsQuery)
+            .map { postgresRows in
+                return FrontpageContext(
+                    numberOfOrganizations: nil,
+                    numberOfApps: nil,
+                    numberOfInsights: nil,
+                    numberOfSignals: postgresRows.first?.column("reltuples")?.int)
             }
             .flatMap { context in
-                App.query(on: req.db)
-                    .count()
-                    .map { appCount in
-                        var newContext = context
-                        newContext.numberOfApps = appCount
-                        return newContext
-                    }
+                postgres.simpleQuery(countInsightsQuery).map { postgresRows in
+                    return FrontpageContext(
+                        numberOfOrganizations: nil,
+                        numberOfApps: nil,
+                        numberOfInsights: postgresRows.first?.column("reltuples")?.int,
+                        numberOfSignals: context.numberOfSignals)
+                }
             }
-            .flatMap { (context: FrontpageContext) in
-                Insight.query(on: req.db)
-                    .count()
-                    .map { insightCount in
-                        var newContext = context
-                        newContext.numberOfInsights = insightCount
-                        return newContext
-                    }
+            .flatMap { context in
+                postgres.simpleQuery(countAppsQuery).map { postgresRows in
+                    return FrontpageContext(
+                        numberOfOrganizations: nil,
+                        numberOfApps: postgresRows.first?.column("reltuples")?.int,
+                        numberOfInsights: context.numberOfInsights,
+                        numberOfSignals: context.numberOfSignals)
+                }
+            }
+            .flatMap { context in
+                postgres.simpleQuery(countOrgsQuery).map { postgresRows in
+                    return FrontpageContext(
+                        numberOfOrganizations: postgresRows.first?.column("reltuples")?.int,
+                        numberOfApps: context.numberOfApps,
+                        numberOfInsights: context.numberOfInsights,
+                        numberOfSignals: context.numberOfSignals)
+                }
             }
     }
 }
