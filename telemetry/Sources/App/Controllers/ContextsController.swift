@@ -27,7 +27,7 @@ class ContextsController: RouteCollection {
         let countSignalsQuery = "SELECT reltuples::bigint FROM pg_catalog.pg_class WHERE relname = 'signals';"
         let countInsightsQuery = "SELECT reltuples::bigint FROM pg_catalog.pg_class WHERE relname = 'insights';"
         let countAppsQuery = "SELECT reltuples::bigint FROM pg_catalog.pg_class WHERE relname = 'apps';"
-        let countOrgsQuery = "SELECT reltuples::bigint FROM pg_catalog.pg_class WHERE relname = 'organizations';"
+        let countOrgsQuery = "SELECT COUNT(*) as reltuples from organizations;"
 
         return postgres.simpleQuery(countSignalsQuery)
             .map { postgresRows in
