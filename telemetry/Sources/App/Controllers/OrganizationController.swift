@@ -1,12 +1,6 @@
-//
-//  File.swift
-//  
-//
-//  Created by Daniel Jilg on 11.11.20.
-//
-
 import Vapor
 import Fluent
+import FluentPostgresDriver
 
 struct OrganizationController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
@@ -15,12 +9,14 @@ struct OrganizationController: RouteCollection {
         organization.get("joinRequests", use: getJoinRequests)
         organization.post("joinRequests", use: createJoinRequest)
         organization.delete("joinRequests", ":joinRequestID", use: deleteJoinRequest)
+
+        organization.get("signalcount", use: getSignalCount)
         
         // No auth checking
         routes.post("joinRequests", "join", use: join)
     }
     
-    // List all users belonging to this organization
+    /// List all users belonging to this organization
     func getUsers(req: Request) throws -> EventLoopFuture<[UserDataTransferObject]> {
         let user = try req.auth.require(User.self)
         return User.query(on: req.db)
@@ -32,7 +28,7 @@ struct OrganizationController: RouteCollection {
     }
     
     
-    // List all OrganizationJoinRequests belonging to this organization
+    /// List all OrganizationJoinRequests belonging to this organization
     func getJoinRequests(req: Request) throws -> EventLoopFuture<[OrganizationJoinRequest]> {
         let user = try req.auth.require(User.self)
         
@@ -40,8 +36,8 @@ struct OrganizationController: RouteCollection {
                 .filter(\.$organization.$id == user.$organization.id)
                 .all()
     }
-    
-    // Create a new Join Request
+
+    /// Create a new Join Request
     func createJoinRequest(req: Request) throws -> EventLoopFuture<OrganizationJoinRequest> {
         let user = try req.auth.require(User.self)
         
@@ -56,7 +52,7 @@ struct OrganizationController: RouteCollection {
             .map { organizationJoinRequest }
     }
     
-    // Delete a Join Request
+    /// Delete a Join Request
     func deleteJoinRequest(req: Request) throws -> EventLoopFuture<HTTPStatus> {
         guard let joinRequestIDString = req.parameters.get("joinRequestID"),
               let joinRequestID = UUID(joinRequestIDString) else {
@@ -84,7 +80,7 @@ struct OrganizationController: RouteCollection {
         let registrationToken: String
     }
     
-    // Join an Organization
+    /// Join an Organization
     func join(req: Request) throws -> EventLoopFuture<UserDataTransferObject> {
         let orgJoinRequest = try req.content.decode(OrganizationJoinRequestURLObject.self)
         
@@ -108,5 +104,22 @@ struct OrganizationController: RouteCollection {
                 
                 return user.create(on: req.db).map { UserDataTransferObject(user: user) }
             }
+    }
+
+    /// Get the number of signals for this organization for the current month
+    func getSignalCount(req: Request) throws -> EventLoopFuture<Int> {
+        let user = try req.auth.require(User.self)
+
+        let postgres = req.db as! PostgresDatabase
+        let query = """
+        WITH
+        orgApps AS (SELECT id AS app_id, name, organization_id FROM apps WHERE organization_id = '\(user.$organization.id)'),
+        appcounts AS (SELECT app_id, COUNT(app_id) from signals WHERE received_at >= date_trunc('month', CURRENT_DATE) GROUP BY app_id)
+        SELECT SUM(count) FROM orgApps INNER JOIN appcounts ON orgApps.app_id = appcounts.app_id
+        """
+
+        return postgres.simpleQuery(query).map { postgresRows in
+            return postgresRows.first?.column("sum")?.int ?? 0
+        }
     }
 }
